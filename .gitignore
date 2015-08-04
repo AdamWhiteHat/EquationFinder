@@ -41,3 +41,17 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+EquationFinder\obj\*
+EquationFinder\bin\*
+
+AlgebraicTuple\obj\*
+AlgebraicTuple\bin\*
+
+AlgebraicString\obj\*
+AlgebraicString\bin\*
+
+AlgebraicExpression\obj\*
+AlgebraicExpression\bin\*
+
+
