@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9338745F-90D7-4FE7-8006-3C2D77FDB98E}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{0635B79F-75AD-46B4-96B0-17465975A382}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AlgebraicExpression</RootNamespace>
-    <AssemblyName>AlgebraicExpression</AssemblyName>
+    <RootNamespace>EquationFinder_Console</RootNamespace>
+    <AssemblyName>EquationFinder_Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -39,12 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlgebraicExpression.cs" />
+    <Compile Include="MainRoutine.cs" />
+    <Compile Include="SettingsReader.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ThreadManager.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EquationFinder\EquationFinder.csproj">
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EquationFactories\AlgebraicTuple\AlgebraicTuple.csproj">
+      <Project>{8112e30a-4082-4b1a-9d44-6af7979ea90a}</Project>
+      <Name>AlgebraicTuple</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EquationFinder\EquationFinder.csproj">
       <Project>{a016727c-ecb6-4653-a122-94578cd41ca7}</Project>
       <Name>EquationFinder</Name>
     </ProjectReference>

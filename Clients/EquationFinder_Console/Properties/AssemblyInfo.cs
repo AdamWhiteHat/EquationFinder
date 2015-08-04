@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EquationFinder")]
+[assembly: AssemblyTitle("EquationFinder_Console")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("www.csharpprogramming.tips")]
-[assembly: AssemblyProduct("EquationFinder")]
+[assembly: AssemblyProduct("EquationFinder_Console")]
 [assembly: AssemblyCopyright("Copyright © Adam Rakaska 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f8405c93-6a45-4081-a34d-09f680404e44")]
+[assembly: Guid("09f0079c-b9ca-45bf-bfa2-aa293ef85e7e")]
 
 // Version information for an assembly consists of the following four values:
 //

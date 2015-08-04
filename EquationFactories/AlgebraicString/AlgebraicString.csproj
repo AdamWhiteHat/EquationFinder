@@ -45,7 +45,7 @@
     <Compile Include="ThreadManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EquationFinder\EquationFinder.csproj">
+    <ProjectReference Include="..\..\EquationFinder\EquationFinder.csproj">
       <Project>{a016727c-ecb6-4653-a122-94578cd41ca7}</Project>
       <Name>EquationFinder</Name>
     </ProjectReference>

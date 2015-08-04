@@ -138,26 +138,6 @@ namespace EquationFinder
 			}
 			return strResults;
 		}
-
-		public ExpressionResults StringExpressionSpawnerFunc(ThreadSpawnerArgs threadArgs)
-		{
-			IExpression expression = new AlgebraicString(threadArgs.EquationFinderArgs);
-			expression.
-			TotalExpressionsGenerated++;
-
-			int maxAge = (threadArgs.TimeToLive * 1000);
-			Stopwatch Age = new Stopwatch();
-			Age.Start();
-
-			while (expression.Evaluate() != (decimal)threadArgs.EquationFinderArgs.TargetValue && Age.ElapsedMilliseconds < maxAge)
-			{
-				expression = new IExpression(threadArgs.EquationFinderArgs);
-				TotalExpressionsGenerated++;
-			}
-
-			Age.Stop();
-			Age = null;
-			return expression.GetResults();
-		}
-	}
+				
+	} // ThreadedEquationFinder
 }
