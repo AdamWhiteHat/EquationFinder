@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquationFinder", "EquationFinder\EquationFinder.csproj", "{A016727C-ECB6-4653-A122-94578CD41CA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgebraicTuple", "AlgebraicTuple\AlgebraicTuple.csproj", "{8112E30A-4082-4B1A-9D44-6AF7979EA90A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgebraicString", "AlgebraicString\AlgebraicString.csproj", "{5A69DD25-21B1-4709-9B15-08BF198873E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgebraicExpression", "AlgebraicExpression\AlgebraicExpression.csproj", "{9338745F-90D7-4FE7-8006-3C2D77FDB98E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A016727C-ECB6-4653-A122-94578CD41CA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A016727C-ECB6-4653-A122-94578CD41CA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A016727C-ECB6-4653-A122-94578CD41CA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A016727C-ECB6-4653-A122-94578CD41CA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8112E30A-4082-4B1A-9D44-6AF7979EA90A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8112E30A-4082-4B1A-9D44-6AF7979EA90A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8112E30A-4082-4B1A-9D44-6AF7979EA90A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8112E30A-4082-4B1A-9D44-6AF7979EA90A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A69DD25-21B1-4709-9B15-08BF198873E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A69DD25-21B1-4709-9B15-08BF198873E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A69DD25-21B1-4709-9B15-08BF198873E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A69DD25-21B1-4709-9B15-08BF198873E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9338745F-90D7-4FE7-8006-3C2D77FDB98E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9338745F-90D7-4FE7-8006-3C2D77FDB98E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9338745F-90D7-4FE7-8006-3C2D77FDB98E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9338745F-90D7-4FE7-8006-3C2D77FDB98E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
