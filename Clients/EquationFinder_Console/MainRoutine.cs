@@ -17,8 +17,13 @@ namespace EquationFinder_Console
 		private static string settingsExceptionMessage = "<appSettings> must be configured in App.config file: {0}  key was missing or empty.";
 		private static string settingsExceptionArgument = "<appSettings><add key=\"{0}\" value=\"{1}\"/>";
 
-		public MainRoutine()
+		public MainRoutine(List<string> args)
 		{
+			if (args.Count > 1)
+			{
+				// Perhaps accept args?
+			}
+			
 			if (string.IsNullOrWhiteSpace(Settings.File_Output))
 			{
 				throw new ArgumentException(string.Format(settingsExceptionMessage, "File_Output"), string.Format(settingsExceptionArgument, "File_Output", "output.txt"));
@@ -50,7 +55,7 @@ namespace EquationFinder_Console
 			}			
 
 			EquationFinderArgs equationArgs = new EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, termSelector, operatorSelector);
-			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(LogOutput, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Operations_Quantity, equationArgs);
+			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(LogOutput, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Round_Quantity, equationArgs);
 
 			ThreadedEquationFinder equationFinder = new ThreadedEquationFinder(threadArgs);
 			if (File.Exists(outputFilename))
@@ -71,10 +76,13 @@ namespace EquationFinder_Console
 
 			if (!string.IsNullOrWhiteSpace(outputFilename))
 			{
-				File.AppendAllText(outputFilename, outputString + Environment.NewLine);
-			}
+				Console.WriteLine(outputString);
 
-			Console.WriteLine(outputString);
+				if (!outputString.Contains("Time-to-live expired"))
+				{
+					File.AppendAllText(outputFilename, outputString + Environment.NewLine);
+				}
+			}			
 		}
 	}
 }

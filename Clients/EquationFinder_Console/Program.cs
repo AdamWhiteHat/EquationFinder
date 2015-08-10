@@ -10,7 +10,7 @@ namespace EquationFinder_Console
 	{
 		private static void Main(string[] args)
 		{
-			MainRoutine mRoutine = new MainRoutine();
+			MainRoutine mRoutine = new MainRoutine(args.ToList());
 			mRoutine.Find();			
 		}
 	}
