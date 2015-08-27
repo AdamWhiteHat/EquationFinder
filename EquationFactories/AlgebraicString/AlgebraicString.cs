@@ -8,13 +8,13 @@ namespace EquationFinder
 {
 	public partial class AlgebraicString : IExpression
 	{
-		public ExpressionFinderArgs EquationArgs { get; private set; }
+		public EquationFinderArgs EquationArgs { get; private set; }
 		public string Expression { get; private set; }
 
 		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
-		public Func<string> OperatorSelector { get { return EquationArgs.OperatorSelector; } }
-		public Func<decimal> TermSelector { get { return EquationArgs.TermSelector; } }
+		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		public string TermPool { get { return EquationArgs.TermPool; } }
 
 		public decimal CalculatedValue
 		{
@@ -39,7 +39,7 @@ namespace EquationFinder
 			get { return (CalculatedValue == TargetValue); }
 		}
 
-		public AlgebraicString(ExpressionFinderArgs equationArgs)
+		public AlgebraicString(EquationFinderArgs equationArgs)
 		{
 			EquationArgs = equationArgs;
 			BuildExpression();
@@ -48,10 +48,10 @@ namespace EquationFinder
 
 		public IExpression NewExpression(IEquationFinderArgs equationArgs)
 		{
-			return new AlgebraicString((ExpressionFinderArgs)equationArgs);
+			return new AlgebraicString((EquationFinderArgs)equationArgs);
 		}
 
-		public Task<IExpression> NewTask(ExpressionFinderArgs equationArgs)
+		public Task<IExpression> NewTask(EquationFinderArgs equationArgs)
 		{
 			return new Task<IExpression>(new Func<IExpression>(delegate { return new AlgebraicString(equationArgs); }));
 		}
@@ -66,14 +66,12 @@ namespace EquationFinder
 			List<string> operators = new List<string>(NumberOfOperations);
 			int counter = NumberOfOperations - 1;
 			while (counter-- > 0)
-				operators.Add(OperatorSelector());
-			//operators.Add(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
+				operators.Add(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
 
 			List<string> terms = new List<string>(NumberOfOperations);
 			counter = NumberOfOperations;
 			while (counter-- > 0)
-				terms.Add(TermSelector().ToString());
-			//terms.Add(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString());
+				terms.Add(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString());
 
 			counter = 0;
 			string result = terms[counter++];

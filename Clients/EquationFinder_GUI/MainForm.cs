@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -21,8 +22,6 @@ namespace EquationFinder_GUI
 
 		long TotalExpressionsGenerated;
 		long ExpressionsGeneratedThisRound;
-
-		string OperatorPool = string.Empty;
 
 		public MainForm()
 		{
@@ -55,39 +54,13 @@ namespace EquationFinder_GUI
 
 		void BtnFindSolutionClick(object sender, EventArgs e)
 		{
-			//EquationExpression.TestExpressionMethod();
-
-			string operators = string.Empty;
-			foreach (ListViewItem item in listOperators.SelectedItems)
-			{
-				switch (item.Text)
-				{
-					case "Addition":
-						operators += "+";
-						break;
-
-					case "Subtraction":
-						operators += "-";
-						break;
-
-					case "Multiplication":
-						operators += "*";
-						break;
-
-					case "Division":
-						operators += "/";
-						break;
-				}
-			}
-			OperatorPool = operators;
-
 			backgroundWorker_ThreadSpawner.RunWorkerAsync();
 		}
 
 		private void backgroundWorker_ThreadSpawner_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			DisableControls();
-			ThreadSpawner();
+			ThreadSpawnLauncher();
 		}
 
 		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -95,7 +68,56 @@ namespace EquationFinder_GUI
 			EnableControls();
 		}
 
-		private void ThreadSpawner()
+		private string GetOperatorPool()
+		{
+			StringBuilder result = new StringBuilder();
+			foreach (ListViewItem item in listOperators.SelectedItems)
+			{
+				switch (item.Text)
+				{
+					case "Addition":
+						result.Append('+');
+						break;
+
+					case "Subtraction":
+						result.Append('-');
+						break;
+
+					case "Multiplication":
+						result.Append('*');
+						break;
+
+					case "Division":
+						result.Append('/');
+						break;
+				}
+			}
+			return result.ToString();
+		}
+
+		private string GetTermPool()
+		{
+			StringBuilder result = new StringBuilder();
+			int maxTerm = Convert.ToInt32(tbTerm.Text);
+
+			if (radioRandom.Checked)
+			{
+				int counter = maxTerm;
+				while (counter > 0)
+				{
+					result.Append(counter);
+					counter--;
+				}
+			}
+			else
+			{
+				result = result.Append(maxTerm);
+			}
+			
+			return result.ToString();
+		}
+
+		private void ThreadSpawnLauncher()
 		{
 			IsDirty = true;
 			decimal targetValue = StaticClass.String2Decimal(tbTargetValue.Text);
@@ -104,19 +126,21 @@ namespace EquationFinder_GUI
 			int numberOfOperations = StaticClass.String2Int(tbNumberOperations.Text);
 			int timeToLive = StaticClass.String2Int(tbTTL.Text);
 			int numberOfRounds = StaticClass.String2Int(tbRounds.Text);
+			string OperatorPool = GetOperatorPool();
+			string TermPool = GetTermPool();
 
-			Func<decimal> termSelector;
-			int numToUse = StaticClass.String2Int(tbTerm.Text);
-
-			if (radioConstant.Checked)
-				termSelector = () => (decimal)(numToUse);
-			else
-				termSelector = () => (decimal)(StaticRandom.Instance.Next(0, numToUse));
-
-			Func<string> operatorSelector = new Func<string>(delegate { return OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString(); });
-
-			EquationFinderArgs equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, termSelector, operatorSelector);
-
+			if (string.IsNullOrWhiteSpace(TermPool))
+			{
+				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			if (string.IsNullOrWhiteSpace(OperatorPool))
+			{
+				MessageBox.Show("You must select at least one operation.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			
+			EquationFinderArgs equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
 			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(DisplayOutput, timeToLive, numberOfThreads, numberOfOperations, equationArgs);
 
 			ThreadedEquationFinder equationFinder = new ThreadedEquationFinder(threadArgs);

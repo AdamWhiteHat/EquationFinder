@@ -13,12 +13,10 @@ namespace EquationFinder_Console
 
 		public static decimal Equations_Goal	= SettingsReader.GetSetting<decimal>("Equations.Goal");
 		public static string  Equations_Factory	= SettingsReader.GetSettingString("Equations.Factory");
-		
-		public static string Operations			= SettingsReader.GetSettingString("Operations");
+
+		public static string Term_Pool			= SettingsReader.GetSettingString("Term.Pool");
+		public static string Operand_Pool		= SettingsReader.GetSettingString("Operand.Pool");
 		public static int	 Operations_Quantity= SettingsReader.GetSetting<int>("Operations.Quantity");
-		
-		public static int	 Term_MaxValue		= SettingsReader.GetSetting<int>("Term.MaxValue");
-		public static string Term_Varience		= SettingsReader.GetSettingString("Term.Varience");
 		
 		public static int	 Round_Threads		= SettingsReader.GetSetting<int>("Round.Threads");
 		public static int	 Round_Quantity		= SettingsReader.GetSetting<int>("Round.Quantity");

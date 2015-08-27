@@ -23,21 +23,18 @@ namespace EquationFinder
 
 	public class ExpressionResults
 	{
-		public string ExpressionText { get; private set; }
-		public decimal TargetValue { get; private set; }
-		public bool IsSolution { get; private set; }
-		public decimal Result { get; private set; }
+		public IExpression xpression { get; private set; }
+		public static ExpressionResults Empty = new ExpressionResults(decimal.MinValue, null);
 
-		public IExpression Expression { get; private set; }
+		public decimal TargetValue { get; private set; }
+		public string ExpressionText { get { return xpression.ToString(); } }
+		public decimal Result { get { return xpression.CalculatedValue; } }
+		public bool IsSolution { get { return Result.Equals(TargetValue); } }
 
 		public ExpressionResults(decimal targetValue, IExpression expression)
 		{
-			this.Expression = expression; // Expression
-			Result = expression.CalculatedValue; // decimal
-			ExpressionText = expression.ToString(); // string
-
+			xpression = expression; // Expression
 			TargetValue = targetValue; // decimal
-			IsSolution = Result.Equals(targetValue); // bool
 		}
 	}
 
@@ -45,21 +42,18 @@ namespace EquationFinder
 	{
 		public decimal TargetValue { get; set; }
 		public int NumberOfOperations { get; set; }
+		public string TermPool { get; set; }
+		public string OperatorPool { get; set; }
 
-		public Func<decimal> TermSelector { get; set; }
-		public Func<string> OperatorSelector { get; set; }
-		//public string TermPool { get; set; }
-		//public string OperatorPool { get; set; }
-
-		public EquationFinderArgs(decimal targetValue, int numOperations, Func<decimal> termSelector, Func<string> operatorSelector)
+		public EquationFinderArgs(decimal targetValue, int numOperations, string termPool, string operatorPool)
 		{
-			if (termSelector == null)
+			if (string.IsNullOrWhiteSpace(termPool))
 			{
-				throw new ArgumentException("termSelector may not be null.", "termSelector");
+				throw new ArgumentException("termPool may not be empty or null.", "termPool");
 			}
-			if (operatorSelector == null)
+			if (string.IsNullOrWhiteSpace(operatorPool))
 			{
-				throw new ArgumentException("operatorSelector may not be null.", "operatorSelector");
+				throw new ArgumentException("operatorPool may not be empty or null.", "operatorPool");
 			}
 			if (numOperations < 1)
 			{
@@ -68,27 +62,13 @@ namespace EquationFinder
 
 			TargetValue = targetValue;
 			NumberOfOperations = numOperations;
-			TermSelector = termSelector;
-			OperatorSelector = operatorSelector;
+			
+			TermPool = termPool;
+			OperatorPool = operatorPool;
 
-			//TermPool = termPool;
-			//OperatorPool = operatorPool;
 			//TermSelector = new Func<decimal>(delegate { return StaticClass.String2Decimal(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString()); });			
 			//OperatorSelector = new Func<string>(delegate { return OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString(); });
 		}
-	}
-
-	public class ExpressionFinderArgs : EquationFinderArgs, IEquationFinderArgs
-	{
-		public ExpressionFinderArgs(decimal targetValue, int numOperations, Func<decimal> termSelector, Func<string> operatorSelector, string termPool, string operatorPool)
-			: base(targetValue, numOperations, termSelector, operatorSelector)
-		{
-			this.TermPool = termPool;
-			this.OperatorPool = operatorPool;
-		}
-
-		public string TermPool { get; set; }
-		public string OperatorPool { get; set; }
 	}
 
 	public class ThreadSpawnerArgs
@@ -97,6 +77,7 @@ namespace EquationFinder
 		public int NumberOfThreads { get; set; }
 		public int NumberOfRounds { get; set; }
 		public DisplayOutputDelegate DisplayOutputFunction { get; set; }
+		public List<string> PreviouslyFoundResultsCollection { get; set; }
 
 		public IEquationFinderArgs EquationFinderArgs { get; set; }
 
@@ -111,9 +92,16 @@ namespace EquationFinder
 			TimeToLive = timeToLive;
 			NumberOfThreads = numberOfThreads;
 			NumberOfRounds = numberOfRounds;
-			
+
 			// Equation settings
 			EquationFinderArgs = finderArgs;
+		}
+
+		public ThreadSpawnerArgs(DisplayOutputDelegate displayOutputFunction, List<string> previouslyFoundResults, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+			: this(displayOutputFunction, timeToLive, numberOfThreads, numberOfRounds, finderArgs)
+		{
+			PreviouslyFoundResultsCollection = previouslyFoundResults;
+			
 		}
 	}	
 }

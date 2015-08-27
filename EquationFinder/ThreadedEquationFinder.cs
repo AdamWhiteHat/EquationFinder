@@ -7,17 +7,18 @@ using System.Diagnostics;
 namespace EquationFinder
 {
 	public delegate void DisplayOutputDelegate(string FormatMessage, params object[] FormatArgs);
-	public delegate ExpressionResults ExpressionThreadManagerDelegate(ThreadSpawnerArgs threadArgs);
+	public delegate ExpressionResults ExpressionThreadManagerDelegate(IExpression expressionClass, ThreadSpawnerArgs threadArgs);
 
 	public class ThreadedEquationFinder
 	{		
-		public List<string> Results { get; set; }
-		public long TotalExpressionsGenerated { get; private set; }
-
 		ThreadSpawnerArgs FinderThreadArgs { get; set; }
-		public int NumberOfRounds { get; set; }
 
-		public DisplayOutputDelegate DisplayOuputFunction { get; set; }
+		public List<string> Results { get; set; }
+		public long TotalExpressionsGenerated { get; private set; }		
+
+		// Read only
+		public int NumberOfRounds { get { return FinderThreadArgs.NumberOfRounds; } }
+		public DisplayOutputDelegate DisplayOuputFunction { get { return FinderThreadArgs.DisplayOutputFunction; } }
 		public static string ExpirationMessage = "Time-to-live expired.";
 
 		public ThreadedEquationFinder(/*string[] previouslyFoundResults,*/ ThreadSpawnerArgs threadArgs)
@@ -26,8 +27,6 @@ namespace EquationFinder
 			FinderThreadArgs = threadArgs;
 			//if (previouslyFoundResults != null || previouslyFoundResults.Length > 0)
 			//	Results.AddRange(previouslyFoundResults);
-			DisplayOuputFunction = threadArgs.DisplayOutputFunction;
-			NumberOfRounds = threadArgs.NumberOfRounds;
 		}
 
 		private void Print(string FormatMessage, params object[] FormatArgs)
@@ -78,8 +77,8 @@ namespace EquationFinder
 				if (showExpiredMessage)
 				{
 					if (Results.Count > 0)
-					{
-						// Includes expiration message.
+					{			
+						// Prevents more than one message
 						//if (Results.Contains(expirationMessage))
 						//{
 						//	Results.RemoveAll(line => line.Contains(expirationMessage));
@@ -113,7 +112,7 @@ namespace EquationFinder
 
 			foreach (var thread in threadDelegateList)
 			{
-				threadHandletList.Add(thread.BeginInvoke(threadArgs, null, null));
+				//threadHandletList.Add(thread.BeginInvoke(threadArgs, null, null));
 			}
 
 			counter = 0;
@@ -137,6 +136,11 @@ namespace EquationFinder
 				}
 			}
 			return strResults;
+		}
+
+		private void AsyncCompleteCallback(IAsyncResult threadResult)
+		{
+	
 		}
 				
 	} // ThreadedEquationFinder

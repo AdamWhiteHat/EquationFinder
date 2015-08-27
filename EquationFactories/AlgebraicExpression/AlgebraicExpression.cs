@@ -9,12 +9,12 @@ namespace EquationFinder
 	public partial class AlgebraicExpression : IExpression
 	{
 		//public Expression<Func<T, decimal>> Expression { get; private set; }
-		public ExpressionFinderArgs EquationArgs { get; private set; }
+		public EquationFinderArgs EquationArgs { get; private set; }
 
 		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
-		public Func<string> OperatorSelector { get { return EquationArgs.OperatorSelector; } }
-		public Func<decimal> TermSelector { get { return EquationArgs.TermSelector; } }
+		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		public string TermPool { get { return EquationArgs.TermPool; } }
 
 		void test()
 		{
@@ -44,7 +44,7 @@ namespace EquationFinder
 
 		protected void BuildExpression()
 		{
-			string stringExpression = StaticClass.GenerateRandomStringExpression(NumberOfOperations, OperatorSelector, TermSelector);
+			string stringExpression = StaticClass.GenerateRandomStringExpression(NumberOfOperations, OperatorPool, TermPool);
 
 			string[] strArr = stringExpression.Split(' ');
 
@@ -76,7 +76,7 @@ namespace EquationFinder
 		}
 
 
-		public AlgebraicExpression(ExpressionFinderArgs equationArgs)
+		public AlgebraicExpression(EquationFinderArgs equationArgs)
 		{
 			EquationArgs = equationArgs;
 			BuildExpression();
@@ -96,7 +96,7 @@ namespace EquationFinder
 
 		public IExpression NewExpression(IEquationFinderArgs equationArgs)
 		{
-			return new AlgebraicExpression((ExpressionFinderArgs)equationArgs);
+			return new AlgebraicExpression((EquationFinderArgs)equationArgs);
 		}
 
 		

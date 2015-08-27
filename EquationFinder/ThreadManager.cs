@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EquationFinder
 {
-	public partial class AlgebraicTuple : IExpression
+	public class ThreadManager
 	{
-		public static ExpressionResults TupleExpressionThreadManager(ThreadSpawnerArgs threadArgs)
+		public static ExpressionResults TupleExpressionThreadManager(IExpression expressionClass, ThreadSpawnerArgs threadArgs)
 		{
 			long TotalExpressionsGenerated = 0;
-			AlgebraicTuple expression = null;
-			
+			IExpression expression = null;
+
 			int maxMilliseconds = (threadArgs.TimeToLive * 1000);
 			Stopwatch Age = new Stopwatch();
 			Age.Start();
 
-			while (Age.ElapsedMilliseconds < maxMilliseconds) 
-			{				
-				expression = new AlgebraicTuple((EquationFinderArgs)threadArgs.EquationFinderArgs);
+			while (Age.ElapsedMilliseconds < maxMilliseconds)
+			{
+				expression = expressionClass.NewExpression((EquationFinderArgs)threadArgs.EquationFinderArgs);
 				TotalExpressionsGenerated++;
 				if (expression.Evaluate() == (decimal)threadArgs.EquationFinderArgs.TargetValue)
 				{
@@ -31,7 +30,7 @@ namespace EquationFinder
 					}
 				}
 			}
-			
+
 			Age.Stop();
 			Age = null;
 			if (expression != null)
@@ -40,5 +39,5 @@ namespace EquationFinder
 			}
 			return ExpressionResults.Empty;
 		}
-	}
+	}	
 }

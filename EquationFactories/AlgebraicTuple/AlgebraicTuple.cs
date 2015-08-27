@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 //using System.Threading.Tasks;
 
 namespace EquationFinder
@@ -19,10 +20,10 @@ namespace EquationFinder
 		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 		
-		public Func<string> OperatorSelector { get { return EquationArgs.OperatorSelector; } }
-		public Func<decimal> TermSelector { get { return EquationArgs.TermSelector; } }
-		//public string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		//public string TermPool { get { return EquationArgs.TermPool; } }
+		//public Func<string> OperatorSelector { get { return EquationArgs.OperatorSelector; } }
+		//public Func<decimal> TermSelector { get { return EquationArgs.TermSelector; } }
+		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		public string TermPool { get { return EquationArgs.TermPool; } }
 
 		public decimal CalculatedValue
 		{
@@ -58,10 +59,10 @@ namespace EquationFinder
 
 		protected void BuildExpression()
 		{
-			Expression = AlgebraicTuple.GenerateRandomExpression(NumberOfOperations, EquationArgs.TermSelector, EquationArgs.OperatorSelector);
+			Expression = GenerateRandomExpression(NumberOfOperations);
 		}
 
-		public static List<Tuple<decimal, TupleOperation>> GenerateRandomExpression(int numberOfOperations, Func<decimal> termSelector, Func<string> operatorSelector)
+		public List<Tuple<decimal, TupleOperation>> GenerateRandomExpression(int numberOfOperations)
 		{
 			List<Tuple<decimal, TupleOperation>> result = new List<Tuple<decimal, TupleOperation>>();
 
@@ -73,7 +74,7 @@ namespace EquationFinder
 			{
 				do
 				{
-				term = termSelector();
+					term = Convert.ToDecimal(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString());
 				}
 				while (term == 0 && lastOperand == OperandType.Divide);
 
@@ -85,7 +86,7 @@ namespace EquationFinder
 				{
 					//do
 					//{
-					operation = new TupleOperation(operatorSelector());
+					operation = new TupleOperation(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
 					//}
 					//while(term == 0 && operation.Operand == OperandType.Divide);
 				}

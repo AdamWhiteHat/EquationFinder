@@ -12,17 +12,25 @@ namespace EquationFinder
 		public ExpressionResults StringExpressionSpawnerFunc(ThreadSpawnerArgs threadArgs)
 		{
 			long TotalExpressionsGenerated = 0;
-			AlgebraicString expression = new AlgebraicString((ExpressionFinderArgs)threadArgs.EquationFinderArgs);
+			AlgebraicString expression = new AlgebraicString((EquationFinderArgs)threadArgs.EquationFinderArgs);
 			TotalExpressionsGenerated++;
 
 			int maxAge = (threadArgs.TimeToLive * 1000);
 			Stopwatch Age = new Stopwatch();
 			Age.Start();
 
-			while (expression.Evaluate() != (decimal)threadArgs.EquationFinderArgs.TargetValue && Age.ElapsedMilliseconds < maxAge)
+			while (Age.ElapsedMilliseconds < maxAge)
 			{
-				expression = new AlgebraicString((ExpressionFinderArgs)threadArgs.EquationFinderArgs);
+				expression = new AlgebraicString((EquationFinderArgs)threadArgs.EquationFinderArgs);
 				TotalExpressionsGenerated++;
+				if(expression.Evaluate() == threadArgs.EquationFinderArgs.TargetValue)
+				{
+					string foundExpression = expression.ToString();
+					if(!threadArgs.PreviouslyFoundResultsCollection.Contains(foundExpression))
+					{
+						break;
+					}
+				}
 			}
 
 			Age.Stop();

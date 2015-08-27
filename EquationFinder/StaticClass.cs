@@ -5,7 +5,8 @@
  * 
  */
 using System;
-//using System.Linq;
+using System.Linq;
+using System.Text;
 //using MSScriptControl;
 using System.Threading;
 using System.Collections.Generic;
@@ -45,18 +46,18 @@ namespace EquationFinder
 		public const string DecimalNumbers = "0123456789";
 		public const string AlgebraicOperators = "+-*/";
 
-		public static string GenerateRandomStringExpression(int NumberOfOperations, Func<string> OperatorSelector, Func<decimal> TermSelector)
+		public static string GenerateRandomStringExpression(int NumberOfOperations, string OperatorPool, string TermPool)
 		{
 			List<string> operators = new List<string>(NumberOfOperations);
 			List<string> terms = new List<string>(NumberOfOperations);
 
 			int counter = NumberOfOperations - 1;
 			while (counter-- > 0)
-				operators.Add(OperatorSelector()); //operators.Add(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
+				operators.Add(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
 
 			counter = NumberOfOperations;
 			while (counter-- > 0)
-				terms.Add(TermSelector().ToString());
+				terms.Add(TermPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
 
 			counter = 0;
 			string result = terms[counter++];
