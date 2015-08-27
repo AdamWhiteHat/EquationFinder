@@ -42,10 +42,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-EquationFinder/obj/*
-EquationFinder/bin/*
+*/obj/*
+*/bin/*
 
-AlgebraicTuple/obj/*
+*/obj/*
 AlgebraicTuple/bin/*
 
 AlgebraicString/obj/*
@@ -54,6 +54,8 @@ AlgebraicString/bin/*
 AlgebraicExpression/obj/*
 AlgebraicExpression/bin/*
 
-
-
 *.suo
+*.pdb
+*.cache
+*.vhost.*
+*.FileListAbsolute.txt
