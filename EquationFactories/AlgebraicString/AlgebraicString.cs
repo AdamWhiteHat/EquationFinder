@@ -39,6 +39,10 @@ namespace EquationFinder
 			get { return (CalculatedValue == TargetValue); }
 		}
 
+		public AlgebraicString()
+		{
+		}
+
 		public AlgebraicString(EquationFinderArgs equationArgs)
 		{
 			EquationArgs = equationArgs;

@@ -75,6 +75,9 @@ namespace EquationFinder
 			get { return (CalculatedValue == TargetValue); }
 		}
 
+		public AlgebraicExpression()
+		{
+		}
 
 		public AlgebraicExpression(EquationFinderArgs equationArgs)
 		{

@@ -13,7 +13,6 @@ using System.Collections.Generic;
 
 using EquationFinder;
 
-
 namespace EquationFinder_GUI
 {
 	public partial class MainForm : Form
@@ -54,13 +53,48 @@ namespace EquationFinder_GUI
 
 		void BtnFindSolutionClick(object sender, EventArgs e)
 		{
-			backgroundWorker_ThreadSpawner.RunWorkerAsync();
+
+			decimal targetValue = StaticClass.String2Decimal(tbTargetValue.Text);
+			//int MaxIntValue = 9;
+			int numberOfThreads = StaticClass.String2Int(tbThreads.Text);
+			int numberOfOperations = StaticClass.String2Int(tbNumberOperations.Text);
+			int timeToLive = StaticClass.String2Int(tbTTL.Text);
+			int numberOfRounds = StaticClass.String2Int(tbRounds.Text);
+			string OperatorPool = GetOperatorPool();
+			string TermPool = GetTermPool();
+
+			if (string.IsNullOrWhiteSpace(TermPool))
+			{
+				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			if (string.IsNullOrWhiteSpace(OperatorPool))
+			{
+				MessageBox.Show("You must select at least one operation.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			EquationFinderArgs equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
+			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(DisplayOutput, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+
+			if (!backgroundWorker_ThreadSpawner.IsBusy)
+			{
+				backgroundWorker_ThreadSpawner.RunWorkerAsync(threadArgs);
+			}
 		}
 
 		private void backgroundWorker_ThreadSpawner_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
-			DisableControls();
-			ThreadSpawnLauncher();
+			if (e != null && e.Argument != null)
+			{				
+				DisableControls();
+
+				if (e.Argument is ThreadSpawnerArgs)
+				{
+					ThreadSpawnerArgs args = (ThreadSpawnerArgs)e.Argument;
+					ThreadSpawnLauncher(args);
+				}
+			}
 		}
 
 		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -117,45 +151,37 @@ namespace EquationFinder_GUI
 			return result.ToString();
 		}
 
-		private void ThreadSpawnLauncher()
+		private void ThreadSpawnLauncher(ThreadSpawnerArgs threadArgs)
 		{
 			IsDirty = true;
-			decimal targetValue = StaticClass.String2Decimal(tbTargetValue.Text);
-			//int MaxIntValue = 9;
-			int numberOfThreads = StaticClass.String2Int(tbThreads.Text);
-			int numberOfOperations = StaticClass.String2Int(tbNumberOperations.Text);
-			int timeToLive = StaticClass.String2Int(tbTTL.Text);
-			int numberOfRounds = StaticClass.String2Int(tbRounds.Text);
-			string OperatorPool = GetOperatorPool();
-			string TermPool = GetTermPool();
 
-			if (string.IsNullOrWhiteSpace(TermPool))
+			ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>(threadArgs);
+			string[] previousResults = GetOutputLines();
+			if (previousResults != null && previousResults.Length > 0)
 			{
-				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
+				equationFinder.Results.AddRange(previousResults);
 			}
-			if (string.IsNullOrWhiteSpace(OperatorPool))
-			{
-				MessageBox.Show("You must select at least one operation.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-			
-			EquationFinderArgs equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
-			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(DisplayOutput, timeToLive, numberOfThreads, numberOfOperations, equationArgs);
-
-			ThreadedEquationFinder equationFinder = new ThreadedEquationFinder(threadArgs);
-			equationFinder.Results.AddRange(tbOutput.Lines);
-			equationFinder.Run(AlgebraicTuple.TupleExpressionThreadManager);
+			equationFinder.Run(ThreadedEquationFinder<AlgebraicTuple>.ThreadManager);
 
 			// Stats
 			ExpressionsGeneratedThisRound = equationFinder.TotalExpressionsGenerated;
 			TotalExpressionsGenerated += ExpressionsGeneratedThisRound;
 			DisplayStats();
 		}
+
+		private string[] GetOutputLines()
+		{
+			return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return (tbOutput.Lines.Length > 0) ? tbOutput.Lines : new string[]{}; } ));
+		}
+
+		private string GetOutputText()
+		{
+			return (string)tbOutput.Invoke(new Func<string>(delegate { return (tbOutput.Text.Length > 0) ? tbOutput.Text : string.Empty; }));
+		}
 		
 		DialogResult PromptToSaveWork()
 		{
-			if (!IsDirty || string.IsNullOrEmpty(tbOutput.Text))
+			if (!IsDirty || string.IsNullOrEmpty(GetOutputText()))
 			{
 				return DialogResult.OK;
 			}
@@ -196,8 +222,12 @@ namespace EquationFinder_GUI
 			{
 				using (FileStream fStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
 				{
-					TextWriter tWriter = new StreamWriter(fStream);
-					tWriter.Write(tbOutput.Text);
+					using (TextWriter tWriter = new StreamWriter(fStream))
+					{
+						tWriter.Write(GetOutputText());
+						tWriter.Flush();
+						tWriter.Close();
+					}					
 				}
 				IsDirty = false;
 			}
@@ -215,8 +245,12 @@ namespace EquationFinder_GUI
 			{
 				using (FileStream fStream = new FileStream(openFileDialog.FileName, FileMode.Open))
 				{
-					TextReader tReader = new StreamReader(fStream);
-					tbOutput.Text = tReader.ReadToEnd();
+					using (TextReader tReader = new StreamReader(fStream))
+					{
+						string fileText = tReader.ReadToEnd();						
+						tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = fileText; }));
+						tReader.Close();
+					}
 				}
 				IsDirty = false;
 				ExpressionsGeneratedThisRound = 0;
@@ -230,12 +264,15 @@ namespace EquationFinder_GUI
 		// Clear found solutions when changing Target or # Operations
 		void OnParametersChanged(object sender, EventArgs e)
 		{
-			if (PromptToSaveWork() == DialogResult.OK)
+			if (!backgroundWorker_ThreadSpawner.IsBusy)
 			{
-				tbOutput.Text = string.Empty;
-				ExpressionsGeneratedThisRound = 0;
-				TotalExpressionsGenerated = 0;
-				DisplayStats();
+				if (PromptToSaveWork() == DialogResult.OK)
+				{
+					tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
+					ExpressionsGeneratedThisRound = 0;
+					TotalExpressionsGenerated = 0;
+					DisplayStats();
+				}
 			}
 		}
 
@@ -255,10 +292,10 @@ namespace EquationFinder_GUI
 				delegate
 				{
 					string message = string.Format(FormatMessage, FormatArgs);
-					if (message.Contains(ThreadedEquationFinder.ExpirationMessage))
+					if (message.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage))
 					{
 						List<string> newOutput = new List<string>(tbOutput.Lines);
-						newOutput.RemoveAll(line => line.Contains(ThreadedEquationFinder.ExpirationMessage));
+						newOutput.RemoveAll(line => line.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage));
 						tbOutput.Lines = newOutput.ToArray();
 					}
 					tbOutput.Text = message + Environment.NewLine + tbOutput.Text;

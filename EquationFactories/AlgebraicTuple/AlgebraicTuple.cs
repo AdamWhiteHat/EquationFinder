@@ -45,6 +45,10 @@ namespace EquationFinder
 			get { return (CalculatedValue == TargetValue); }
 		}
 
+		public AlgebraicTuple()
+		{
+		}
+
 		public AlgebraicTuple(EquationFinderArgs equationArgs)
 		{
 			EquationArgs = equationArgs;

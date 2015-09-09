@@ -25,10 +25,10 @@ namespace EquationFinder
 	{
 		public IExpression xpression { get; private set; }
 		public static ExpressionResults Empty = new ExpressionResults(decimal.MinValue, null);
-
+		
 		public decimal TargetValue { get; private set; }
-		public string ExpressionText { get { return xpression.ToString(); } }
-		public decimal Result { get { return xpression.CalculatedValue; } }
+		public string ExpressionText { get { return (xpression==null) ? "" : xpression.ToString(); } }
+		public decimal Result { get { return (xpression == null) ? 0 : xpression.CalculatedValue; } }
 		public bool IsSolution { get { return Result.Equals(TargetValue); } }
 
 		public ExpressionResults(decimal targetValue, IExpression expression)
@@ -78,7 +78,7 @@ namespace EquationFinder
 		public int NumberOfRounds { get; set; }
 		public DisplayOutputDelegate DisplayOutputFunction { get; set; }
 		public List<string> PreviouslyFoundResultsCollection { get; set; }
-
+		
 		public IEquationFinderArgs EquationFinderArgs { get; set; }
 
 		public ThreadSpawnerArgs()
@@ -87,6 +87,29 @@ namespace EquationFinder
 
 		public ThreadSpawnerArgs(DisplayOutputDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
 		{
+			PreviouslyFoundResultsCollection = new List<string>();
+
+			if (finderArgs == null)
+			{
+				throw new ArgumentNullException("FinderArgs cannot be null.", "finderArgs");
+			}
+			if (timeToLive <= 0)
+			{
+				throw new ArgumentException("TimeToLive must be greater than zero.", "timeToLive");
+			}
+			if (numberOfThreads < 1)
+			{
+				throw new ArgumentException("NumberOfThreads must be at least one.", "numberOfThreads");
+			}
+			if (numberOfRounds < 1)
+			{
+				throw new ArgumentException("NumberOfRounds must be at least one.", "numberOfRounds");
+			}
+			if (displayOutputFunction == null)
+			{
+				displayOutputFunction = Console.WriteLine;
+			}
+
 			// Thread settings
 			DisplayOutputFunction = displayOutputFunction;
 			TimeToLive = timeToLive;
@@ -97,11 +120,13 @@ namespace EquationFinder
 			EquationFinderArgs = finderArgs;
 		}
 
-		public ThreadSpawnerArgs(DisplayOutputDelegate displayOutputFunction, List<string> previouslyFoundResults, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+		public ThreadSpawnerArgs(List<string> previouslyFoundResults, DisplayOutputDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
 			: this(displayOutputFunction, timeToLive, numberOfThreads, numberOfRounds, finderArgs)
 		{
-			PreviouslyFoundResultsCollection = previouslyFoundResults;
-			
+			if (previouslyFoundResults != null && previouslyFoundResults.Count > 0)
+			{
+				PreviouslyFoundResultsCollection = previouslyFoundResults;
+			}			
 		}
 	}	
 }

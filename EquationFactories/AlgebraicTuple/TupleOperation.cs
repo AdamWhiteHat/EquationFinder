@@ -95,10 +95,11 @@ namespace EquationFinder
 				case OperandType.Raise: return "^";
 				case OperandType.Equal: return "=";
 				default:
-					throw new ArgumentException(
-						string.Format("Cannot convert OperandType.{0} to a string.  If you added a new OperandType, a translation should be added to the method that threw this Exception.", Enum.GetName(typeof(OperandType), Operand)),
-						"Operation"
-					);
+					return "?";
+					//throw new ArgumentException(
+					//	string.Format("Cannot convert OperandType.{0} to a string.  If you added a new OperandType, a translation should be added to the method that threw this Exception.", Enum.GetName(typeof(OperandType), Operand)),
+					//	"Operation"
+					//);
 			}
         }
 

@@ -7,14 +7,14 @@ using System.Diagnostics;
 namespace EquationFinder
 {
 	public delegate void DisplayOutputDelegate(string FormatMessage, params object[] FormatArgs);
-	public delegate ExpressionResults ExpressionThreadManagerDelegate(IExpression expressionClass, ThreadSpawnerArgs threadArgs);
+	public delegate ExpressionResults ExpressionThreadManagerDelegate(ThreadSpawnerArgs threadArgs);
 
-	public class ThreadedEquationFinder
-	{		
+	public class ThreadedEquationFinder<T> where T : class, IExpression, new()
+	{
 		ThreadSpawnerArgs FinderThreadArgs { get; set; }
 
 		public List<string> Results { get; set; }
-		public long TotalExpressionsGenerated { get; private set; }		
+		public long TotalExpressionsGenerated { get; private set; }
 
 		// Read only
 		public int NumberOfRounds { get { return FinderThreadArgs.NumberOfRounds; } }
@@ -29,9 +29,57 @@ namespace EquationFinder
 			//	Results.AddRange(previouslyFoundResults);
 		}
 
+		public static ExpressionResults ThreadManager(ThreadSpawnerArgs threadArgs)
+		{
+			long TotalExpressionsGenerated = 0;
+			IExpression expression = (IExpression)new T();
+
+			int maxMilliseconds = (threadArgs.TimeToLive * 1000);
+			Stopwatch Age = new Stopwatch();
+			Age.Start();
+
+			bool foundSolution = false;
+			while (Age.ElapsedMilliseconds < maxMilliseconds)
+			{
+				foundSolution = false;
+				expression = expression.NewExpression((EquationFinderArgs)threadArgs.EquationFinderArgs);
+				TotalExpressionsGenerated++;
+				if (expression.Evaluate() == (decimal)threadArgs.EquationFinderArgs.TargetValue)
+				{
+					string foundExpression = expression.ToString();
+					if (string.IsNullOrWhiteSpace(foundExpression))
+					{
+						continue;
+					}
+
+					if (threadArgs.PreviouslyFoundResultsCollection == null || threadArgs.PreviouslyFoundResultsCollection.Count < 1)
+					{
+						foundSolution = true;
+						break;
+					}
+					else if (!threadArgs.PreviouslyFoundResultsCollection.Contains(foundExpression))
+					{
+						foundSolution = true;
+						break;
+					}
+				}
+			}
+
+			Age.Stop();
+			Age = null;
+			if (expression != null && foundSolution == true)
+			{
+				return expression.GetResults();
+			}
+			else
+			{
+				return ExpressionResults.Empty;
+			}
+		}
+
 		private void Print(string FormatMessage, params object[] FormatArgs)
 		{
-			if(DisplayOuputFunction != null)
+			if (DisplayOuputFunction != null)
 			{
 				DisplayOuputFunction.Invoke(FormatMessage, FormatArgs);
 			}
@@ -64,7 +112,7 @@ namespace EquationFinder
 					if (s.Contains("expired"))
 					{
 						showExpiredMessage = true;
-						expiredThreadCount++;						
+						expiredThreadCount++;
 					}
 					else if (!Results.Contains(s))
 					{
@@ -77,7 +125,7 @@ namespace EquationFinder
 				if (showExpiredMessage)
 				{
 					if (Results.Count > 0)
-					{			
+					{
 						// Prevents more than one message
 						//if (Results.Contains(expirationMessage))
 						//{
@@ -96,7 +144,7 @@ namespace EquationFinder
 			results = null;
 		}
 
-		public List<string> FindSolutionThread(ThreadSpawnerArgs threadArgs, ExpressionThreadManagerDelegate expressionManager)
+		public static List<string> FindSolutionThread(ThreadSpawnerArgs threadArgs, ExpressionThreadManagerDelegate expressionManager)
 		{
 			List<ExpressionThreadManagerDelegate> threadDelegateList = new List<ExpressionThreadManagerDelegate>();
 			List<IAsyncResult> threadHandletList = new List<IAsyncResult>();
@@ -110,9 +158,9 @@ namespace EquationFinder
 				counter--;
 			}
 
-			foreach (var thread in threadDelegateList)
+			foreach (ExpressionThreadManagerDelegate thread in threadDelegateList)
 			{
-				//threadHandletList.Add(thread.BeginInvoke(threadArgs, null, null));
+				threadHandletList.Add(thread.BeginInvoke(threadArgs, null, null));
 			}
 
 			counter = 0;
@@ -140,8 +188,8 @@ namespace EquationFinder
 
 		private void AsyncCompleteCallback(IAsyncResult threadResult)
 		{
-	
+
 		}
-				
+
 	} // ThreadedEquationFinder
 }

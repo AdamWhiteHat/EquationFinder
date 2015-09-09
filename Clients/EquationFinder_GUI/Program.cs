@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.ExceptionServices;
 
 namespace EquationFinder_GUI
 {
@@ -26,7 +27,15 @@ namespace EquationFinder_GUI
 			Application.SetCompatibleTextRenderingDefault(true);
 			Application.ThreadException += Application_ThreadException;
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 			Application.Run(new MainForm());
+		}
+
+		private static string ExceptionFileName = "Exception.log.txt";
+
+		static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+		{
+			HandleException((Exception)e.Exception);
 		}
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -42,47 +51,53 @@ namespace EquationFinder_GUI
 
 		private static void HandleException(Exception ex)
 		{
+			File.AppendAllLines(ExceptionFileName, new string[] { "HandleException called!" });
+			File.AppendAllLines(ExceptionFileName, new string[] { string.Format("Timestamp: {0}", DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
+
 			string exceptionName = string.Empty;
 
 			if (ex != null && ex.GetType() != null && !string.IsNullOrEmpty(ex.GetType().Name))
 			{
 				List<string> outputLines = new List<string>();
 				exceptionName = ex.GetType().Name;
-
-				
+								
 				string exType = string.Format("Exception of type \"{0}\":", exceptionName);
 				outputLines.Add(exType);
 				//Console.WriteLine(exType);
 
-				if (!string.IsNullOrEmpty(ex.Source) && ex.TargetSite != null && !string.IsNullOrEmpty(ex.TargetSite.Name))
+				if (!string.IsNullOrEmpty(ex.Message))
 				{
-					string exLocation = string.Format("[{0}: Source=\"{1}\", TargetSite=\"{2}\"]", exceptionName, ex.Source, ex.TargetSite.Name);
-					outputLines.Add(exLocation);
+					string exMessage = string.Format("\t[Message=\"{0}\"]", ex.Message);
+					outputLines.Add(exMessage);
 					outputLines.Add(Environment.NewLine);
-					//Console.WriteLine(exLocation);
-					//Console.WriteLine();
+					//Console.WriteLine(exMessage);
+				}
+
+				if (ex.TargetSite != null && !string.IsNullOrEmpty(ex.TargetSite.Name))
+				{
+					string exTargetSite = string.Format("\t[TargetSite=\"{0}\"]", ex.TargetSite.Name);
+					outputLines.Add(exTargetSite);
+					//Console.WriteLine(exTargetSite);
 				}
 
 				if (!string.IsNullOrEmpty(ex.Source))
 				{
-					string exMessage = string.Format("[Message=\"{0}\"]", ex.Message);
-					outputLines.Add(exMessage);
-					outputLines.Add(Environment.NewLine);
-					//Console.WriteLine(exMessage);
-					//Console.WriteLine();
+					string exSource = string.Format("\t[Source=\"{0}\"]", ex.Source);
+					outputLines.Add(exSource);
 				}
 
 				if (!string.IsNullOrEmpty(ex.StackTrace))
 				{
-					string exStacktrace = string.Format("[Stacktrace=\"{0}\"]");
+					string exStacktrace = string.Format("\t[Stacktrace=\"{0}\"]", ex.StackTrace);
 					outputLines.Add(exStacktrace);
-					outputLines.Add(Environment.NewLine);
 					//Console.ForegroundColor = ConsoleColor.Cyan;
 					//Console.WriteLine(exStacktrace);					
 				}
 				
 				if (outputLines != null && outputLines.Count > 0)
 				{
+					File.AppendAllLines(ExceptionFileName, outputLines.ToArray());
+
 					Console.ForegroundColor = ConsoleColor.Red;
 					foreach (string line in outputLines)
 					{
@@ -91,16 +106,14 @@ namespace EquationFinder_GUI
 
 						Console.WriteLine(line);
 					}
-					Console.ResetColor();
-
-					File.WriteAllLines("Exception.log.txt", outputLines.ToArray());
+					Console.ResetColor();					
 				}
 				
 			}
 			else
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Exception has been caught by the Gloabal Exception Handler. Unfortionatly, there was not exception object or error message available.", exceptionName);
+				Console.WriteLine("Exception has been caught by the Glabal Exception Handler. Unfortionatly, there was not exception object or error message available.");
 			}
 		}
 
