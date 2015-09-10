@@ -16,11 +16,15 @@ namespace EquationFinder
 	public static class StaticRandom
 	{
 		private static int _seed;
-		private static readonly Random _instance = new Random(Interlocked.Increment(ref _seed));
+		private static readonly Random _instance;
 
 		static StaticRandom()
 		{
-			_seed = Environment.TickCount;
+			unchecked
+			{
+				_seed = Environment.TickCount * DateTime.Now.Millisecond;
+			}
+			_instance = new Random(_seed);
 		}
 
 		public static Random Instance { get { return _instance; } }

@@ -35,24 +35,23 @@ namespace EquationFinder_GUI
 
 		static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
 		{
-			HandleException((Exception)e.Exception);
+			HandleException((Exception)e.Exception, "FirstChanceException");
 		}
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			HandleException((Exception)e.ExceptionObject);
+			HandleException((Exception)e.ExceptionObject, "UnhandledException");
 		}
 
 		static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
-			HandleException((Exception)e.Exception);
+			HandleException((Exception)e.Exception, "ThreadException");
 		}
 
 
-		private static void HandleException(Exception ex)
+		private static void HandleException(Exception ex, string CallingEvent)
 		{
-			File.AppendAllLines(ExceptionFileName, new string[] { "HandleException called!" });
-			File.AppendAllLines(ExceptionFileName, new string[] { string.Format("Timestamp: {0}", DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
+			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occured @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
 
 			string exceptionName = string.Empty;
 
@@ -113,7 +112,7 @@ namespace EquationFinder_GUI
 			else
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Exception has been caught by the Glabal Exception Handler. Unfortionatly, there was not exception object or error message available.");
+				Console.WriteLine("Exception has been caught by the Global Exception Handler. Unfortionatly, there was not exception object or error message available.");
 			}
 		}
 

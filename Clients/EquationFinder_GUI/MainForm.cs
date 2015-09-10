@@ -53,7 +53,6 @@ namespace EquationFinder_GUI
 
 		void BtnFindSolutionClick(object sender, EventArgs e)
 		{
-
 			decimal targetValue = StaticClass.String2Decimal(tbTargetValue.Text);
 			//int MaxIntValue = 9;
 			int numberOfThreads = StaticClass.String2Int(tbThreads.Text);
@@ -91,8 +90,7 @@ namespace EquationFinder_GUI
 
 				if (e.Argument is ThreadSpawnerArgs)
 				{
-					ThreadSpawnerArgs args = (ThreadSpawnerArgs)e.Argument;
-					ThreadSpawnLauncher(args);
+					ThreadSpawnLauncher((ThreadSpawnerArgs)e.Argument);
 				}
 			}
 		}
@@ -208,11 +206,11 @@ namespace EquationFinder_GUI
 				}
 				// Else, the user cancled the save dialog box. Do not continue.
 			}
-		#region Mainform Events
 			// Cancel, do not continue
 			return DialogResult.Cancel;
 		}
 
+		#region Mainform Events
 
 		DialogResult SaveWork()
 		{
