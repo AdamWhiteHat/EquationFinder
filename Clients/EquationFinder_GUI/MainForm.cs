@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 using EquationFinder;
+using EquationFactories;
+using EquationFinderCore;
 
 namespace EquationFinder_GUI
 {
@@ -74,7 +76,7 @@ namespace EquationFinder_GUI
 			}
 
 			EquationFinderArgs equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
-			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(DisplayOutput, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
 
 			if (!backgroundWorker_ThreadSpawner.IsBusy)
 			{
@@ -90,7 +92,20 @@ namespace EquationFinder_GUI
 
 				if (e.Argument is ThreadSpawnerArgs)
 				{
-					ThreadSpawnLauncher((ThreadSpawnerArgs)e.Argument);
+					IsDirty = true;
+
+					ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);
+					string[] previousResults = GetOutputLines();
+					if (previousResults != null && previousResults.Length > 0)
+					{
+						equationFinder.Results.AddRange(previousResults);
+					}
+					equationFinder.Run();
+
+					// Stats
+					ExpressionsGeneratedThisRound = equationFinder.TotalEquationGenerated;
+					TotalExpressionsGenerated += ExpressionsGeneratedThisRound;
+					DisplayStats();
 				}
 			}
 		}
@@ -145,26 +160,8 @@ namespace EquationFinder_GUI
 			{
 				result = result.Append(maxTerm);
 			}
-			
+
 			return result.ToString();
-		}
-
-		private void ThreadSpawnLauncher(ThreadSpawnerArgs threadArgs)
-		{
-			IsDirty = true;
-
-			ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>(threadArgs);
-			string[] previousResults = GetOutputLines();
-			if (previousResults != null && previousResults.Length > 0)
-			{
-				equationFinder.Results.AddRange(previousResults);
-			}
-			equationFinder.Run(ThreadedEquationFinder<AlgebraicTuple>.ThreadManager);
-
-			// Stats
-			ExpressionsGeneratedThisRound = equationFinder.TotalExpressionsGenerated;
-			TotalExpressionsGenerated += ExpressionsGeneratedThisRound;
-			DisplayStats();
 		}
 
 		private string[] GetOutputLines()
@@ -204,7 +201,7 @@ namespace EquationFinder_GUI
 				{
 					return DialogResult.OK;
 				}
-				// Else, the user cancled the save dialog box. Do not continue.
+				// Else, the user canceled the save dialog box. Do not continue.
 			}
 			// Cancel, do not continue
 			return DialogResult.Cancel;
@@ -284,19 +281,17 @@ namespace EquationFinder_GUI
 			SaveWork();
 		}
 
-		void DisplayOutput(string FormatMessage, params object[] FormatArgs)
+		void DisplaySolution(EquationResults foundSolution)
 		{
 			tbOutput.Invoke(new MethodInvoker(
 				delegate
 				{
-					string message = string.Format(FormatMessage, FormatArgs);
-					if (message.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage))
-					{
-						List<string> newOutput = new List<string>(tbOutput.Lines);
-						newOutput.RemoveAll(line => line.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage));
-						tbOutput.Lines = newOutput.ToArray();
-					}
-					tbOutput.Text = message + Environment.NewLine + tbOutput.Text;
+					// Removes duplicate ExpirationMessages
+					//if (foundSolution.EquationText.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage))
+					//{
+					//	tbOutput.Lines = tbOutput.Lines.ToList().Where(line => !line.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage)).ToArray();						
+					//}
+					tbOutput.Text = string.Concat(foundSolution.EquationText, Environment.NewLine, tbOutput.Text);
 				}				
 			));
 		}

@@ -3,16 +3,18 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace EquationFinder
+namespace EquationFinderCore
 {
-	public interface IExpression
+	public delegate void FoundSolutionDelegate(EquationResults resultsObject);
+
+	public interface IEquation
 	{
-		decimal TargetValue { get; }
-		decimal CalculatedValue { get; }
 		string ToString();
 		decimal Evaluate();
-		ExpressionResults GetResults();
-		IExpression NewExpression(IEquationFinderArgs equationArgs);
+		decimal TargetValue { get; }		
+		EquationResults GetResults();
+		EquationFinderArgs EquationArgs { get; set; }
+		void Initialize(EquationFinderArgs equationArgs);
 	}
 
 	public interface IEquationFinderArgs
@@ -21,20 +23,19 @@ namespace EquationFinder
 		int NumberOfOperations { get; }
 	}
 
-	public class ExpressionResults
+	public class EquationResults
 	{
-		public IExpression xpression { get; private set; }
-		public static ExpressionResults Empty = new ExpressionResults(decimal.MinValue, null);
-		
 		public decimal TargetValue { get; private set; }
-		public string ExpressionText { get { return (xpression==null) ? "" : xpression.ToString(); } }
-		public decimal Result { get { return (xpression == null) ? 0 : xpression.CalculatedValue; } }
-		public bool IsSolution { get { return Result.Equals(TargetValue); } }
+		public string EquationText { get; private set; }
+		public decimal Result { get; private set; }
+		public bool IsSolution { get; private set; }
 
-		public ExpressionResults(decimal targetValue, IExpression expression)
+		public EquationResults(IEquation equation)
 		{
-			xpression = expression; // Expression
-			TargetValue = targetValue; // decimal
+			EquationText = equation.ToString();
+			TargetValue = equation.TargetValue;
+			Result = equation.Evaluate();
+			IsSolution = Result.Equals(TargetValue);
 		}
 	}
 
@@ -65,9 +66,6 @@ namespace EquationFinder
 			
 			TermPool = termPool;
 			OperatorPool = operatorPool;
-
-			//TermSelector = new Func<decimal>(delegate { return StaticClass.String2Decimal(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString()); });			
-			//OperatorSelector = new Func<string>(delegate { return OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString(); });
 		}
 	}
 
@@ -76,19 +74,19 @@ namespace EquationFinder
 		public int TimeToLive { get; set; }
 		public int NumberOfThreads { get; set; }
 		public int NumberOfRounds { get; set; }
-		public DisplayOutputDelegate DisplayOutputFunction { get; set; }
+		public FoundSolutionDelegate FoundResultCallback { get; set; }
 		public List<string> PreviouslyFoundResultsCollection { get; set; }
 		
 		public IEquationFinderArgs EquationFinderArgs { get; set; }
 
 		public ThreadSpawnerArgs()
 		{
+			PreviouslyFoundResultsCollection = new List<string>();
 		}
 
-		public ThreadSpawnerArgs(DisplayOutputDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+		public ThreadSpawnerArgs(FoundSolutionDelegate foundSolutionCallbackFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+			: this()
 		{
-			PreviouslyFoundResultsCollection = new List<string>();
-
 			if (finderArgs == null)
 			{
 				throw new ArgumentNullException("FinderArgs cannot be null.", "finderArgs");
@@ -105,13 +103,13 @@ namespace EquationFinder
 			{
 				throw new ArgumentException("NumberOfRounds must be at least one.", "numberOfRounds");
 			}
-			if (displayOutputFunction == null)
+			if (foundSolutionCallbackFunction == null)
 			{
-				displayOutputFunction = Console.WriteLine;
+				foundSolutionCallbackFunction = (EquationResults e) => { };
 			}
 
 			// Thread settings
-			DisplayOutputFunction = displayOutputFunction;
+			FoundResultCallback = foundSolutionCallbackFunction;
 			TimeToLive = timeToLive;
 			NumberOfThreads = numberOfThreads;
 			NumberOfRounds = numberOfRounds;
@@ -120,7 +118,7 @@ namespace EquationFinder
 			EquationFinderArgs = finderArgs;
 		}
 
-		public ThreadSpawnerArgs(List<string> previouslyFoundResults, DisplayOutputDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+		public ThreadSpawnerArgs(List<string> previouslyFoundResults, FoundSolutionDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
 			: this(displayOutputFunction, timeToLive, numberOfThreads, numberOfRounds, finderArgs)
 		{
 			if (previouslyFoundResults != null && previouslyFoundResults.Count > 0)

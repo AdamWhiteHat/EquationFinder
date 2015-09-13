@@ -1,43 +1,37 @@
-﻿using System;
+﻿/*
+ *
+ * Developed by Adam Rakaska
+ *  http://www.csharpprogramming.tips
+ * 
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EquationFinderCore;
 
-namespace EquationFinder
+namespace EquationFactories
 {
-	public partial class AlgebraicString : IExpression
+	public partial class AlgebraicString : IEquation
 	{
-		public EquationFinderArgs EquationArgs { get; private set; }
-		public string Expression { get; private set; }
+		public EquationFinderArgs EquationArgs { get; set; }
+		public string Equation { get; private set; }
 
+		public string TermPool { get { return EquationArgs.TermPool; } }
+		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
 		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
-		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		public string TermPool { get { return EquationArgs.TermPool; } }
-
-		public decimal CalculatedValue
-		{
-			get
-			{
-				return Evaluate();
-			}
-		}
-		private decimal? _result = null;
+		public bool IsCorrect { get { return (Evaluate() == TargetValue); } }
 
 		public decimal Evaluate()
 		{
-			if (_result == null)
-			{
-				_result = Solve();
-			}
+			if (_result == null) { _result = Solve(); }
 			return (decimal)_result;
 		}
+		private decimal? _result = null;
 
-		public bool IsCorrect
-		{
-			get { return (CalculatedValue == TargetValue); }
-		}
+		
 
 		public AlgebraicString()
 		{
@@ -45,34 +39,25 @@ namespace EquationFinder
 
 		public AlgebraicString(EquationFinderArgs equationArgs)
 		{
+			Initialize(equationArgs);
+		}
+
+		public void Initialize(EquationFinderArgs equationArgs)
+		{
 			EquationArgs = equationArgs;
-			BuildExpression();
+			Equation = GenerateRandomEquation();
 			Evaluate();
 		}
 
-		public IExpression NewExpression(IEquationFinderArgs equationArgs)
-		{
-			return new AlgebraicString((EquationFinderArgs)equationArgs);
-		}
-
-		public Task<IExpression> NewTask(EquationFinderArgs equationArgs)
-		{
-			return new Task<IExpression>(new Func<IExpression>(delegate { return new AlgebraicString(equationArgs); }));
-		}
-
-		protected void BuildExpression()
-		{
-			Expression = GenerateRandomExpression();
-		}
-
-		public string GenerateRandomExpression()
+		public string GenerateRandomEquation()
 		{
 			List<string> operators = new List<string>(NumberOfOperations);
+			List<string> terms = new List<string>(NumberOfOperations);
+
 			int counter = NumberOfOperations - 1;
 			while (counter-- > 0)
 				operators.Add(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
-
-			List<string> terms = new List<string>(NumberOfOperations);
+						
 			counter = NumberOfOperations;
 			while (counter-- > 0)
 				terms.Add(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString());
@@ -88,17 +73,17 @@ namespace EquationFinder
 
 		private decimal Solve()
 		{
-			return StaticScriptControl.Evaluate(Expression);
+			return StaticScriptControl.Evaluate(Equation);
 		}
 
-		public ExpressionResults GetResults()
+		public EquationResults GetResults()
 		{
-			return new ExpressionResults(TargetValue, this);
+			return new EquationResults(this);
 		}
 
 		public override string ToString()
 		{
-			return Expression + " = " + CalculatedValue.ToString();
+			return Equation + " = " + Evaluate().ToString();
 		}
 	}
 }

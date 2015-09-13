@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9338745F-90D7-4FE7-8006-3C2D77FDB98E}</ProjectGuid>
+    <ProjectGuid>{7D6FDD50-64B9-46CE-8F92-AE7C26B7073A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AlgebraicExpression</RootNamespace>
-    <AssemblyName>AlgebraicExpression</AssemblyName>
+    <RootNamespace>EquationFinderCore</RootNamespace>
+    <AssemblyName>EquationFinderCore</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -40,15 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlgebraicExpression.cs" />
+    <Compile Include="IEquation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ThreadManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\EquationFinder\EquationFinder.csproj">
-      <Project>{a016727c-ecb6-4653-a122-94578cd41ca7}</Project>
-      <Name>EquationFinder</Name>
-    </ProjectReference>
+    <Compile Include="StaticClass.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

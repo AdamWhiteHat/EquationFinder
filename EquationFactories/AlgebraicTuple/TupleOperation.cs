@@ -5,11 +5,12 @@
  * 
  */
 using System;
+using EquationFinderCore;
 
-namespace EquationFinder
+namespace EquationFactories
 {
     /// <summary>
-    /// Describes a mathmatical operation
+    /// Describes a mathematical operation
     /// </summary>
     public class TupleOperation : IOperation
     {

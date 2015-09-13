@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using EquationFinder;
 using System.IO;
+using System.Collections.Generic;
+
+using EquationFinder;
+using EquationFactories;
+using EquationFinderCore;
 
 namespace EquationFinder_Console
 {
@@ -56,32 +55,25 @@ namespace EquationFinder_Console
 
 		public void Find()
 		{
-			//string[] operations = Settings.Operand_Pool.ToArray().Select(c => c.ToString()).ToArray();
-			//string[] terms		= Settings.Term_Pool.ToArray().Select(c => c.ToString()).ToArray();
-			//Func<decimal> termSelector = new Func<decimal>(delegate { return Convert.ToDecimal(operations.ElementAt(StaticRandom.Instance.Next(0, operations.Length))); });
-			//Func<string> operatorSelector = new Func<string>(delegate { return operations.ElementAt(StaticRandom.Instance.Next(0, operations.Length)).ToString(); });
-			
 			equationArgs = new  EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, Settings.Term_Pool, Settings.Operand_Pool);
-			threadArgs = new ThreadSpawnerArgs(previousfoundResults, LogOutput, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Round_Quantity, equationArgs);
+			threadArgs = new ThreadSpawnerArgs(previousfoundResults, LogSolution, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Round_Quantity, equationArgs);
 
 			ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>(threadArgs);
 			if (File.Exists(outputFilename))
 			{
 				equationFinder.Results.AddRange(File.ReadAllLines(outputFilename));
 			}
-			equationFinder.Run(ThreadedEquationFinder<AlgebraicTuple>.ThreadManager);
-
-			//equationFinder.Run(AlgebraicTuple.TupleExpressionThreadManager);
+			equationFinder.Run();
 
 			// Stats
-			long ExpressionsGeneratedThisRound = equationFinder.TotalExpressionsGenerated;
+			long ExpressionsGeneratedThisRound = equationFinder.TotalEquationGenerated;
 			//TotalExpressionsGenerated += ExpressionsGeneratedThisRound;
 			//DisplayStats();
 		}
 
-		private void LogOutput(string format, params object[] args)
+		private void LogSolution(EquationResults foundSolution)
 		{
-			string outputString = string.Format(format, args);
+			string outputString = foundSolution.EquationText;
 
 			if (!string.IsNullOrWhiteSpace(outputFilename))
 			{

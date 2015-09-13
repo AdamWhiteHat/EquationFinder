@@ -10,7 +10,9 @@ using MSScriptControl;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace EquationFinder
+using EquationFinderCore;
+
+namespace EquationFactories
 {	
 	public static class StaticScriptControl
 	{

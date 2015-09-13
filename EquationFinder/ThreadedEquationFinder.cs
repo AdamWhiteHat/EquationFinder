@@ -1,98 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-//using System.Linq;
-//using System.Text;
+using EquationFinderCore;
 
 namespace EquationFinder
-{
-	public delegate void DisplayOutputDelegate(string FormatMessage, params object[] FormatArgs);
-	public delegate ExpressionResults ExpressionThreadManagerDelegate(ThreadSpawnerArgs threadArgs);
+{	
+	public delegate List<EquationResults> EquationThreadManagerDelegate(ThreadSpawnerArgs threadArgs);
 
-	public class ThreadedEquationFinder<T> where T : class, IExpression, new()
+	public class ThreadedEquationFinder<T> where T : class, IEquation, new()
 	{
-		ThreadSpawnerArgs FinderThreadArgs { get; set; }
-
 		public List<string> Results { get; set; }
-		public long TotalExpressionsGenerated { get; private set; }
+		ThreadSpawnerArgs threadSpawnerArgs { get; set; }
+		public long TotalEquationGenerated { get; private set; }
 
 		// Read only
-		public int NumberOfRounds { get { return FinderThreadArgs.NumberOfRounds; } }
-		public DisplayOutputDelegate DisplayOuputFunction { get { return FinderThreadArgs.DisplayOutputFunction; } }
+		public int NumberOfRounds { get { return threadSpawnerArgs.NumberOfRounds; } }
+		public FoundSolutionDelegate FoundSolutionCallback { get { return threadSpawnerArgs.FoundResultCallback; } }
 		public static string ExpirationMessage = "Time-to-live expired.";
 
-		public ThreadedEquationFinder(/*string[] previouslyFoundResults,*/ ThreadSpawnerArgs threadArgs)
+		public ThreadedEquationFinder(ThreadSpawnerArgs spawnerArgs)
 		{
 			Results = new List<string>();
-			FinderThreadArgs = threadArgs;
-			//if (previouslyFoundResults != null || previouslyFoundResults.Length > 0)
-			//	Results.AddRange(previouslyFoundResults);
+			threadSpawnerArgs = spawnerArgs;
+			TotalEquationGenerated = 0;
 		}
 
-		public static ExpressionResults ThreadManager(ThreadSpawnerArgs threadArgs)
+		public List<EquationResults> FindMatchingEquationThread(ThreadSpawnerArgs threadArgs)
 		{
-			long TotalExpressionsGenerated = 0;
-			IExpression expression = (IExpression)new T();
-
 			int maxMilliseconds = (threadArgs.TimeToLive * 1000);
 			Stopwatch Age = new Stopwatch();
 			Age.Start();
 
-			bool foundSolution = false;
+			List<EquationResults> foundSolutions = new List<EquationResults>();			
 			while (Age.ElapsedMilliseconds < maxMilliseconds)
 			{
-				foundSolution = false;
-				expression = expression.NewExpression((EquationFinderArgs)threadArgs.EquationFinderArgs);
-				TotalExpressionsGenerated++;
-				if (expression.Evaluate() == (decimal)threadArgs.EquationFinderArgs.TargetValue)
+				IEquation currentEquation = (IEquation)new T();
+				currentEquation.Initialize((EquationFinderArgs)threadArgs.EquationFinderArgs);
+				TotalEquationGenerated += 1;
+				if (currentEquation.Evaluate() == (decimal)threadArgs.EquationFinderArgs.TargetValue)
 				{
-					string foundExpression = expression.ToString();
-					if (string.IsNullOrWhiteSpace(foundExpression))
+					string equationString = currentEquation.ToString();
+					if (string.IsNullOrWhiteSpace(equationString))
 					{
 						continue;
 					}
 
-					if (threadArgs.PreviouslyFoundResultsCollection == null || threadArgs.PreviouslyFoundResultsCollection.Count < 1)
+					if (!threadArgs.PreviouslyFoundResultsCollection.Contains(equationString))
 					{
-						foundSolution = true;
-						break;
-					}
-					else if (!threadArgs.PreviouslyFoundResultsCollection.Contains(foundExpression))
-					{
-						foundSolution = true;
-						break;
+						EquationResults solution = currentEquation.GetResults();
+						ReportSolution(solution);
+						foundSolutions.Add(solution);
 					}
 				}
 			}
 
 			Age.Stop();
 			Age = null;
-			if (expression != null && foundSolution == true)
+			if (foundSolutions != null && foundSolutions.Count > 0)
 			{
-				return expression.GetResults();
+				return foundSolutions;
 			}
 			else
 			{
-				return ExpressionResults.Empty;
+				return new List<EquationResults>();
 			}
 		}
 
-		private void Print(string FormatMessage, params object[] FormatArgs)
-		{
-			if (DisplayOuputFunction != null)
-			{
-				DisplayOuputFunction.Invoke(FormatMessage, FormatArgs);
-			}
-		}
-
-		public void Run(ExpressionThreadManagerDelegate expressionManager)
+		public void Run()
 		{
 			int expiredThreadCount = 0;
 			bool showExpiredMessage = false;
-			int ttlMiliseconds = (FinderThreadArgs.TimeToLive * 1000);
+			int ttlMiliseconds = (threadSpawnerArgs.TimeToLive * 1000);
 			List<string> results = new List<string>();
 
-			Stopwatch resultsTimer = new Stopwatch();
+			Stopwatch resultsTimer = new Stopwatch();			
 			resultsTimer.Start();
 
 			for (int roundCounter = NumberOfRounds; roundCounter > 0; roundCounter--)
@@ -101,11 +82,10 @@ namespace EquationFinder
 				{
 					string timeoutMessage = "Round Time To Live expired before new results.";
 					Results.Add(timeoutMessage);
-					Print(timeoutMessage, Environment.NewLine);
 					return;
 				}
 
-				results = FindSolutionThread(FinderThreadArgs, expressionManager);
+				results = ThreadSpawner(threadSpawnerArgs, FindMatchingEquationThread);
 
 				foreach (string s in results)
 				{
@@ -117,7 +97,6 @@ namespace EquationFinder
 					else if (!Results.Contains(s))
 					{
 						Results.Add(s);
-						Print(s);
 						resultsTimer.Reset();
 					}
 				}
@@ -135,7 +114,6 @@ namespace EquationFinder
 
 					string expiredMessage = string.Format("{0} ({1} threads)", ExpirationMessage, expiredThreadCount);
 					Results.Add(expiredMessage);
-					Print(expiredMessage);
 				}
 			}
 
@@ -144,21 +122,21 @@ namespace EquationFinder
 			results = null;
 		}
 
-		public static List<string> FindSolutionThread(ThreadSpawnerArgs threadArgs, ExpressionThreadManagerDelegate expressionManager)
+		public static List<string> ThreadSpawner(ThreadSpawnerArgs threadArgs, EquationThreadManagerDelegate equationManager)
 		{
-			List<ExpressionThreadManagerDelegate> threadDelegateList = new List<ExpressionThreadManagerDelegate>();
+			List<EquationThreadManagerDelegate> threadDelegateList = new List<EquationThreadManagerDelegate>();
 			List<IAsyncResult> threadHandletList = new List<IAsyncResult>();
-			List<ExpressionResults> threadResultList = new List<ExpressionResults>();
+			List<EquationResults> threadResultList = new List<EquationResults>();
 
 			// Add Delegates
 			int counter = threadArgs.NumberOfThreads;
 			while (counter > 0)
 			{
-				threadDelegateList.Add(expressionManager);
+				threadDelegateList.Add(equationManager);
 				counter--;
 			}
 
-			foreach (ExpressionThreadManagerDelegate thread in threadDelegateList)
+			foreach (EquationThreadManagerDelegate thread in threadDelegateList)
 			{
 				threadHandletList.Add(thread.BeginInvoke(threadArgs, null, null));
 			}
@@ -166,29 +144,33 @@ namespace EquationFinder
 			counter = 0;
 			foreach (var thread in threadDelegateList)
 			{
-				threadResultList.Add(thread.EndInvoke(threadHandletList[counter]));
+				threadResultList.AddRange(thread.EndInvoke(threadHandletList[counter]));
 				counter++;
 			}
 
 			// Format the results as a List of strings
 			List<string> strResults = new List<string>();
-			foreach (ExpressionResults item in threadResultList)
+			foreach (EquationResults item in threadResultList)
 			{
 				if (item.IsSolution)
 				{
-					strResults.Add(item.ExpressionText);
+					strResults.Add(item.EquationText);
 				}
 				else
 				{
 					strResults.Add(ExpirationMessage);
 				}
 			}
+
 			return strResults;
 		}
 
-		private void AsyncCompleteCallback(IAsyncResult threadResult)
+		private void ReportSolution(EquationResults results)
 		{
-
+			if (FoundSolutionCallback != null)
+			{
+				FoundSolutionCallback.Invoke(results);
+			}
 		}
 
 	} // ThreadedEquationFinder

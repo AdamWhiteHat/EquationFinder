@@ -69,6 +69,10 @@
       <Project>{8112e30a-4082-4b1a-9d44-6af7979ea90a}</Project>
       <Name>AlgebraicTuple</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\EquationFinderCore\EquationFinderCore.csproj">
+      <Project>{7d6fdd50-64b9-46ce-8f92-ae7c26b7073a}</Project>
+      <Name>EquationFinderCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\EquationFinder\EquationFinder.csproj">
       <Project>{a016727c-ecb6-4653-a122-94578cd41ca7}</Project>
       <Name>EquationFinder</Name>
