@@ -24,14 +24,14 @@ namespace EquationFactories
 			sc.Language = "VBScript";
 		}
 
-		public static decimal Evaluate(string Expression)
+		public static decimal Evaluate(string Equation)
 		{
-			return StaticClass.String2Decimal(EvaluateToString(Expression));
+			return StaticClass.String2Decimal(EvaluateToString(Equation));
 		}
 
-		public static string EvaluateToString(string Expression)
+		public static string EvaluateToString(string Equation)
 		{
-			object result = sc.Eval(Expression);
+			object result = sc.Eval(Equation);
 			return result.ToString();
 		}
 

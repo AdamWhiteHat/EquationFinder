@@ -36,10 +36,10 @@ namespace EquationFinder_GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Addition");
-			System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Subtraction");
-			System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Multiplication");
-			System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Division");
+			System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Addition");
+			System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Subtraction");
+			System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Multiplication");
+			System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Division");
 			this.btnFindSolution = new System.Windows.Forms.Button();
 			this.tbOutput = new System.Windows.Forms.TextBox();
 			this.tbNumberOperations = new System.Windows.Forms.TextBox();
@@ -298,12 +298,12 @@ namespace EquationFinder_GUI
 			// listOperators
 			// 
 			this.listOperators.HideSelection = false;
-			listViewItem9.StateImageIndex = 0;
+			listViewItem1.StateImageIndex = 0;
 			this.listOperators.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4});
 			this.listOperators.Location = new System.Drawing.Point(373, 20);
 			this.listOperators.Name = "listOperators";
 			this.listOperators.Size = new System.Drawing.Size(82, 78);
@@ -326,7 +326,7 @@ namespace EquationFinder_GUI
 			this.tbStats.Name = "tbStats";
 			this.tbStats.Size = new System.Drawing.Size(233, 50);
 			this.tbStats.TabIndex = 25;
-			this.tbStats.Text = "Expressions created (this round): 000000\r\nTotal expressions generated: 000000";
+			this.tbStats.Text = "Equations created (this round): 000000\r\nTotal equations generated: 000000";
 			this.tbStats.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.tbStats.UseCompatibleTextRendering = true;
 			// 

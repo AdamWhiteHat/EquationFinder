@@ -11,7 +11,7 @@ namespace EquationFinder
 	{
 		public List<string> Results { get; set; }
 		ThreadSpawnerArgs threadSpawnerArgs { get; set; }
-		public long TotalEquationGenerated { get; private set; }
+		public long TotalEquationsGenerated { get; private set; }
 
 		// Read only
 		public int NumberOfRounds { get { return threadSpawnerArgs.NumberOfRounds; } }
@@ -22,7 +22,7 @@ namespace EquationFinder
 		{
 			Results = new List<string>();
 			threadSpawnerArgs = spawnerArgs;
-			TotalEquationGenerated = 0;
+			TotalEquationsGenerated = 0;
 		}
 
 		public List<EquationResults> FindMatchingEquationThread(ThreadSpawnerArgs threadArgs)
@@ -36,7 +36,7 @@ namespace EquationFinder
 			{
 				IEquation currentEquation = (IEquation)new T();
 				currentEquation.Initialize((EquationFinderArgs)threadArgs.EquationFinderArgs);
-				TotalEquationGenerated += 1;
+				TotalEquationsGenerated += 1;
 				if (currentEquation.Evaluate() == (decimal)threadArgs.EquationFinderArgs.TargetValue)
 				{
 					string equationString = currentEquation.ToString();

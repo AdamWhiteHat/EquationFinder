@@ -66,8 +66,8 @@ namespace EquationFinder_Console
 			equationFinder.Run();
 
 			// Stats
-			long ExpressionsGeneratedThisRound = equationFinder.TotalEquationGenerated;
-			//TotalExpressionsGenerated += ExpressionsGeneratedThisRound;
+			//EquationsGeneratedThisRound = equationFinder.TotalEquationsGenerated;
+			//TotalEquationsGenerated += EquationsGeneratedThisRound;
 			//DisplayStats();
 		}
 

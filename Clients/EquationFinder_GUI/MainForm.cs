@@ -21,15 +21,15 @@ namespace EquationFinder_GUI
 	{
 		public bool IsDirty = false;
 
-		long TotalExpressionsGenerated;
-		long ExpressionsGeneratedThisRound;
+		long TotalEquationsGenerated;
+		long EquationsGeneratedThisRound;
 
 		public MainForm()
 		{
 			InitializeComponent();
 
-			TotalExpressionsGenerated = 0;
-			ExpressionsGeneratedThisRound = 0;
+			TotalEquationsGenerated = 0;
+			EquationsGeneratedThisRound = 0;
 
 			int numOps = 9;//StaticRandom.Instance.Next(3, 9);
 			//int maxPossible = numOps * (MaxIntValue);
@@ -103,8 +103,8 @@ namespace EquationFinder_GUI
 					equationFinder.Run();
 
 					// Stats
-					ExpressionsGeneratedThisRound = equationFinder.TotalEquationGenerated;
-					TotalExpressionsGenerated += ExpressionsGeneratedThisRound;
+					EquationsGeneratedThisRound = equationFinder.TotalEquationsGenerated;
+					TotalEquationsGenerated += EquationsGeneratedThisRound;
 					DisplayStats();
 				}
 			}
@@ -248,8 +248,8 @@ namespace EquationFinder_GUI
 					}
 				}
 				IsDirty = false;
-				ExpressionsGeneratedThisRound = 0;
-				TotalExpressionsGenerated = 0;
+				EquationsGeneratedThisRound = 0;
+				TotalEquationsGenerated = 0;
 				DisplayStats();
 			}
 
@@ -264,8 +264,8 @@ namespace EquationFinder_GUI
 				if (PromptToSaveWork() == DialogResult.OK)
 				{
 					tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
-					ExpressionsGeneratedThisRound = 0;
-					TotalExpressionsGenerated = 0;
+					EquationsGeneratedThisRound = 0;
+					TotalEquationsGenerated = 0;
 					DisplayStats();
 				}
 			}
@@ -298,9 +298,9 @@ namespace EquationFinder_GUI
 
 		void DisplayStats()
 		{
-			string statsString = string.Format("Expressions generated this round: {1}{0}" +
-												"Expressions generated total: {2}", Environment.NewLine,
-												ExpressionsGeneratedThisRound, TotalExpressionsGenerated);
+			string statsString = string.Format("Equations generated this round: {1}{0}" +
+												"Equations generated total: {2}", Environment.NewLine,
+												EquationsGeneratedThisRound, TotalEquationsGenerated);
 			tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
 		}
 
