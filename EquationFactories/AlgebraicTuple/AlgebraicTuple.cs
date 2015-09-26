@@ -20,8 +20,16 @@ namespace EquationFactories
 		public string TermPool { get { return EquationArgs.TermPool; } }
 		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
 		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
-		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }		
-		
+		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
+
+		public void Dispose()
+		{
+			Equation.RemoveRange(0, Equation.Count);
+			Equation = null;
+			EquationArgs.Dispose();
+			EquationArgs = null;			
+		}
+
 		public decimal Evaluate()
 		{
 			if (_result == null) { _result = Solve(); }

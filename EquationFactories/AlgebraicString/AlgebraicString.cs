@@ -24,14 +24,19 @@ namespace EquationFactories
 		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 		public bool IsCorrect { get { return (Evaluate() == TargetValue); } }
 
+		public void Dispose()
+		{
+			Equation = null;
+			EquationArgs.Dispose();
+			EquationArgs = null;
+		}
+
 		public decimal Evaluate()
 		{
 			if (_result == null) { _result = Solve(); }
 			return (decimal)_result;
 		}
-		private decimal? _result = null;
-
-		
+		private decimal? _result = null;		
 
 		public AlgebraicString()
 		{

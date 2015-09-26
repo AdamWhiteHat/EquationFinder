@@ -2,13 +2,16 @@
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EquationFinderCore
 {
 	public delegate void FoundSolutionDelegate(EquationResults resultsObject);
 
-	public interface IEquation
-	{
+	public interface IEquation : IDisposable
+	{ 
 		string ToString();
 		decimal Evaluate();
 		decimal TargetValue { get; }		
@@ -17,7 +20,7 @@ namespace EquationFinderCore
 		void Initialize(EquationFinderArgs equationArgs);
 	}
 
-	public interface IEquationFinderArgs
+	public interface IEquationFinderArgs : IDisposable
 	{
 		decimal TargetValue { get; }
 		int NumberOfOperations { get; }
@@ -46,6 +49,12 @@ namespace EquationFinderCore
 		public string TermPool { get; set; }
 		public string OperatorPool { get; set; }
 
+		public void Dispose()
+		{
+			TermPool = null;
+			OperatorPool = null;
+		}
+
 		public EquationFinderArgs(decimal targetValue, int numOperations, string termPool, string operatorPool)
 		{
 			if (string.IsNullOrWhiteSpace(termPool))
@@ -69,19 +78,31 @@ namespace EquationFinderCore
 		}
 	}
 
-	public class ThreadSpawnerArgs
+	public class ThreadSpawnerArgs : IDisposable
 	{
 		public int TimeToLive { get; set; }
 		public int NumberOfThreads { get; set; }
 		public int NumberOfRounds { get; set; }
-		public FoundSolutionDelegate FoundResultCallback { get; set; }
-		public List<string> PreviouslyFoundResultsCollection { get; set; }
-		
+		public FoundSolutionDelegate FoundResultCallback { get; set; }			
 		public IEquationFinderArgs EquationFinderArgs { get; set; }
+		public BlockingCollection<string> FoundSolutions { get; set; }
+		//public List<string> PreviouslyFoundResultsCollection { get; set; }	
+
+		public void Dispose()
+		{
+			FoundSolutions.Dispose();
+			FoundSolutions = null;
+		
+			EquationFinderArgs.Dispose();
+			EquationFinderArgs = null; 
+			
+			FoundResultCallback = null;			
+		}
 
 		public ThreadSpawnerArgs()
 		{
-			PreviouslyFoundResultsCollection = new List<string>();
+			//PreviouslyFoundResultsCollection = new List<string>();
+			FoundSolutions = new BlockingCollection<string>();
 		}
 
 		public ThreadSpawnerArgs(FoundSolutionDelegate foundSolutionCallbackFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
@@ -118,13 +139,21 @@ namespace EquationFinderCore
 			EquationFinderArgs = finderArgs;
 		}
 
-		public ThreadSpawnerArgs(List<string> previouslyFoundResults, FoundSolutionDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+		public ThreadSpawnerArgs(List<string> previouslyFoundSolutons, FoundSolutionDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
 			: this(displayOutputFunction, timeToLive, numberOfThreads, numberOfRounds, finderArgs)
 		{
-			if (previouslyFoundResults != null && previouslyFoundResults.Count > 0)
+			if (previouslyFoundSolutons != null && previouslyFoundSolutons.Count > 0)
 			{
-				PreviouslyFoundResultsCollection = previouslyFoundResults;
-			}			
+				foreach(string prevSolution in previouslyFoundSolutons)
+				{
+					if (!string.IsNullOrWhiteSpace(prevSolution))
+					{						
+						FoundSolutions.Add(prevSolution);
+					}
+				}				
+			}
+			
+			
 		}
 	}	
 }

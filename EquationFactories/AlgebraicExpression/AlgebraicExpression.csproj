@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7D6FDD50-64B9-46CE-8F92-AE7C26B7073A}</ProjectGuid>
+    <ProjectGuid>{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EquationFinderCore</RootNamespace>
-    <AssemblyName>EquationFinderCore</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>AlgebraicExpression</RootNamespace>
+    <AssemblyName>AlgebraicExpression</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,11 +39,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="IEquation.cs" />
+    <Compile Include="AlgebraicExpression.cs" />
+    <Compile Include="ExpressionComposer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HelperClass.cs" />
-    <Compile Include="ThreadSafeRandom.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EquationFinderCore\EquationFinderCore.csproj">
+      <Project>{7d6fdd50-64b9-46ce-8f92-ae7c26b7073a}</Project>
+      <Name>EquationFinderCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EquationFinder\EquationFinder.csproj">
+      <Project>{a016727c-ecb6-4653-a122-94578cd41ca7}</Project>
+      <Name>EquationFinder</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

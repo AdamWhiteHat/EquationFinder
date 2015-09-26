@@ -16,7 +16,7 @@ namespace EquationFactories
     {
         public OperandType Operand { get; set; }
 		
-        public TupleOperation() : this((OperandType)(int)Math.Pow(2, (double)StaticRandom.Instance.Next(0, 3)))
+        public TupleOperation() : this(HelperClass.AlgebraicOperators[StaticRandom.Instance.Next(0,HelperClass.AlgebraicOperators.Length)].ToString() )
         {
         }
 
@@ -96,7 +96,7 @@ namespace EquationFactories
 				case OperandType.Raise: return "^";
 				case OperandType.Equal: return "=";
 				default:
-					return "?";
+					return " ";
 					//throw new ArgumentException(
 					//	string.Format("Cannot convert OperandType.{0} to a string.  If you added a new OperandType, a translation should be added to the method that threw this Exception.", Enum.GetName(typeof(OperandType), Operand)),
 					//	"Operation"

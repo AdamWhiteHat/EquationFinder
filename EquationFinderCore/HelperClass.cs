@@ -10,42 +10,11 @@ using System.Text;
 //using MSScriptControl;
 using System.Threading;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace EquationFinderCore
 {
-	public static class StaticRandom
-	{
-		private static int _seed;
-		private static readonly Random _instance;
-
-		static StaticRandom()
-		{
-			unchecked
-			{
-				_seed = Environment.TickCount * DateTime.Now.Millisecond;
-			}
-			_instance = new Random(_seed);
-		}
-
-		public static Random Instance { get { return _instance; } }
-
-		public static int Next()
-		{
-			return _instance.Next();
-		}
-
-		public static int Next(int maxValue)
-		{
-			return _instance.Next(maxValue);
-		}
-
-		public static int Next(int minValue, int maxValue)
-		{
-			return _instance.Next(minValue, maxValue);
-		}
-	}
-
-	public static class StaticClass
+	public static class HelperClass
 	{
 		public const string DecimalNumbers = "0123456789";
 		public const string AlgebraicOperators = "+-*/";
@@ -59,7 +28,7 @@ namespace EquationFinderCore
 			}
 			else
 			{
-				return 0; 
+				return 0;
 			}
 		}
 
@@ -69,5 +38,5 @@ namespace EquationFinderCore
 			decimal.TryParse(Input, out lResult);
 			return lResult;
 		}
-	}
+	}	
 }

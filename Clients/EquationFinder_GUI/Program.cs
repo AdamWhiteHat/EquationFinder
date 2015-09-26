@@ -51,7 +51,7 @@ namespace EquationFinder_GUI
 
 		private static void HandleException(Exception ex, string CallingEvent)
 		{
-			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occured @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
+			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occurred @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
 
 			string exceptionName = string.Empty;
 
@@ -112,7 +112,7 @@ namespace EquationFinder_GUI
 			else
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Exception has been caught by the Global Exception Handler. Unfortionatly, there was not exception object or error message available.");
+				Console.WriteLine("Exception has been caught by the Global Exception Handler. Unfortunately, there was not exception object or error message available.");
 			}
 		}
 

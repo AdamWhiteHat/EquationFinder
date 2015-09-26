@@ -53,17 +53,22 @@ namespace EquationFinder_GUI
 			DisplayStats();
 		}
 
+		EquationFinderArgs equationArgs { get; set; }
+		ThreadSpawnerArgs threadArgs { get; set; }
+		ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
+
+		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
+		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }		
+		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
+		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
+		int timeToLive { get { return  HelperClass.String2Int(tbTTL.Text); } }
+		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
+		string OperatorPool { get { return GetOperatorPool(); } }
+		string TermPool { get { return GetTermPool(); } }
+		//int MaxIntValue { get { return 9; } }
+
 		void BtnFindSolutionClick(object sender, EventArgs e)
 		{
-			decimal targetValue = StaticClass.String2Decimal(tbTargetValue.Text);
-			//int MaxIntValue = 9;
-			int numberOfThreads = StaticClass.String2Int(tbThreads.Text);
-			int numberOfOperations = StaticClass.String2Int(tbNumberOperations.Text);
-			int timeToLive = StaticClass.String2Int(tbTTL.Text);
-			int numberOfRounds = StaticClass.String2Int(tbRounds.Text);
-			string OperatorPool = GetOperatorPool();
-			string TermPool = GetTermPool();
-
 			if (string.IsNullOrWhiteSpace(TermPool))
 			{
 				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -75,10 +80,19 @@ namespace EquationFinder_GUI
 				return;
 			}
 
-			EquationFinderArgs equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
-			ThreadSpawnerArgs threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+			 equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
 
-			if (!backgroundWorker_ThreadSpawner.IsBusy)
+			string[] previousResults = GetOutputLines();
+			if (previousResults != null && previousResults.Length > 0)
+			{
+				threadArgs = new ThreadSpawnerArgs(previousResults.ToList(), DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+			}
+			else
+			{
+				 threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+			}
+
+			if (backgroundWorker_ThreadSpawner.IsBusy == false)
 			{
 				backgroundWorker_ThreadSpawner.RunWorkerAsync(threadArgs);
 			}
@@ -94,12 +108,8 @@ namespace EquationFinder_GUI
 				{
 					IsDirty = true;
 
-					ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);
-					string[] previousResults = GetOutputLines();
-					if (previousResults != null && previousResults.Length > 0)
-					{
-						equationFinder.Results.AddRange(previousResults);
-					}
+					equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);
+					
 					equationFinder.Run();
 
 					// Stats
@@ -112,6 +122,12 @@ namespace EquationFinder_GUI
 
 		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
 		{
+			equationFinder.Dispose();							
+
+	 		equationArgs = null;	
+			threadArgs = null;
+			equationFinder = null;
+
 			EnableControls();
 		}
 
@@ -144,8 +160,7 @@ namespace EquationFinder_GUI
 
 		private string GetTermPool()
 		{
-			StringBuilder result = new StringBuilder();
-			int maxTerm = Convert.ToInt32(tbTerm.Text);
+			StringBuilder result = new StringBuilder();			
 
 			if (radioRandom.Checked)
 			{
@@ -286,12 +301,7 @@ namespace EquationFinder_GUI
 			tbOutput.Invoke(new MethodInvoker(
 				delegate
 				{
-					// Removes duplicate ExpirationMessages
-					//if (foundSolution.EquationText.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage))
-					//{
-					//	tbOutput.Lines = tbOutput.Lines.ToList().Where(line => !line.Contains(ThreadedEquationFinder<AlgebraicTuple>.ExpirationMessage)).ToArray();						
-					//}
-					tbOutput.Text = string.Concat(foundSolution.EquationText, Environment.NewLine, tbOutput.Text);
+					tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution.EquationText, Environment.NewLine));
 				}				
 			));
 		}

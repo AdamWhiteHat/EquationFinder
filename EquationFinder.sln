@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquationFinder_Console", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquationFinderCore", "EquationFinderCore\EquationFinderCore.csproj", "{7D6FDD50-64B9-46CE-8F92-AE7C26B7073A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgebraicExpression", "EquationFactories\AlgebraicExpression\AlgebraicExpression.csproj", "{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,16 @@ Global
 		{7D6FDD50-64B9-46CE-8F92-AE7C26B7073A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7D6FDD50-64B9-46CE-8F92-AE7C26B7073A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7D6FDD50-64B9-46CE-8F92-AE7C26B7073A}.Release|x86.ActiveCfg = Release|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,5 +111,6 @@ Global
 		{5A69DD25-21B1-4709-9B15-08BF198873E9} = {E30EBD44-D3A2-4061-AA6E-B3B8F6A1AB26}
 		{7F4F9CD1-236F-43F4-AE88-5158C8D05ACC} = {6EC634A9-BCFE-47A0-9945-7CD0BF81F372}
 		{0635B79F-75AD-46B4-96B0-17465975A382} = {6EC634A9-BCFE-47A0-9945-7CD0BF81F372}
+		{2A80D85A-1DDD-42A4-A70A-A35E07CA4619} = {E30EBD44-D3A2-4061-AA6E-B3B8F6A1AB26}
 	EndGlobalSection
 EndGlobal
