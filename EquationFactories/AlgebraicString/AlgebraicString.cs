@@ -83,7 +83,7 @@ namespace EquationFactories
 
 		public EquationResults GetResults()
 		{
-			return new EquationResults(this);
+			return new EquationResults(ToString(), TargetValue, Evaluate());
 		}
 
 		public override string ToString()

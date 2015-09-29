@@ -22,12 +22,29 @@ namespace EquationFactories
 		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 
+		public AlgebraicTuple()
+		{
+		}
+
+		public AlgebraicTuple(EquationFinderArgs equationArgs)
+		{
+			Initialize(equationArgs);
+		}
+
+		public void Initialize(EquationFinderArgs equationArgs)
+		{
+			EquationArgs = equationArgs;
+
+			Equation = GenerateRandomEquation(NumberOfOperations);
+			Evaluate();
+		}
+
 		public void Dispose()
 		{
 			Equation.RemoveRange(0, Equation.Count);
 			Equation = null;
 			EquationArgs.Dispose();
-			EquationArgs = null;			
+			EquationArgs = null;
 		}
 
 		public decimal Evaluate()
@@ -42,21 +59,7 @@ namespace EquationFactories
 			get { return (Evaluate() == TargetValue); }
 		}
 
-		public AlgebraicTuple()
-		{
-		}
-
-		public AlgebraicTuple(EquationFinderArgs equationArgs)
-		{
-			Initialize(equationArgs);
-		}
-
-		public void Initialize(EquationFinderArgs equationArgs)
-		{
-			EquationArgs = equationArgs;
-			Equation = GenerateRandomEquation(NumberOfOperations);
-			Evaluate();
-		}
+		
 
 		public List<Tuple<decimal, TupleOperation>> GenerateRandomEquation(int numberOfOperations)
 		{
@@ -116,7 +119,7 @@ namespace EquationFactories
 
 		public EquationResults GetResults()
 		{
-			return new EquationResults(this);
+			return new EquationResults(ToString(),TargetValue,Evaluate());
 		}
 
 		public override string ToString()

@@ -33,11 +33,11 @@ namespace EquationFinderCore
 		public decimal Result { get; private set; }
 		public bool IsSolution { get; private set; }
 
-		public EquationResults(IEquation equation)
+		public EquationResults(string equationText, decimal targetValue, decimal result)
 		{
-			EquationText = equation.ToString();
-			TargetValue = equation.TargetValue;
-			Result = equation.Evaluate();
+			EquationText = equationText;
+			TargetValue = targetValue;
+			Result = result;
 			IsSolution = Result.Equals(TargetValue);
 		}
 	}

@@ -58,10 +58,10 @@ namespace EquationFinder_GUI
 		ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
 
 		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
-		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }		
+		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
 		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
 		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
-		int timeToLive { get { return  HelperClass.String2Int(tbTTL.Text); } }
+		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
 		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
 		string OperatorPool { get { return GetOperatorPool(); } }
 		string TermPool { get { return GetTermPool(); } }
@@ -80,7 +80,11 @@ namespace EquationFinder_GUI
 				return;
 			}
 
-			 equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
+			equationFinder = null;
+			equationArgs = null;
+			threadArgs = null;
+
+			equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
 
 			string[] previousResults = GetOutputLines();
 			if (previousResults != null && previousResults.Length > 0)
@@ -89,7 +93,7 @@ namespace EquationFinder_GUI
 			}
 			else
 			{
-				 threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+				threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
 			}
 
 			if (backgroundWorker_ThreadSpawner.IsBusy == false)
@@ -101,7 +105,7 @@ namespace EquationFinder_GUI
 		private void backgroundWorker_ThreadSpawner_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
 			if (e != null && e.Argument != null)
-			{				
+			{
 				DisableControls();
 
 				if (e.Argument is ThreadSpawnerArgs)
@@ -109,7 +113,7 @@ namespace EquationFinder_GUI
 					IsDirty = true;
 
 					equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);
-					
+
 					equationFinder.Run();
 
 					// Stats
@@ -122,9 +126,9 @@ namespace EquationFinder_GUI
 
 		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
 		{
-			equationFinder.Dispose();							
+			equationFinder.Dispose();
 
-	 		equationArgs = null;	
+			equationArgs = null;
 			threadArgs = null;
 			equationFinder = null;
 
@@ -160,7 +164,7 @@ namespace EquationFinder_GUI
 
 		private string GetTermPool()
 		{
-			StringBuilder result = new StringBuilder();			
+			StringBuilder result = new StringBuilder();
 
 			if (radioRandom.Checked)
 			{
@@ -181,14 +185,36 @@ namespace EquationFinder_GUI
 
 		private string[] GetOutputLines()
 		{
-			return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return (tbOutput.Lines.Length > 0) ? tbOutput.Lines : new string[]{}; } ));
+			if (tbOutput.Lines.Length < 1)
+			{
+				return new string[] { };
+			}
+			if (tbOutput.InvokeRequired)
+			{
+				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return tbOutput.Lines; }));
+			}
+			else
+			{
+				return tbOutput.Lines;
+			}
 		}
 
 		private string GetOutputText()
 		{
-			return (string)tbOutput.Invoke(new Func<string>(delegate { return (tbOutput.Text.Length > 0) ? tbOutput.Text : string.Empty; }));
+			if (tbOutput.Text.Length < 1)
+			{
+				return "";
+			}
+			if (tbOutput.InvokeRequired)
+			{
+				return (string)tbOutput.Invoke(new Func<string>(delegate { return tbOutput.Text; }));
+			}
+			else
+			{
+				return tbOutput.Text;
+			}
 		}
-		
+
 		DialogResult PromptToSaveWork()
 		{
 			if (!IsDirty || string.IsNullOrEmpty(GetOutputText()))
@@ -196,7 +222,7 @@ namespace EquationFinder_GUI
 				return DialogResult.OK;
 			}
 
-			DialogResult choice =	 MessageBox.Show(string.Format(
+			DialogResult choice = MessageBox.Show(string.Format(
 									"Results not saved!{0}{0}" +
 									"Would you like to save these results now before discarding?", Environment.NewLine),
 									"Changing Parameters",
@@ -237,7 +263,7 @@ namespace EquationFinder_GUI
 						tWriter.Write(GetOutputText());
 						tWriter.Flush();
 						tWriter.Close();
-					}					
+					}
 				}
 				IsDirty = false;
 			}
@@ -257,8 +283,15 @@ namespace EquationFinder_GUI
 				{
 					using (TextReader tReader = new StreamReader(fStream))
 					{
-						string fileText = tReader.ReadToEnd();						
-						tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = fileText; }));
+						string fileText = tReader.ReadToEnd();
+						if (tbOutput.InvokeRequired)
+						{
+							tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = fileText; }));
+						}
+						else
+						{
+							tbOutput.Text = fileText;
+						}
 						tReader.Close();
 					}
 				}
@@ -278,7 +311,14 @@ namespace EquationFinder_GUI
 			{
 				if (PromptToSaveWork() == DialogResult.OK)
 				{
-					tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
+					if (tbOutput.InvokeRequired)
+					{
+						tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
+					}
+					else
+					{
+						tbOutput.Text = string.Empty;
+					}
 					EquationsGeneratedThisRound = 0;
 					TotalEquationsGenerated = 0;
 					DisplayStats();
@@ -298,12 +338,19 @@ namespace EquationFinder_GUI
 
 		void DisplaySolution(EquationResults foundSolution)
 		{
-			tbOutput.Invoke(new MethodInvoker(
-				delegate
-				{
-					tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution.EquationText, Environment.NewLine));
-				}				
-			));
+			if (tbOutput.InvokeRequired)
+			{
+				tbOutput.Invoke(new MethodInvoker(
+					delegate
+					{
+						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution.EquationText, Environment.NewLine));
+					}
+				));
+			}
+			else
+			{
+				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution.EquationText, Environment.NewLine));
+			}
 		}
 
 		void DisplayStats()
@@ -311,17 +358,36 @@ namespace EquationFinder_GUI
 			string statsString = string.Format("Equations generated this round: {1}{0}" +
 												"Equations generated total: {2}", Environment.NewLine,
 												EquationsGeneratedThisRound, TotalEquationsGenerated);
-			tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
+			if (tbStats.InvokeRequired)
+			{
+				tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
+			}
+			else
+			{
+				tbStats.Text = statsString;
+			}
 		}
 
 		void DisableControls()
 		{
-			btnFindSolution.Invoke(new MethodInvoker(delegate { btnFindSolution.Enabled = false; }));
+			SetControlsEnabled(false);
 		}
 
 		void EnableControls()
 		{
-			btnFindSolution.Invoke(new MethodInvoker(delegate { btnFindSolution.Enabled = true; }));
+			SetControlsEnabled(true);
+		}
+
+		void SetControlsEnabled(bool enabled)
+		{
+			if (btnFindSolution.InvokeRequired)
+			{
+				btnFindSolution.Invoke(new MethodInvoker(delegate { btnFindSolution.Enabled = enabled; }));
+			}
+			else
+			{
+				btnFindSolution.Enabled = enabled;
+			}
 		}
 
 		#endregion
