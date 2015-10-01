@@ -64,16 +64,11 @@ namespace EquationFinder_Console
 				equationFinder.Results.AddRange(File.ReadAllLines(outputFilename));
 			}
 			equationFinder.Run();
-
-			// Stats
-			//EquationsGeneratedThisRound = equationFinder.TotalEquationsGenerated;
-			//TotalEquationsGenerated += EquationsGeneratedThisRound;
-			//DisplayStats();
 		}
 
-		private void LogSolution(EquationResults foundSolution)
+		private void LogSolution(string foundSolution)
 		{
-			string outputString = foundSolution.EquationText;
+			string outputString = foundSolution;
 
 			if (!string.IsNullOrWhiteSpace(outputFilename))
 			{

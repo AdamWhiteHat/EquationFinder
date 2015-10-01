@@ -20,10 +20,10 @@ namespace EquationFinder_GUI
 		/// <summary>
 		/// Program entry point.
 		/// </summary>
-		[STAThread]
+		[STAThread()]
 		private static void Main(string[] args)
 		{
-			//Application.EnableVisualStyles();
+			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(true);
 			Application.ThreadException += Application_ThreadException;
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -62,21 +62,18 @@ namespace EquationFinder_GUI
 								
 				string exType = string.Format("Exception of type \"{0}\":", exceptionName);
 				outputLines.Add(exType);
-				//Console.WriteLine(exType);
 
 				if (!string.IsNullOrEmpty(ex.Message))
 				{
 					string exMessage = string.Format("\t[Message=\"{0}\"]", ex.Message);
 					outputLines.Add(exMessage);
 					outputLines.Add(Environment.NewLine);
-					//Console.WriteLine(exMessage);
 				}
 
 				if (ex.TargetSite != null && !string.IsNullOrEmpty(ex.TargetSite.Name))
 				{
 					string exTargetSite = string.Format("\t[TargetSite=\"{0}\"]", ex.TargetSite.Name);
 					outputLines.Add(exTargetSite);
-					//Console.WriteLine(exTargetSite);
 				}
 
 				if (!string.IsNullOrEmpty(ex.Source))
@@ -88,9 +85,7 @@ namespace EquationFinder_GUI
 				if (!string.IsNullOrEmpty(ex.StackTrace))
 				{
 					string exStacktrace = string.Format("\t[Stacktrace=\"{0}\"]", ex.StackTrace);
-					outputLines.Add(exStacktrace);
-					//Console.ForegroundColor = ConsoleColor.Cyan;
-					//Console.WriteLine(exStacktrace);					
+					outputLines.Add(exStacktrace);				
 				}
 				
 				if (outputLines != null && outputLines.Count > 0)

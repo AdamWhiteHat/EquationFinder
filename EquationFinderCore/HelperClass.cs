@@ -38,5 +38,14 @@ namespace EquationFinderCore
 			decimal.TryParse(Input, out lResult);
 			return lResult;
 		}
+
+		public static bool IsDebug()
+		{
+			bool result = false;
+#if DEBUG
+			result = true;
+#endif
+			return result;
+		}
 	}	
 }

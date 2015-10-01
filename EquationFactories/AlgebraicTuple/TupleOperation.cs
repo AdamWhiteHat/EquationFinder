@@ -15,7 +15,7 @@ namespace EquationFactories
     public class TupleOperation : IOperation
     {
         public OperandType Operand { get; set; }
-		
+				
         public TupleOperation() : this(HelperClass.AlgebraicOperators[StaticRandom.Instance.Next(0,HelperClass.AlgebraicOperators.Length)].ToString() )
         {
         }
@@ -50,11 +50,6 @@ namespace EquationFactories
         public TupleOperation(OperandType operation)
         {
             this.Operand = operation;
-        }
-
-        public TupleOperation(TupleOperation operation)
-        {
-            this.Operand = operation.Operand;
         }
 
         public decimal Calculate(decimal Value1, decimal Value2)
@@ -97,10 +92,6 @@ namespace EquationFactories
 				case OperandType.Equal: return "=";
 				default:
 					return " ";
-					//throw new ArgumentException(
-					//	string.Format("Cannot convert OperandType.{0} to a string.  If you added a new OperandType, a translation should be added to the method that threw this Exception.", Enum.GetName(typeof(OperandType), Operand)),
-					//	"Operation"
-					//);
 			}
         }
 
@@ -119,7 +110,7 @@ namespace EquationFactories
 			int hashCode = (int)Operand;
             unchecked
             {
-                hashCode += hashCode.GetHashCode(); //(int)this.operation;
+                hashCode += hashCode.GetHashCode();
             }
             return hashCode;
         }

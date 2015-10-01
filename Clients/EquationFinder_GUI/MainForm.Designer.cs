@@ -202,7 +202,7 @@ namespace EquationFinder_GUI
 			this.tbTTL.Size = new System.Drawing.Size(40, 20);
 			this.tbTTL.TabIndex = 8;
 			this.tbTTL.Tag = "";
-			this.tbTTL.Text = "5";
+			this.tbTTL.Text = "6";
 			this.tbTTL.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// tbRounds
@@ -212,7 +212,7 @@ namespace EquationFinder_GUI
 			this.tbRounds.Name = "tbRounds";
 			this.tbRounds.Size = new System.Drawing.Size(40, 20);
 			this.tbRounds.TabIndex = 16;
-			this.tbRounds.Text = "1";
+			this.tbRounds.Text = "10";
 			this.tbRounds.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// tbThreads
@@ -222,7 +222,7 @@ namespace EquationFinder_GUI
 			this.tbThreads.Name = "tbThreads";
 			this.tbThreads.Size = new System.Drawing.Size(40, 20);
 			this.tbThreads.TabIndex = 18;
-			this.tbThreads.Text = "5";
+			this.tbThreads.Text = "1";
 			this.tbThreads.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// label6

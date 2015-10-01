@@ -126,8 +126,6 @@ namespace EquationFinder_GUI
 
 		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
 		{
-			equationFinder.Dispose();
-
 			equationArgs = null;
 			threadArgs = null;
 			equationFinder = null;
@@ -336,20 +334,20 @@ namespace EquationFinder_GUI
 			SaveWork();
 		}
 
-		void DisplaySolution(EquationResults foundSolution)
+		void DisplaySolution(string foundSolution)
 		{
 			if (tbOutput.InvokeRequired)
 			{
 				tbOutput.Invoke(new MethodInvoker(
 					delegate
 					{
-						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution.EquationText, Environment.NewLine));
+						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
 					}
 				));
 			}
 			else
 			{
-				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution.EquationText, Environment.NewLine));
+				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
 			}
 		}
 

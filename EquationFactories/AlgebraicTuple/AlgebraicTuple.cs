@@ -14,13 +14,22 @@ namespace EquationFactories
 {
 	public partial class AlgebraicTuple : IEquation
 	{
-		public EquationFinderArgs EquationArgs { get; set; }
-		public List<Tuple<decimal, TupleOperation>> Equation { get; private set; }
+		public decimal Result
+		{
+			get
+			{
+				if (_result == null) { _result = Solve(); }
+				return (decimal)_result;
+			}
+		}
+		private decimal? _result = null;
 
-		public string TermPool { get { return EquationArgs.TermPool; } }
-		public string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		public decimal TargetValue { get { return EquationArgs.TargetValue; } }
-		public int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
+		IEquationFinderArgs EquationArgs { get; set; }
+		List<Tuple<decimal, TupleOperation>> Equation { get; set; }
+		string TermPool { get { return EquationArgs.TermPool; } }
+		string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		decimal TargetValue { get { return EquationArgs.TargetValue; } }
+		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 
 		public AlgebraicTuple()
 		{
@@ -28,98 +37,84 @@ namespace EquationFactories
 
 		public AlgebraicTuple(EquationFinderArgs equationArgs)
 		{
-			Initialize(equationArgs);
-		}
+			SetArgs(equationArgs);
+		}	
 
-		public void Initialize(EquationFinderArgs equationArgs)
+		public void SetArgs(IEquationFinderArgs args)
 		{
-			EquationArgs = equationArgs;
-
-			Equation = GenerateRandomEquation(NumberOfOperations);
-			Evaluate();
+			EquationArgs = args;
+			GenerateNewAndEvaluate();
 		}
-
-		public void Dispose()
-		{
-			Equation.RemoveRange(0, Equation.Count);
-			Equation = null;
-			EquationArgs.Dispose();
-			EquationArgs = null;
-		}
-
-		public decimal Evaluate()
-		{
-			if (_result == null) { _result = Solve(); }
-			return (decimal)_result;
-		}
-		private decimal? _result = null;
-
-		public bool IsCorrect
-		{
-			get { return (Evaluate() == TargetValue); }
-		}
-
 		
+		public void GenerateNewAndEvaluate()
+		{
+			_result = null;
+			Equation = GenerateRandomEquation();
+			Solve();
+		}
 
-		public List<Tuple<decimal, TupleOperation>> GenerateRandomEquation(int numberOfOperations)
+		public bool IsSolution
+		{
+			get { return (Solve() == TargetValue); }
+		}
+
+		List<Tuple<decimal, TupleOperation>> GenerateRandomEquation()
 		{
 			List<Tuple<decimal, TupleOperation>> result = new List<Tuple<decimal, TupleOperation>>();
 
-			int Counter = 1;
+			int counter = 1;
 			decimal term = 0;
 			TupleOperation operation = new TupleOperation();
 			OperandType lastOperand = OperandType.None;
-			while (Counter <= numberOfOperations)
+			while (counter <= NumberOfOperations)
 			{
 				do
 				{
-					term = Convert.ToDecimal(TermPool.ElementAt(StaticRandom.Instance.Next(0, TermPool.Length)).ToString());
+					term = Convert.ToDecimal(TermPool.ElementAt(EquationArgs.Rand.Next(0, TermPool.Length)).ToString());
 				}
-				while (term == 0 && lastOperand == OperandType.Divide);
+				while (lastOperand == OperandType.Divide && term == 0);
 
-				if (Counter == numberOfOperations)
+				if (counter == NumberOfOperations)
 				{
 					operation = new TupleOperation(OperandType.Equal);
 				}
 				else
 				{
-					//do
-					//{
-					operation = new TupleOperation(OperatorPool.ElementAt(StaticRandom.Instance.Next(0, OperatorPool.Length)).ToString());
-					//}
-					//while(term == 0 && operation.Operand == OperandType.Divide);
+					operation = new TupleOperation(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, OperatorPool.Length)).ToString());
 				}
 
 				result.Add(new Tuple<decimal, TupleOperation>(term, operation));
 				lastOperand = operation.Operand;
-				Counter++;
+				counter++;
 			}
 
 			return result;
 		}
 
-		private decimal Solve()
+		decimal Solve()
 		{
-			TupleOperation lastOperation = new TupleOperation(OperandType.None);
-			decimal runningTotal = 0;
-			foreach (Tuple<decimal, TupleOperation> t in Equation)
+			if (_result == null)
 			{
-				if (lastOperation.Operand == OperandType.None)
+				TupleOperation lastOperation = new TupleOperation(OperandType.None);
+				decimal runningTotal = 0;
+				foreach (Tuple<decimal, TupleOperation> t in Equation)
 				{
-					runningTotal = (decimal)t.Item1;
+					if (lastOperation.Operand == OperandType.None)
+					{
+						runningTotal = (decimal)t.Item1;
+					}
+					else
+					{
+						runningTotal = lastOperation.Calculate((decimal)runningTotal, (decimal)t.Item1);
+					}
+					lastOperation = t.Item2;
 				}
-				else
-				{
-					runningTotal = lastOperation.Calculate((decimal)runningTotal, (decimal)t.Item1);
-				}
-				lastOperation = t.Item2;
+				return runningTotal;
 			}
-			return runningTotal;
-		}
-
-		public EquationResults GetResults()
-		{
-			return new EquationResults(ToString(),TargetValue,Evaluate());
+			else
+			{
+				return (decimal)_result;
+			}
 		}
 
 		public override string ToString()
@@ -129,7 +124,8 @@ namespace EquationFactories
 			{
 				resultText.AppendFormat("{0} {1} ", exp.Item1, exp.Item2);
 			}
-			return resultText.Append(Evaluate()).ToString();
+			resultText.Append(Result);
+			return resultText.ToString();
 		}
 	}
 }

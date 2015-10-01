@@ -7,20 +7,32 @@ namespace EquationFinderCore
 {
 	public sealed class StaticRandom
 	{
-		public static Random Instance { get { return Nested.instance; } }
+		private static readonly Random _instance;
+		public static Random Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
 
 		private StaticRandom()
 		{ }	// Explicit private constructor with no public constructors prevents other classes from instantiating it
 
-		private class Nested
+		static StaticRandom()
+		{ // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit
+			_instance = New();
+			int rounds = 250;
+			while (rounds-- > 0) { _instance.Next(); }
+		}
+
+		public static Random New()
 		{
-			internal static readonly Random instance;
-			static Nested()
-			{ // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit
-				instance = new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0));
-				int rounds = instance.Next(100, 200);
-				while (rounds-- > 0) { instance.Next(); }
-			}			
+			Random result = new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0));
+
+			int rounds = 250;
+			while (rounds-- > 0) { result.Next(); }
+			return result;
 		}
 	}
 }

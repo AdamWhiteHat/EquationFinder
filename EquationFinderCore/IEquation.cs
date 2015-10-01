@@ -8,23 +8,81 @@ using System.Threading.Tasks;
 
 namespace EquationFinderCore
 {
-	public delegate void FoundSolutionDelegate(EquationResults resultsObject);
-
-	public interface IEquation : IDisposable
-	{ 
+	public interface IEquation
+	{
+		void SetArgs(IEquationFinderArgs args);
+		void GenerateNewAndEvaluate();
+		bool IsSolution { get; }
+		decimal Result { get; }
 		string ToString();
-		decimal Evaluate();
-		decimal TargetValue { get; }		
-		EquationResults GetResults();
-		EquationFinderArgs EquationArgs { get; set; }
-		void Initialize(EquationFinderArgs equationArgs);
 	}
 
-	public interface IEquationFinderArgs : IDisposable
+	public interface IEquationFinderArgs
 	{
+		string TermPool { get; }
+		string OperatorPool { get; }
 		decimal TargetValue { get; }
 		int NumberOfOperations { get; }
+		Random Rand { get; }
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public class EquationFinderArgs : IEquationFinderArgs
+	{
+		public decimal TargetValue { get; set; }
+		public int NumberOfOperations { get; set; }
+		public string TermPool { get; set; }
+		public string OperatorPool { get; set; }
+		public Random Rand { get; private set; }
+
+		public EquationFinderArgs(decimal targetValue, int numOperations, string termPool, string operatorPool)
+		{
+			if (string.IsNullOrWhiteSpace(termPool))
+			{
+				throw new ArgumentException("termPool may not be empty or null.", "termPool");
+			}
+			if (string.IsNullOrWhiteSpace(operatorPool))
+			{
+				throw new ArgumentException("operatorPool may not be empty or null.", "operatorPool");
+			}
+			if (numOperations < 1)
+			{
+				throw new ArgumentException("numOperations must be one or greater.", "numOperations");
+			}
+
+			Rand = StaticRandom.New();
+
+			TargetValue = targetValue;
+			NumberOfOperations = numOperations;
+
+			TermPool = termPool;
+			OperatorPool = operatorPool;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+	public delegate void FoundSolutionDelegate(string resultsObject);
 
 	public class EquationResults
 	{
@@ -42,43 +100,15 @@ namespace EquationFinderCore
 		}
 	}
 
-	public class EquationFinderArgs : IEquationFinderArgs
-	{
-		public decimal TargetValue { get; set; }
-		public int NumberOfOperations { get; set; }
-		public string TermPool { get; set; }
-		public string OperatorPool { get; set; }
 
-		public void Dispose()
-		{
-			TermPool = null;
-			OperatorPool = null;
-		}
 
-		public EquationFinderArgs(decimal targetValue, int numOperations, string termPool, string operatorPool)
-		{
-			if (string.IsNullOrWhiteSpace(termPool))
-			{
-				throw new ArgumentException("termPool may not be empty or null.", "termPool");
-			}
-			if (string.IsNullOrWhiteSpace(operatorPool))
-			{
-				throw new ArgumentException("operatorPool may not be empty or null.", "operatorPool");
-			}
-			if (numOperations < 1)
-			{
-				throw new ArgumentException("numOperations must be one or greater.", "numOperations");
-			}
 
-			TargetValue = targetValue;
-			NumberOfOperations = numOperations;
-			
-			TermPool = termPool;
-			OperatorPool = operatorPool;
-		}
-	}
 
-	public class ThreadSpawnerArgs : IDisposable
+
+
+	
+
+	public class ThreadSpawnerArgs
 	{
 		public int TimeToLive { get; set; }
 		public int NumberOfThreads { get; set; }
@@ -86,22 +116,9 @@ namespace EquationFinderCore
 		public FoundSolutionDelegate FoundResultCallback { get; set; }			
 		public IEquationFinderArgs EquationFinderArgs { get; set; }
 		public BlockingCollection<string> FoundSolutions { get; set; }
-		//public List<string> PreviouslyFoundResultsCollection { get; set; }	
-
-		public void Dispose()
-		{
-			FoundSolutions.Dispose();
-			FoundSolutions = null;
-		
-			EquationFinderArgs.Dispose();
-			EquationFinderArgs = null; 
-			
-			FoundResultCallback = null;			
-		}
-
+	
 		public ThreadSpawnerArgs()
 		{
-			//PreviouslyFoundResultsCollection = new List<string>();
 			FoundSolutions = new BlockingCollection<string>();
 		}
 
@@ -126,7 +143,7 @@ namespace EquationFinderCore
 			}
 			if (foundSolutionCallbackFunction == null)
 			{
-				foundSolutionCallbackFunction = (EquationResults e) => { };
+				foundSolutionCallbackFunction = (string e) => { };
 			}
 
 			// Thread settings
@@ -151,9 +168,8 @@ namespace EquationFinderCore
 						FoundSolutions.Add(prevSolution);
 					}
 				}				
-			}
-			
-			
+			}		
 		}
-	}	
+
+	}
 }
