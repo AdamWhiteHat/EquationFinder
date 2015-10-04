@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ *
+ * Developed by Adam Rakaska
+ *  http://www.csharpprogramming.tips
+ * 
+ */
+using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -14,14 +20,16 @@ namespace EquationFinder
 
 	public class ThreadedEquationFinder<T> where T : class, IEquation, new()
 	{
-		public List<string> Results { get; set; }
-		ThreadSpawnerArgs threadSpawnerArgs { get; set; }
+		//		
+		public List<string> Results { get; set; }		
 		public long TotalEquationsGenerated { get; private set; }
-
+		public bool CancellationPending { get; private set; }
 		// Read only
 		public int NumberOfRounds { get { return threadSpawnerArgs.NumberOfRounds; } }
-		public FoundSolutionDelegate FoundSolutionCallback { get { return threadSpawnerArgs.FoundResultCallback; } }
+		public FoundEquationDelegate FoundSolutionCallback { get { return threadSpawnerArgs.FoundResultCallback; } }
 		public static string ExpirationMessage = "Time-to-live expired.";
+
+		ThreadSpawnerArgs threadSpawnerArgs { get; set; }
 
 		public ThreadedEquationFinder()
 		{ }
@@ -31,6 +39,11 @@ namespace EquationFinder
 			Results = new List<string>();
 			threadSpawnerArgs = spawnerArgs;
 			TotalEquationsGenerated = 0;
+		}
+
+		public void Cancel()
+		{
+			CancellationPending = true;
 		}
 
 		private List<EquationResults> ThreadFunction_FindSatisfiableEquations(ThreadSpawnerArgs threadArgs)
@@ -71,7 +84,7 @@ namespace EquationFinder
 						}
 					}
 
-				}
+				} // End while
 				
 				Age.Stop();
 				Age = null;
@@ -97,6 +110,10 @@ namespace EquationFinder
 
 			for (int roundCounter = NumberOfRounds; roundCounter > 0; roundCounter--)
 			{
+				if (CancellationPending)
+				{
+					return;
+				}
 				if (resultsTimer.ElapsedMilliseconds > ttlMiliseconds)
 				{
 					return;
@@ -140,18 +157,8 @@ namespace EquationFinder
 				}
 
 				// Free up some resources
-				counter = threadHandletList.Count;
-				while (counter-- > 0)	{
-					threadHandletList[counter] = null;
-				}
 				threadHandletList.RemoveAll(d => true);
 				threadHandletList = null;
-
-				counter = threadDelegateList.Count;
-				while (counter-- > 0)
-				{
-					threadDelegateList[counter] = null;
-				}
 				threadDelegateList.RemoveAll(d => true);
 				threadDelegateList = null;
 
@@ -169,6 +176,7 @@ namespace EquationFinder
 					}
 				}
 
+				// Free up some resources
 				threadResultList.RemoveAll(r => true);
 				threadResultList = null;
 			}

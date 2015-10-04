@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using EquationFinder;
 using EquationFactories;
 using EquationFinderCore;
+using System.Drawing;
 
 namespace EquationFinder_GUI
 {
@@ -53,22 +54,60 @@ namespace EquationFinder_GUI
 			DisplayStats();
 		}
 
+
+		void BtnSaveClick(object sender, EventArgs e)
+		{
+			SaveWork();
+		}
+				
 		EquationFinderArgs equationArgs { get; set; }
 		ThreadSpawnerArgs threadArgs { get; set; }
 		ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
 
+		bool isSearching = false;
+		static string findButtonText = "Find Solution";
+		static string cancelButtonText = "Stop Searching";
+		string TermPool { get { return GetTermPool(); } }
+		string OperatorPool { get { return GetOperatorPool(); } }
 		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
 		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
-		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
 		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
+		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }		
 		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
 		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
-		string OperatorPool { get { return GetOperatorPool(); } }
-		string TermPool { get { return GetTermPool(); } }
-		//int MaxIntValue { get { return 9; } }
+
+		#region Equation search toggling
+
+		///<summary>enabled = make visible</summary>
+		void ToggleControlsVisibility(bool enabled)
+		{
+				isSearching = !enabled;
+				btnFindSolution.Text = isSearching ? cancelButtonText : findButtonText;
+				btnFindSolution.BackColor = isSearching ? Color.MistyRose : Color.LightGreen;		
+		}
 
 		void BtnFindSolutionClick(object sender, EventArgs e)
 		{
+			if (isSearching)
+			{
+				CancelSearch();
+			}
+			else
+			{			
+				BeginSearch();
+			}
+		}
+
+		void CancelSearch()
+		{
+			if (isSearching && !equationFinder.CancellationPending)
+			{
+				equationFinder.Cancel();
+			}
+		}
+
+		void BeginSearch()
+		{		
 			if (string.IsNullOrWhiteSpace(TermPool))
 			{
 				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -79,10 +118,6 @@ namespace EquationFinder_GUI
 				MessageBox.Show("You must select at least one operation.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
-
-			equationFinder = null;
-			equationArgs = null;
-			threadArgs = null;
 
 			equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
 
@@ -98,40 +133,83 @@ namespace EquationFinder_GUI
 
 			if (backgroundWorker_ThreadSpawner.IsBusy == false)
 			{
+				ToggleControlsVisibility(false);				
 				backgroundWorker_ThreadSpawner.RunWorkerAsync(threadArgs);
 			}
 		}
 
-		private void backgroundWorker_ThreadSpawner_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		#endregion
+			
+
+		#region Display Solution Logic
+
+		void DisplaySolution(string foundSolution)
 		{
-			if (e != null && e.Argument != null)
+			if (tbOutput.InvokeRequired)
 			{
-				DisableControls();
-
-				if (e.Argument is ThreadSpawnerArgs)
-				{
-					IsDirty = true;
-
-					equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);
-
-					equationFinder.Run();
-
-					// Stats
-					EquationsGeneratedThisRound = equationFinder.TotalEquationsGenerated;
-					TotalEquationsGenerated += EquationsGeneratedThisRound;
-					DisplayStats();
-				}
+				tbOutput.Invoke(new MethodInvoker(
+					delegate
+					{
+						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
+					}
+				));
+			}
+			else
+			{
+				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
 			}
 		}
 
-		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+		private string[] GetOutputLines()
 		{
-			equationArgs = null;
-			threadArgs = null;
-			equationFinder = null;
-
-			EnableControls();
+			if (tbOutput.Lines.Length < 1)
+			{
+				return new string[] { };
+			}
+			if (tbOutput.InvokeRequired)
+			{
+				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return tbOutput.Lines; }));
+			}
+			else
+			{
+				return tbOutput.Lines;
+			}
 		}
+
+		private string GetOutputText()
+		{
+			if (tbOutput.Text.Length < 1)
+			{
+				return "";
+			}
+			if (tbOutput.InvokeRequired)
+			{
+				return (string)tbOutput.Invoke(new Func<string>(delegate { return tbOutput.Text; }));
+			}
+			else
+			{
+				return tbOutput.Text;
+			}
+		}
+
+		void DisplayStats()
+		{
+			string statsString = string.Format("Equations generated this round: {1}{0}" +
+												"Equations generated total: {2}", Environment.NewLine,
+												EquationsGeneratedThisRound, TotalEquationsGenerated);
+			if (tbStats.InvokeRequired)
+			{
+				tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
+				return;
+			}
+			tbStats.Text = statsString;
+		}
+
+		#endregion
+
+
+
+		#region Option pools (term & operator)
 
 		private string GetOperatorPool()
 		{
@@ -169,226 +247,17 @@ namespace EquationFinder_GUI
 				int counter = maxTerm;
 				while (counter > 0)
 				{
-					result.Append(counter);
-					counter--;
+					result.Append(counter--);
 				}
 			}
-			else
-			{
-				result = result.Append(maxTerm);
-			}
+			else { result = result.Append(maxTerm); }
 
 			return result.ToString();
 		}
 
-		private string[] GetOutputLines()
-		{
-			if (tbOutput.Lines.Length < 1)
-			{
-				return new string[] { };
-			}
-			if (tbOutput.InvokeRequired)
-			{
-				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return tbOutput.Lines; }));
-			}
-			else
-			{
-				return tbOutput.Lines;
-			}
-		}
-
-		private string GetOutputText()
-		{
-			if (tbOutput.Text.Length < 1)
-			{
-				return "";
-			}
-			if (tbOutput.InvokeRequired)
-			{
-				return (string)tbOutput.Invoke(new Func<string>(delegate { return tbOutput.Text; }));
-			}
-			else
-			{
-				return tbOutput.Text;
-			}
-		}
-
-		DialogResult PromptToSaveWork()
-		{
-			if (!IsDirty || string.IsNullOrEmpty(GetOutputText()))
-			{
-				return DialogResult.OK;
-			}
-
-			DialogResult choice = MessageBox.Show(string.Format(
-									"Results not saved!{0}{0}" +
-									"Would you like to save these results now before discarding?", Environment.NewLine),
-									"Changing Parameters",
-									MessageBoxButtons.YesNoCancel,
-									MessageBoxIcon.Question,
-									MessageBoxDefaultButton.Button1
-							   );
-
-			if (choice == DialogResult.No)
-			{
-				// The user made the decision to throw the results buffer away.				
-				return DialogResult.OK; // Return OK to continue, 
-			}
-			if (choice == DialogResult.Yes)
-			{
-				if (SaveWork() == DialogResult.OK)
-				{
-					return DialogResult.OK;
-				}
-				// Else, the user canceled the save dialog box. Do not continue.
-			}
-			// Cancel, do not continue
-			return DialogResult.Cancel;
-		}
-
-		#region Mainform Events
-
-		DialogResult SaveWork()
-		{
-			DialogResult dResult = saveFileDialog.ShowDialog();
-
-			if (dResult == DialogResult.OK)
-			{
-				using (FileStream fStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
-				{
-					using (TextWriter tWriter = new StreamWriter(fStream))
-					{
-						tWriter.Write(GetOutputText());
-						tWriter.Flush();
-						tWriter.Close();
-					}
-				}
-				IsDirty = false;
-			}
-
-			return dResult;
-		}
-
-		DialogResult OpenWork()
-		{
-			if (PromptToSaveWork() == DialogResult.Cancel)
-				return DialogResult.Cancel;
-
-			DialogResult dResult = openFileDialog.ShowDialog();
-			if (dResult == DialogResult.OK)
-			{
-				using (FileStream fStream = new FileStream(openFileDialog.FileName, FileMode.Open))
-				{
-					using (TextReader tReader = new StreamReader(fStream))
-					{
-						string fileText = tReader.ReadToEnd();
-						if (tbOutput.InvokeRequired)
-						{
-							tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = fileText; }));
-						}
-						else
-						{
-							tbOutput.Text = fileText;
-						}
-						tReader.Close();
-					}
-				}
-				IsDirty = false;
-				EquationsGeneratedThisRound = 0;
-				TotalEquationsGenerated = 0;
-				DisplayStats();
-			}
-
-			return dResult;
-		}
-
-		// Clear found solutions when changing Target or # Operations
-		void OnParametersChanged(object sender, EventArgs e)
-		{
-			if (!backgroundWorker_ThreadSpawner.IsBusy)
-			{
-				if (PromptToSaveWork() == DialogResult.OK)
-				{
-					if (tbOutput.InvokeRequired)
-					{
-						tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
-					}
-					else
-					{
-						tbOutput.Text = string.Empty;
-					}
-					EquationsGeneratedThisRound = 0;
-					TotalEquationsGenerated = 0;
-					DisplayStats();
-				}
-			}
-		}
-
-		void BtnOpenClick(object sender, EventArgs e)
-		{
-			OpenWork();
-		}
-
-		void BtnSaveClick(object sender, EventArgs e)
-		{
-			SaveWork();
-		}
-
-		void DisplaySolution(string foundSolution)
-		{
-			if (tbOutput.InvokeRequired)
-			{
-				tbOutput.Invoke(new MethodInvoker(
-					delegate
-					{
-						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
-					}
-				));
-			}
-			else
-			{
-				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
-			}
-		}
-
-		void DisplayStats()
-		{
-			string statsString = string.Format("Equations generated this round: {1}{0}" +
-												"Equations generated total: {2}", Environment.NewLine,
-												EquationsGeneratedThisRound, TotalEquationsGenerated);
-			if (tbStats.InvokeRequired)
-			{
-				tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
-			}
-			else
-			{
-				tbStats.Text = statsString;
-			}
-		}
-
-		void DisableControls()
-		{
-			SetControlsEnabled(false);
-		}
-
-		void EnableControls()
-		{
-			SetControlsEnabled(true);
-		}
-
-		void SetControlsEnabled(bool enabled)
-		{
-			if (btnFindSolution.InvokeRequired)
-			{
-				btnFindSolution.Invoke(new MethodInvoker(delegate { btnFindSolution.Enabled = enabled; }));
-			}
-			else
-			{
-				btnFindSolution.Enabled = enabled;
-			}
-		}
-
 		#endregion
+
+
 
 	}
 }

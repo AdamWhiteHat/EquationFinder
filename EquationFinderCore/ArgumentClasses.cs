@@ -1,43 +1,32 @@
-﻿using System;
-using System.Text;
-using System.Linq;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam Rakaska
+ *  http://www.csharpprogramming.tips
+ * 
+ */
+using System;
 using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace EquationFinderCore
 {
-	public interface IEquation
+	public class EquationResults
 	{
-		void SetArgs(IEquationFinderArgs args);
-		void GenerateNewAndEvaluate();
-		bool IsSolution { get; }
-		decimal Result { get; }
-		string ToString();
+		public decimal TargetValue { get; private set; }
+		public string EquationText { get; private set; }
+		public decimal Result { get; private set; }
+		public bool IsSolution { get; private set; }
+
+		public EquationResults(string equationText, decimal targetValue, decimal result)
+		{
+			EquationText = equationText;
+			TargetValue = targetValue;
+			Result = result;
+			IsSolution = Result.Equals(TargetValue);
+		}
 	}
-
-	public interface IEquationFinderArgs
-	{
-		string TermPool { get; }
-		string OperatorPool { get; }
-		decimal TargetValue { get; }
-		int NumberOfOperations { get; }
-		Random Rand { get; }
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public class EquationFinderArgs : IEquationFinderArgs
 	{
@@ -72,57 +61,21 @@ namespace EquationFinderCore
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-	public delegate void FoundSolutionDelegate(string resultsObject);
-
-	public class EquationResults
-	{
-		public decimal TargetValue { get; private set; }
-		public string EquationText { get; private set; }
-		public decimal Result { get; private set; }
-		public bool IsSolution { get; private set; }
-
-		public EquationResults(string equationText, decimal targetValue, decimal result)
-		{
-			EquationText = equationText;
-			TargetValue = targetValue;
-			Result = result;
-			IsSolution = Result.Equals(TargetValue);
-		}
-	}
-
-
-
-
-
-
-
-	
-
 	public class ThreadSpawnerArgs
 	{
 		public int TimeToLive { get; set; }
 		public int NumberOfThreads { get; set; }
 		public int NumberOfRounds { get; set; }
-		public FoundSolutionDelegate FoundResultCallback { get; set; }			
+		public FoundEquationDelegate FoundResultCallback { get; set; }
 		public IEquationFinderArgs EquationFinderArgs { get; set; }
 		public BlockingCollection<string> FoundSolutions { get; set; }
-	
+
 		public ThreadSpawnerArgs()
 		{
 			FoundSolutions = new BlockingCollection<string>();
 		}
 
-		public ThreadSpawnerArgs(FoundSolutionDelegate foundSolutionCallbackFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+		public ThreadSpawnerArgs(FoundEquationDelegate foundSolutionCallbackFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
 			: this()
 		{
 			if (finderArgs == null)
@@ -156,20 +109,19 @@ namespace EquationFinderCore
 			EquationFinderArgs = finderArgs;
 		}
 
-		public ThreadSpawnerArgs(List<string> previouslyFoundSolutons, FoundSolutionDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
+		public ThreadSpawnerArgs(List<string> previouslyFoundSolutons, FoundEquationDelegate displayOutputFunction, int timeToLive, int numberOfThreads, int numberOfRounds, IEquationFinderArgs finderArgs)
 			: this(displayOutputFunction, timeToLive, numberOfThreads, numberOfRounds, finderArgs)
 		{
 			if (previouslyFoundSolutons != null && previouslyFoundSolutons.Count > 0)
 			{
-				foreach(string prevSolution in previouslyFoundSolutons)
+				foreach (string prevSolution in previouslyFoundSolutons)
 				{
 					if (!string.IsNullOrWhiteSpace(prevSolution))
-					{						
+					{
 						FoundSolutions.Add(prevSolution);
 					}
-				}				
-			}		
+				}
+			}
 		}
-
 	}
 }
