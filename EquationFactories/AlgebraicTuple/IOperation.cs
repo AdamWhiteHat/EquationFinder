@@ -1,4 +1,10 @@
-﻿//using System;
+﻿/*
+ *
+ * Developed by Adam Rakaska
+ *  http://www.csharpprogramming.tips
+ * 
+ */
+//using System;
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Text;
