@@ -62,12 +62,12 @@ namespace EquationFinder_GUI
 				
 		EquationFinderArgs equationArgs { get; set; }
 		ThreadSpawnerArgs threadArgs { get; set; }
-		ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
+		ThreadedEquationFinder<AlgebraicExpression> equationFinder { get; set; }
 
 		bool isSearching = false;
 		static string findButtonText = "Find Solution";
 		static string cancelButtonText = "Stop Searching";
-		string TermPool { get { return GetTermPool(); } }
+		string TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
 		string OperatorPool { get { return GetOperatorPool(); } }
 		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
 		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
@@ -133,7 +133,7 @@ namespace EquationFinder_GUI
 
 			if (backgroundWorker_ThreadSpawner.IsBusy == false)
 			{
-				ToggleControlsVisibility(false);				
+				ToggleControlsVisibility(false);
 				backgroundWorker_ThreadSpawner.RunWorkerAsync(threadArgs);
 			}
 		}
@@ -238,19 +238,23 @@ namespace EquationFinder_GUI
 			return result.ToString();
 		}
 
-		private string GetTermPool()
+		private string GetTermPool(bool IncludeZero = false)
 		{
+			int minTerm = IncludeZero ? -1 : 0;
 			StringBuilder result = new StringBuilder();
 
 			if (radioRandom.Checked)
 			{
 				int counter = maxTerm;
-				while (counter > 0)
+				while (counter > minTerm)
 				{
 					result.Append(counter--);
 				}
 			}
-			else { result = result.Append(maxTerm); }
+			else
+			{
+				result = result.Append(maxTerm);
+			}
 
 			return result.ToString();
 		}

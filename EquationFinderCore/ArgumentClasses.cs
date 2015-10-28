@@ -51,7 +51,7 @@ namespace EquationFinderCore
 				throw new ArgumentException("numOperations must be one or greater.", "numOperations");
 			}
 
-			Rand = StaticRandom.New();
+			Rand = StaticRandom.Factory.Random();
 
 			TargetValue = targetValue;
 			NumberOfOperations = numOperations;

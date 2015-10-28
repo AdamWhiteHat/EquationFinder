@@ -47,5 +47,33 @@ namespace EquationFinderCore
 #endif
 			return result;
 		}
+
+		public static string GenerateRandomEquation(EquationFinderArgs EquationArgs)
+		{
+			List<string> operators = new List<string>(EquationArgs.NumberOfOperations);
+			List<string> terms = new List<string>(EquationArgs.NumberOfOperations);
+
+			int counter = EquationArgs.NumberOfOperations - 1;
+			while (counter-- > 0)
+			{
+				operators.Add(EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.OperatorPool.Length)).ToString());
+			}
+
+			counter = EquationArgs.NumberOfOperations;
+			while (counter-- > 0)
+			{
+				terms.Add(EquationArgs.TermPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.TermPool.Length)).ToString());
+			}
+
+			counter = 0;
+			string result = terms[counter++];
+
+			foreach (string op in operators)
+			{
+				result += string.Format(" {0} {1}", op, terms[counter++]);
+			}
+
+			return result;
+		}
 	}	
 }

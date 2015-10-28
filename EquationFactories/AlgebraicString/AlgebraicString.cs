@@ -45,7 +45,7 @@ namespace EquationFactories
 
 		public bool GenerateAndEvaluate()
 		{
-			Equation = GenerateRandomEquation();
+			Equation = HelperClass.GenerateRandomEquation(EquationArgs);
 			return IsSolution;
 		}
 
@@ -54,27 +54,7 @@ namespace EquationFactories
 			get { return (Result == TargetValue); }
 		}
 
-		string GenerateRandomEquation()
-		{
-			List<string> operators = new List<string>(NumberOfOperations);
-			List<string> terms = new List<string>(NumberOfOperations);
-
-			int counter = NumberOfOperations - 1;
-			while (counter-- > 0)
-				operators.Add(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, OperatorPool.Length)).ToString());
-						
-			counter = NumberOfOperations;
-			while (counter-- > 0)
-				terms.Add(TermPool.ElementAt(EquationArgs.Rand.Next(0, TermPool.Length)).ToString());
-
-			counter = 0;
-			string result = terms[counter++];
-
-			foreach (string op in operators)
-				result += string.Format(" {0} {1}", op, terms[counter++]);
-
-			return result;
-		}
+		
 
 		decimal Solve()
 		{

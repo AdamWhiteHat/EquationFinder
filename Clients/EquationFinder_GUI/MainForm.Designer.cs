@@ -63,6 +63,7 @@ namespace EquationFinder_GUI
 			this.radioRandom = new System.Windows.Forms.RadioButton();
 			this.tbTerm = new System.Windows.Forms.TextBox();
 			this.groupTerm = new System.Windows.Forms.GroupBox();
+			this.cbAllowZero = new System.Windows.Forms.CheckBox();
 			this.listOperators = new System.Windows.Forms.ListView();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tbStats = new System.Windows.Forms.Label();
@@ -84,21 +85,22 @@ namespace EquationFinder_GUI
 			// 
 			// tbOutput
 			// 
-			this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tbOutput.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.tbOutput.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tbOutput.Location = new System.Drawing.Point(0, 119);
+			this.tbOutput.Location = new System.Drawing.Point(0, 109);
 			this.tbOutput.MaxLength = 3276700;
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbOutput.Size = new System.Drawing.Size(698, 338);
+			this.tbOutput.Size = new System.Drawing.Size(698, 348);
 			this.tbOutput.TabIndex = 2;
 			// 
 			// tbNumberOperations
 			// 
-			this.tbNumberOperations.Location = new System.Drawing.Point(24, 66);
+			this.tbNumberOperations.Location = new System.Drawing.Point(12, 66);
 			this.tbNumberOperations.MaxLength = 4;
 			this.tbNumberOperations.Name = "tbNumberOperations";
 			this.tbNumberOperations.Size = new System.Drawing.Size(30, 20);
@@ -108,18 +110,19 @@ namespace EquationFinder_GUI
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(6, 2);
+			this.label1.Location = new System.Drawing.Point(3, 1);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(75, 17);
+			this.label1.Size = new System.Drawing.Size(57, 17);
 			this.label1.TabIndex = 4;
 			this.label1.Text = "Goal:";
 			this.label1.UseCompatibleTextRendering = true;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(7, 48);
+			this.label2.Location = new System.Drawing.Point(3, 45);
+			this.label2.Margin = new System.Windows.Forms.Padding(0);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(77, 17);
+			this.label2.Size = new System.Drawing.Size(72, 17);
 			this.label2.TabIndex = 5;
 			this.label2.Text = "# Operations:";
 			this.label2.UseCompatibleTextRendering = true;
@@ -159,7 +162,7 @@ namespace EquationFinder_GUI
 			// 
 			// tbTargetValue
 			// 
-			this.tbTargetValue.Location = new System.Drawing.Point(24, 19);
+			this.tbTargetValue.Location = new System.Drawing.Point(12, 21);
 			this.tbTargetValue.MaxLength = 10;
 			this.tbTargetValue.Name = "tbTargetValue";
 			this.tbTargetValue.Size = new System.Drawing.Size(48, 20);
@@ -169,11 +172,12 @@ namespace EquationFinder_GUI
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(3, 99);
+			this.label3.Location = new System.Drawing.Point(3, 91);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(116, 17);
 			this.label3.TabIndex = 6;
 			this.label3.Text = "Found solutions:";
+			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this.label3.UseCompatibleTextRendering = true;
 			// 
 			// label4
@@ -242,7 +246,7 @@ namespace EquationFinder_GUI
 			this.groupThreads.Controls.Add(this.tbTTL);
 			this.groupThreads.Controls.Add(this.label5);
 			this.groupThreads.Controls.Add(this.label4);
-			this.groupThreads.Location = new System.Drawing.Point(202, 5);
+			this.groupThreads.Location = new System.Drawing.Point(218, 5);
 			this.groupThreads.Name = "groupThreads";
 			this.groupThreads.Size = new System.Drawing.Size(150, 81);
 			this.groupThreads.TabIndex = 23;
@@ -252,29 +256,29 @@ namespace EquationFinder_GUI
 			// 
 			// radioConstant
 			// 
-			this.radioConstant.Location = new System.Drawing.Point(3, 59);
+			this.radioConstant.Location = new System.Drawing.Point(15, 37);
 			this.radioConstant.Name = "radioConstant";
-			this.radioConstant.Size = new System.Drawing.Size(105, 18);
+			this.radioConstant.Size = new System.Drawing.Size(70, 18);
 			this.radioConstant.TabIndex = 15;
-			this.radioConstant.Text = "Constant value";
+			this.radioConstant.Text = "Constant";
 			this.radioConstant.UseCompatibleTextRendering = true;
 			this.radioConstant.UseVisualStyleBackColor = true;
 			// 
 			// radioRandom
 			// 
 			this.radioRandom.Checked = true;
-			this.radioRandom.Location = new System.Drawing.Point(4, 41);
+			this.radioRandom.Location = new System.Drawing.Point(15, 56);
 			this.radioRandom.Name = "radioRandom";
-			this.radioRandom.Size = new System.Drawing.Size(104, 18);
+			this.radioRandom.Size = new System.Drawing.Size(70, 18);
 			this.radioRandom.TabIndex = 14;
 			this.radioRandom.TabStop = true;
-			this.radioRandom.Text = "Max random";
+			this.radioRandom.Text = "Random";
 			this.radioRandom.UseCompatibleTextRendering = true;
 			this.radioRandom.UseVisualStyleBackColor = true;
 			// 
 			// tbTerm
 			// 
-			this.tbTerm.Location = new System.Drawing.Point(32, 14);
+			this.tbTerm.Location = new System.Drawing.Point(15, 15);
 			this.tbTerm.MaxLength = 4;
 			this.tbTerm.Name = "tbTerm";
 			this.tbTerm.Size = new System.Drawing.Size(30, 20);
@@ -284,16 +288,27 @@ namespace EquationFinder_GUI
 			// 
 			// groupTerm
 			// 
+			this.groupTerm.Controls.Add(this.cbAllowZero);
 			this.groupTerm.Controls.Add(this.tbTerm);
 			this.groupTerm.Controls.Add(this.radioRandom);
 			this.groupTerm.Controls.Add(this.radioConstant);
-			this.groupTerm.Location = new System.Drawing.Point(87, 5);
+			this.groupTerm.Location = new System.Drawing.Point(78, 5);
 			this.groupTerm.Name = "groupTerm";
-			this.groupTerm.Size = new System.Drawing.Size(109, 81);
+			this.groupTerm.Size = new System.Drawing.Size(134, 81);
 			this.groupTerm.TabIndex = 22;
 			this.groupTerm.TabStop = false;
 			this.groupTerm.Text = "Term:";
 			this.groupTerm.UseCompatibleTextRendering = true;
+			// 
+			// cbAllowZero
+			// 
+			this.cbAllowZero.AutoSize = true;
+			this.cbAllowZero.Location = new System.Drawing.Point(51, 16);
+			this.cbAllowZero.Name = "cbAllowZero";
+			this.cbAllowZero.Size = new System.Drawing.Size(74, 17);
+			this.cbAllowZero.TabIndex = 16;
+			this.cbAllowZero.Text = "Allow zero";
+			this.cbAllowZero.UseVisualStyleBackColor = true;
 			// 
 			// listOperators
 			// 
@@ -304,7 +319,7 @@ namespace EquationFinder_GUI
             listViewItem2,
             listViewItem3,
             listViewItem4});
-			this.listOperators.Location = new System.Drawing.Point(373, 20);
+			this.listOperators.Location = new System.Drawing.Point(389, 20);
 			this.listOperators.Name = "listOperators";
 			this.listOperators.Size = new System.Drawing.Size(82, 78);
 			this.listOperators.TabIndex = 24;
@@ -313,7 +328,7 @@ namespace EquationFinder_GUI
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(355, 1);
+			this.label8.Location = new System.Drawing.Point(371, 1);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(99, 17);
 			this.label8.TabIndex = 20;
@@ -322,9 +337,9 @@ namespace EquationFinder_GUI
 			// 
 			// tbStats
 			// 
-			this.tbStats.Location = new System.Drawing.Point(461, 66);
+			this.tbStats.Location = new System.Drawing.Point(475, 56);
 			this.tbStats.Name = "tbStats";
-			this.tbStats.Size = new System.Drawing.Size(233, 50);
+			this.tbStats.Size = new System.Drawing.Size(219, 50);
 			this.tbStats.TabIndex = 25;
 			this.tbStats.Text = "Equations created (this round): 000000\r\nTotal equations generated: 000000";
 			this.tbStats.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -341,8 +356,8 @@ namespace EquationFinder_GUI
 			this.Controls.Add(this.groupThreads);
 			this.Controls.Add(this.groupTerm);
 			this.Controls.Add(this.btnSave);
-			this.Controls.Add(this.btnOpen);
 			this.Controls.Add(this.label3);
+			this.Controls.Add(this.btnOpen);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.tbNumberOperations);
@@ -386,5 +401,6 @@ namespace EquationFinder_GUI
 		private System.Windows.Forms.ListView listOperators;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label tbStats;
+		private System.Windows.Forms.CheckBox cbAllowZero;
 	}
 }

@@ -11,27 +11,49 @@ namespace EquationFactories
 {
 	public class AlgebraicExpression : IEquation
     {
-		public decimal TargetValue { get; private set; }
-		public EquationFinderArgs EquationArgs { get; set; }
+		public decimal Result { get { return _builder.Result; } }
+		public string Equation { get { return _builder.ToString(); } }
+		public bool IsSolution { get; private set; }
 
-		public void Initialize(EquationFinderArgs equationArgs)
-		{ 
-		}
+		private ExpressionBuilder<decimal> _builder = null;
+		private IEquationFinderArgs _equationArgs = null;
 
-		public decimal Evaluate()
+		public AlgebraicExpression()
 		{
-			return 0;
-		}
-
-		public EquationResults GetResults()
-		{
-			return new EquationResults(this);
 		}
 		
+		public void SetArgs(IEquationFinderArgs args)
+		{
+			if (_equationArgs == null)
+			{
+				_equationArgs = default(IEquationFinderArgs);
+				if (args == null)
+				{
+					throw new ArgumentNullException("args");
+				}
+				_equationArgs = args;
+			}
+		}
+
+		public void GenerateNewAndEvaluate()
+		{			
+			_builder = new ExpressionBuilder<decimal>(_equationArgs);
+
+			IsSolution = (Result == _equationArgs.TargetValue);
+		}
+		
+		public EquationResults GetResults()
+		{
+			if (_equationArgs != null)
+			{
+				return new EquationResults(Equation, _equationArgs.TargetValue, Result);
+			}
+			throw new Exception("Private property 'equationArgs' should never be null after initialization.");
+		}
 
 		public override string ToString()
 		{
-			return base.ToString();
+			return _builder.ToString();
 		}
     }
 }

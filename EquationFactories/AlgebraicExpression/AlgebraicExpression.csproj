@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlgebraicExpression.cs" />
-    <Compile Include="ExpressionComposer.cs" />
+    <Compile Include="ExpressionBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

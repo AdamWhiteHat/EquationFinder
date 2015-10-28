@@ -7,7 +7,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>EquationFinder_GUI</RootNamespace>
     <AssemblyName>EquationFinder_GUI</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -36,6 +36,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>none</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -72,6 +76,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\EquationFactories\AlgebraicExpression\AlgebraicExpression.csproj">
+      <Project>{2a80d85a-1ddd-42a4-a70a-a35e07ca4619}</Project>
+      <Name>AlgebraicExpression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EquationFactories\AlgebraicString\AlgebraicString.csproj">
+      <Project>{5a69dd25-21b1-4709-9b15-08bf198873e9}</Project>
+      <Name>AlgebraicString</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\EquationFactories\AlgebraicTuple\AlgebraicTuple.csproj">
       <Project>{8112e30a-4082-4b1a-9d44-6af7979ea90a}</Project>
       <Name>AlgebraicTuple</Name>

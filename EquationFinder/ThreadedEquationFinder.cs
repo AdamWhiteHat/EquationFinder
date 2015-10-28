@@ -21,7 +21,7 @@ namespace EquationFinder
 	public class ThreadedEquationFinder<T> where T : class, IEquation, new()
 	{
 		//		
-		public List<string> Results { get; set; }		
+		public List<string> Results { get; set; }
 		public long TotalEquationsGenerated { get; private set; }
 		public bool CancellationPending { get; private set; }
 		// Read only
@@ -62,30 +62,29 @@ namespace EquationFinder
 				while (Age.ElapsedMilliseconds < maxMilliseconds)
 				{
 					currentEquation.GenerateNewAndEvaluate();
-					
 					TotalEquationsGenerated += 1;
-					if (currentEquation.Result == (decimal)threadArgs.EquationFinderArgs.TargetValue)
+
+					if (currentEquation.IsSolution) //if (currentEquation.Result == (decimal)threadArgs.EquationFinderArgs.TargetValue)
 					{
 						string equationString = currentEquation.ToString();
-						if (!string.IsNullOrWhiteSpace(equationString))
+						if (string.IsNullOrWhiteSpace(equationString))
 						{
-							if (threadArgs.FoundSolutions.Contains(equationString) == false)
-							{
-								EquationResults result = new EquationResults(equationString, threadArgs.EquationFinderArgs.TargetValue, currentEquation.Result);
-								//ReportSolution(result);
-								results.Add(result);
-								threadArgs.FoundSolutions.Add(equationString);
+							continue; 
+						}
+						if (threadArgs.FoundSolutions.Contains(equationString) == false)
+						{
+							results.Add(new EquationResults(equationString, threadArgs.EquationFinderArgs.TargetValue, currentEquation.Result));
+							//results.Add(new EquationResults(equationString, currentEquation.Result, currentEquation.Result));
+							threadArgs.FoundSolutions.Add(equationString);
 
-								if (--maxResults < 1)
-								{
-									break;
-								}
+							if (--maxResults < 1)
+							{
+								break;
 							}
 						}
 					}
-
 				} // End while
-				
+
 				Age.Stop();
 				Age = null;
 			}
