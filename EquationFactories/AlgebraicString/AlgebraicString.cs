@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,7 +71,7 @@ namespace EquationFactories
 
 		public override string ToString()
 		{
-			return Equation + " = " + Result.ToString();
+			return string.Format(CultureInfo.CurrentCulture, "{0} = {1:0.##} {1}", Equation, Result);
 		}
 	}
 }

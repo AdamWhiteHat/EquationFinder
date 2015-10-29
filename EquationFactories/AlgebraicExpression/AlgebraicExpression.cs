@@ -46,7 +46,7 @@ namespace EquationFactories
 		{
 			if (_equationArgs != null)
 			{
-				return new EquationResults(Equation, _equationArgs.TargetValue, Result);
+				return new EquationResults(Equation, _equationArgs.TargetValue, Result, IsSolution);
 			}
 			throw new Exception("Private property 'equationArgs' should never be null after initialization.");
 		}

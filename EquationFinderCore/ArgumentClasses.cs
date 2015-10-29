@@ -19,12 +19,12 @@ namespace EquationFinderCore
 		public decimal Result { get; private set; }
 		public bool IsSolution { get; private set; }
 
-		public EquationResults(string equationText, decimal targetValue, decimal result)
+		public EquationResults(string equationText, decimal targetValue, decimal result, bool isSolution)
 		{
 			EquationText = equationText;
 			TargetValue = targetValue;
 			Result = result;
-			IsSolution = Result.Equals(TargetValue);
+			IsSolution = isSolution;
 		}
 	}
 

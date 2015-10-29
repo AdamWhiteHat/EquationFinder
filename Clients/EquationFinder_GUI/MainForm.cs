@@ -150,13 +150,13 @@ namespace EquationFinder_GUI
 				tbOutput.Invoke(new MethodInvoker(
 					delegate
 					{
-						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
+						tbOutput.Text = tbOutput.Text.Insert(0, string.IsNullOrWhiteSpace(foundSolution) ? "" : string.Concat(foundSolution,Environment.NewLine));
 					}
 				));
 			}
 			else
 			{
-				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
+				tbOutput.Text = tbOutput.Text.Insert(0, string.IsNullOrWhiteSpace(foundSolution) ? "" : string.Concat(foundSolution, Environment.NewLine));
 			}
 		}
 

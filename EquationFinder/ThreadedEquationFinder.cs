@@ -73,7 +73,7 @@ namespace EquationFinder
 						}
 						if (threadArgs.FoundSolutions.Contains(equationString) == false)
 						{
-							results.Add(new EquationResults(equationString, threadArgs.EquationFinderArgs.TargetValue, currentEquation.Result));
+							results.Add(new EquationResults(equationString, threadArgs.EquationFinderArgs.TargetValue, currentEquation.Result, currentEquation.IsSolution));
 							//results.Add(new EquationResults(equationString, currentEquation.Result, currentEquation.Result));
 							threadArgs.FoundSolutions.Add(equationString);
 

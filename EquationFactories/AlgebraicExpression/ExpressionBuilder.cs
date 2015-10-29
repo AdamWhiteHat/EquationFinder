@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-
 using EquationFinderCore;
 
 namespace EquationFactories
@@ -83,7 +83,7 @@ namespace EquationFactories
 
 		public override string ToString()
 		{
-			return string.Format("{0,13:0.######} = {1}", Result, Expression.ToString().Replace("(", "").Replace(")", ""));
+			return string.Format(CultureInfo.CurrentCulture,"{0,13:0.######} = {1}", Result, Expression.ToString().Replace("(", "").Replace(")", ""));
 		}
 
 		

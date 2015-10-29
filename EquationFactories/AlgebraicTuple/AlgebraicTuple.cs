@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using EquationFinderCore;
+using System.Globalization;
 
 namespace EquationFactories
 {
@@ -122,9 +123,9 @@ namespace EquationFactories
 			StringBuilder resultText = new StringBuilder();
 			foreach (Tuple<decimal, TupleOperation> exp in Equation)
 			{
-				resultText.AppendFormat("{0} {1} ", exp.Item1, exp.Item2);
+				resultText.AppendFormat(CultureInfo.CurrentCulture, "{0:0.##} {1} ", exp.Item1, exp.Item2);
 			}
-			resultText.Append(Result);
+			resultText.AppendFormat(CultureInfo.CurrentCulture, "{0:0.##}", Result);
 			return resultText.ToString();
 		}
 	}
