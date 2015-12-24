@@ -18,7 +18,7 @@ namespace EquationFinder
 {
 	public delegate List<EquationResults> EquationThreadManagerDelegate(ThreadSpawnerArgs threadArgs);
 
-	public class ThreadedEquationFinder<T> where T : class, IEquation, new()
+	public class ThreadedEquationFinder<TEquation> where TEquation : class, IEquation, new()
 	{
 		//		
 		public List<string> Results { get; set; }
@@ -55,7 +55,7 @@ namespace EquationFinder
 				Stopwatch Age = new Stopwatch();
 				Age.Start();
 
-				IEquation currentEquation = (IEquation)new T();
+				IEquation currentEquation = (IEquation)new TEquation();
 				currentEquation.SetArgs(threadArgs.EquationFinderArgs);
 
 				int maxResults = 300;
