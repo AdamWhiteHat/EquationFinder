@@ -48,7 +48,7 @@ namespace EquationFinderCore
 			return result;
 		}
 
-		public static string GenerateRandomEquation(EquationFinderArgs EquationArgs)
+		public static string GenerateRandomEquation(IEquationFinderArgs EquationArgs)
 		{
 			List<string> operators = new List<string>(EquationArgs.NumberOfOperations);
 			List<string> terms = new List<string>(EquationArgs.NumberOfOperations);

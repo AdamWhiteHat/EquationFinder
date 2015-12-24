@@ -14,9 +14,9 @@ using EquationFinderCore;
 
 namespace EquationFactories
 {
-	public partial class AlgebraicString
+	public partial class AlgebraicString : IEquation
 	{
-		EquationFinderArgs EquationArgs { get; set; }
+		IEquationFinderArgs EquationArgs { get; set; }
 		string Equation { get; set; }
 		string TermPool { get { return EquationArgs.TermPool; } }
 		string OperatorPool { get { return EquationArgs.OperatorPool; } }
@@ -38,40 +38,43 @@ namespace EquationFactories
 		{
 		}
 
-		public AlgebraicString(EquationFinderArgs equationArgs)
+		public AlgebraicString(IEquationFinderArgs equationArgs)
 		{
-			EquationArgs = equationArgs;
-			GenerateAndEvaluate();
+			SetArgs(equationArgs);
 		}
 
-		public bool GenerateAndEvaluate()
+		public void SetArgs(IEquationFinderArgs args)
 		{
+			EquationArgs = args;
+			GenerateNewAndEvaluate();
+		}
+
+		public void GenerateNewAndEvaluate()
+		{
+			_result = null;
 			Equation = HelperClass.GenerateRandomEquation(EquationArgs);
-			return IsSolution;
+			Solve();
 		}
 
 		public bool IsSolution
 		{
 			get { return (Result == TargetValue); }
-		}
-
-		
+		}		
 
 		decimal Solve()
 		{
 			if (_result == null)
 			{
-				return StaticScriptControl.Evaluate(Equation);
+				//_result = InfixNotationParser.Parse(Equation);
+				_result = StaticScriptControl.Evaluate(Equation);
 			}
-			else
-			{
-				return -1;
-			}
+				
+			return (decimal)_result;			
 		}
 
 		public override string ToString()
 		{
-			return string.Format(CultureInfo.CurrentCulture, "{0} = {1:0.##} {1}", Equation, Result);
+			return string.Format(CultureInfo.CurrentCulture, "{0} = {1:0.##}", Equation, Result);
 		}
 	}
 }
