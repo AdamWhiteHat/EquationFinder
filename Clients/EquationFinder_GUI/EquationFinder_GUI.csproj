@@ -34,7 +34,7 @@
     <StartupObject>EquationFinder_GUI.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>none</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
