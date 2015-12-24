@@ -7,9 +7,7 @@ namespace EquationFactories
 {
 	public static class PostfixNotationEvaluator
 	{
-		private static string Numbers = "0123456789";
-		private static string Operators = "+-*/^";
-		private static string AllowedCharacters = Numbers + Operators + " ";
+		private static string AllowedCharacters = InfixNotationParser.Numbers + InfixNotationParser.Operators + " ";
 
 		public static int Evaluate(string postfixNotationString)
 		{
@@ -42,11 +40,11 @@ namespace EquationFactories
 					{
 						char c = token[0];
 
-						if (Numbers.Contains(c))
+						if (InfixNotationParser.Numbers.Contains(c))
 						{
 							valueStack.Push(c.ToString());
 						}
-						else if (Operators.Contains(c))
+						else if (InfixNotationParser.Operators.Contains(c))
 						{
 							if (valueStack.Count < 2)
 							{

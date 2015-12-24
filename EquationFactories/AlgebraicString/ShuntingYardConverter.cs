@@ -7,9 +7,7 @@ namespace EquationFactories
 {
 	public static class ShuntingYardConverter
 	{
-		private static string Numbers = "0123456789";
-		private static string Operators = "+-*/^";
-		private static string AllowedCharacters = Numbers + Operators + "()";
+		private static string AllowedCharacters = InfixNotationParser.Numbers + InfixNotationParser.Operators + "()";
 
 		private enum Associativity
 		{
@@ -34,7 +32,7 @@ namespace EquationFactories
 				return false;
 			}
 
-			return text.All(c => Numbers.Contains(c));
+			return text.All(c => InfixNotationParser.Numbers.Contains(c));
 		}
 
 		private static void AddToOutput(List<char> output, params char[] chars)
@@ -64,7 +62,7 @@ namespace EquationFactories
 			List<string> enumerableInfixTokens = new List<string>();
 			foreach (char c in sanitizedString)
 			{
-				if (Operators.Contains(c) || "()".Contains(c))
+				if (InfixNotationParser.Operators.Contains(c) || "()".Contains(c))
 				{
 					if (number.Length > 0)
 					{
@@ -73,7 +71,7 @@ namespace EquationFactories
 					}
 					enumerableInfixTokens.Add(c.ToString());
 				}
-				else if (Numbers.Contains(c))
+				else if (InfixNotationParser.Numbers.Contains(c))
 				{
 					number += c.ToString();
 				}
@@ -99,11 +97,11 @@ namespace EquationFactories
 				{
 					char c = token[0];
 
-					if (Numbers.Contains(c))
+					if (InfixNotationParser.Numbers.Contains(c))
 					{
 						AddToOutput(output, c);
 					}
-					else if (Operators.Contains(c))
+					else if (InfixNotationParser.Operators.Contains(c))
 					{
 						if (operatorStack.Count > 0)
 						{
