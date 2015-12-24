@@ -19,11 +19,25 @@ using System.Drawing;
 namespace EquationFinder_GUI
 {
 	public partial class MainForm : Form
-	{
-		public bool IsDirty = false;
+	{		
+		EquationFinderArgs equationArgs { get; set; }
+		ThreadSpawnerArgs threadArgs { get; set; }
+		ThreadedEquationFinder<AlgebraicString> equationFinder { get; set; }
 
+		bool IsDirty = false;
+		bool isSearching = false;
 		long TotalEquationsGenerated;
-		long EquationsGeneratedThisRound;
+		long EquationsGeneratedThisRound;	
+		static string findButtonText = "Find Solution";
+		static string cancelButtonText = "Stop Searching";
+		string TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
+		string OperatorPool { get { return GetOperatorPool(); } }
+		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
+		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
+		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
+		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
+		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
+		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
 
 		public MainForm()
 		{
@@ -59,22 +73,6 @@ namespace EquationFinder_GUI
 		{
 			SaveWork();
 		}
-				
-		EquationFinderArgs equationArgs { get; set; }
-		ThreadSpawnerArgs threadArgs { get; set; }
-		ThreadedEquationFinder<AlgebraicString> equationFinder { get; set; }
-
-		bool isSearching = false;
-		static string findButtonText = "Find Solution";
-		static string cancelButtonText = "Stop Searching";
-		string TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
-		string OperatorPool { get { return GetOperatorPool(); } }
-		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
-		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
-		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
-		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }		
-		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
-		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
 
 		#region Equation search toggling
 
