@@ -41,7 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlgebraicString.cs" />
+    <Compile Include="InfixNotationParser.cs" />
+    <Compile Include="PostfixNotationEvaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShuntingYardConverter.cs" />
     <Compile Include="StaticScriptControl.cs" />
   </ItemGroup>
   <ItemGroup>
