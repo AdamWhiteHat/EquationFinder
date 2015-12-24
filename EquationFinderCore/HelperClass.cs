@@ -7,10 +7,7 @@
 using System;
 using System.Linq;
 using System.Text;
-//using MSScriptControl;
-using System.Threading;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace EquationFinderCore
 {
@@ -66,14 +63,15 @@ namespace EquationFinderCore
 			}
 
 			counter = 0;
-			string result = terms[counter++];
+
+			StringBuilder stringBuilder = new StringBuilder(terms[counter++]);
 
 			foreach (string op in operators)
 			{
-				result += string.Format(" {0} {1}", op, terms[counter++]);
+				stringBuilder.AppendFormat(" {0} {1}", op, terms[counter++]);
 			}
 
-			return result;
+			return stringBuilder.ToString();
 		}
 	}	
 }
