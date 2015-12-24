@@ -30,7 +30,7 @@ namespace EquationFinder_GUI
 				{
 					IsDirty = true;
 
-					equationFinder = new ThreadedEquationFinder<AlgebraicExpression>((ThreadSpawnerArgs)e.Argument);
+					equationFinder = new ThreadedEquationFinder<AlgebraicString>((ThreadSpawnerArgs)e.Argument);
 
 					equationFinder.Run();
 

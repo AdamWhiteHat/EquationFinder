@@ -84,7 +84,7 @@ namespace EquationFinder_GUI
 
 				if (!string.IsNullOrEmpty(ex.StackTrace))
 				{
-					string exStacktrace = string.Format("\t[Stacktrace=\"{0}\"]", ex.StackTrace);
+					string exStacktrace = string.Format("\t[StackTrace=\"{0}\"]", ex.StackTrace);
 					outputLines.Add(exStacktrace);				
 				}
 				
@@ -96,7 +96,7 @@ namespace EquationFinder_GUI
 					foreach (string line in outputLines)
 					{
 						if (line.Contains("[Message=")) { Console.ForegroundColor = ConsoleColor.Yellow; }
-						else if (line.Contains("[Stacktrace=")) { Console.ForegroundColor = ConsoleColor.Cyan; }
+						else if (line.Contains("[StackTrace=")) { Console.ForegroundColor = ConsoleColor.Cyan; }
 
 						Console.WriteLine(line);
 					}

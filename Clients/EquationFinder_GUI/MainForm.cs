@@ -62,7 +62,7 @@ namespace EquationFinder_GUI
 				
 		EquationFinderArgs equationArgs { get; set; }
 		ThreadSpawnerArgs threadArgs { get; set; }
-		ThreadedEquationFinder<AlgebraicExpression> equationFinder { get; set; }
+		ThreadedEquationFinder<AlgebraicString> equationFinder { get; set; }
 
 		bool isSearching = false;
 		static string findButtonText = "Find Solution";
