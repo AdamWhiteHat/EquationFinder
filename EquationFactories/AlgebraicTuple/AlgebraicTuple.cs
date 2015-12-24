@@ -110,12 +110,10 @@ namespace EquationFactories
 					}
 					lastOperation = t.Item2;
 				}
-				return runningTotal;
+				_result = runningTotal;
 			}
-			else
-			{
-				return (decimal)_result;
-			}
+		
+			return (decimal)_result;			
 		}
 
 		public override string ToString()

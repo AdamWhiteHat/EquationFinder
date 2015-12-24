@@ -17,7 +17,7 @@ namespace EquationFinder_Console
 
 		private List<string> previousfoundResults { get; set; }
 
-		public EquationFinderArgs equationArgs { get; set; }
+		public IEquationFinderArgs equationArgs { get; set; }
 		public ThreadSpawnerArgs threadArgs { get; set; }
 
 		public MainRoutine(List<string> args)
