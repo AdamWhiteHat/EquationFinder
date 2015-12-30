@@ -32,13 +32,13 @@ namespace EquationFinderCore
 	{
 		public decimal TargetValue { get; set; }
 		public int NumberOfOperations { get; set; }
-		public string TermPool { get; set; }
+		public List<int> TermPool { get; set; }
 		public string OperatorPool { get; set; }
 		public Random Rand { get; private set; }
 
-		public EquationFinderArgs(decimal targetValue, int numOperations, string termPool, string operatorPool)
+		public EquationFinderArgs(decimal targetValue, int numOperations, List<int> termPool, string operatorPool)
 		{
-			if (string.IsNullOrWhiteSpace(termPool))
+			if (termPool == null || termPool.Count < 1)
 			{
 				throw new ArgumentException("termPool may not be empty or null.", "termPool");
 			}

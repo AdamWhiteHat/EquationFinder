@@ -27,7 +27,7 @@ namespace EquationFactories
 
 		IEquationFinderArgs EquationArgs { get; set; }
 		List<Tuple<decimal, TupleOperation>> Equation { get; set; }
-		string TermPool { get { return EquationArgs.TermPool; } }
+		List<int> TermPool { get { return EquationArgs.TermPool; } }
 		string OperatorPool { get { return EquationArgs.OperatorPool; } }
 		decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
@@ -65,13 +65,15 @@ namespace EquationFactories
 
 			int counter = 1;
 			decimal term = 0;
+			int termCount = TermPool.Count;
+			int opCount = OperatorPool.Length;
 			TupleOperation operation = new TupleOperation();
 			OperandType lastOperand = OperandType.None;
 			while (counter <= NumberOfOperations)
 			{
 				do
 				{
-					term = Convert.ToDecimal(TermPool.ElementAt(EquationArgs.Rand.Next(0, TermPool.Length)).ToString());
+					term = Convert.ToDecimal(TermPool[EquationArgs.Rand.Next(0, termCount)]);
 				}
 				while (lastOperand == OperandType.Divide && term == 0);
 
@@ -81,7 +83,7 @@ namespace EquationFactories
 				}
 				else
 				{
-					operation = new TupleOperation(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, OperatorPool.Length)).ToString());
+					operation = new TupleOperation(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, opCount)).ToString());
 				}
 
 				result.Add(new Tuple<decimal, TupleOperation>(term, operation));

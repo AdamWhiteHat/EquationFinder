@@ -33,7 +33,7 @@ namespace EquationFinder_GUI
 		long lastSolutionCount { get; set; }
 		static string findButtonText = "Find Solution";
 		static string cancelButtonText = "Stop Searching";
-		string TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
+		List<int> TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
 		string OperatorPool { get { return GetOperatorPool(); } }
 		int maxTerm { get { return Convert.ToInt32(tbOperandMax.Text); } }
 		decimal targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
@@ -93,7 +93,7 @@ namespace EquationFinder_GUI
 
 		void BeginSearch()
 		{		
-			if (string.IsNullOrWhiteSpace(TermPool))
+			if (TermPool == null || TermPool.Count < 1)
 			{
 				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
@@ -205,15 +205,15 @@ namespace EquationFinder_GUI
 				}				
 
 				StringBuilder stats = new StringBuilder();
-				stats.AppendLine("TOTAL");
-				stats.Append("\tEquations generated: ");
+				stats.AppendLine("TOTAL:");
+				stats.Append("  Equations generated: ");
 				stats.AppendLine(TotalEquationsGenerated.ToString());
-				stats.Append("\tSolutions found:     ");
+				stats.Append("  Solutions found:     ");
 				stats.AppendLine(TotalSolutionsFound.ToString());
-				stats.AppendLine("THIS ROUND");
-				stats.Append("\tEquations generated: ");
+				stats.AppendLine("THIS ROUND:");
+				stats.Append("  Equations generated: ");
 				stats.AppendLine(RoundEquationsGenerated.ToString());
-				stats.Append("\tNew solutions:       ");
+				stats.Append("  New solutions:       ");
 				stats.Append(RoundSolutionsFound);
 
 				tbStats.Text = stats.ToString();
@@ -253,25 +253,25 @@ namespace EquationFinder_GUI
 			return result.ToString();
 		}
 
-		private string GetTermPool(bool IncludeZero = false)
+		private List<int> GetTermPool(bool IncludeZero = false)
 		{
 			int minTerm = IncludeZero ? -1 : 0;
-			StringBuilder result = new StringBuilder();
+			List<int> result = new List<int>();
 
 			if (radioRandom.Checked)
 			{
 				int counter = maxTerm;
 				while (counter > minTerm)
 				{
-					result.Append(counter--);
+					result.Add(counter--);
 				}
 			}
 			else
 			{
-				result = result.Append(maxTerm);
+				result.Add(maxTerm);
 			}
 
-			return result.ToString();
+			return result;
 		}
 
 		#endregion

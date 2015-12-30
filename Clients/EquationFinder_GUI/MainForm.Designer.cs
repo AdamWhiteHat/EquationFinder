@@ -36,10 +36,10 @@ namespace EquationFinder_GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Addition");
-			System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Subtraction");
-			System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Multiplication");
-			System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Division");
+			System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Addition");
+			System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Subtraction");
+			System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Multiplication");
+			System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Division");
 			this.btnFindSolution = new System.Windows.Forms.Button();
 			this.tbOutput = new System.Windows.Forms.TextBox();
 			this.tbOperandQuantity = new System.Windows.Forms.TextBox();
@@ -264,7 +264,7 @@ namespace EquationFinder_GUI
 			// tbOperandMax
 			// 
 			this.tbOperandMax.Location = new System.Drawing.Point(70, 36);
-			this.tbOperandMax.MaxLength = 4;
+			this.tbOperandMax.MaxLength = 5;
 			this.tbOperandMax.Name = "tbOperandMax";
 			this.tbOperandMax.Size = new System.Drawing.Size(40, 20);
 			this.tbOperandMax.TabIndex = 1;
@@ -310,12 +310,12 @@ namespace EquationFinder_GUI
 			// listboxOperators
 			// 
 			this.listboxOperators.HideSelection = false;
-			listViewItem5.StateImageIndex = 0;
+			listViewItem1.StateImageIndex = 0;
 			this.listboxOperators.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4});
 			this.listboxOperators.Location = new System.Drawing.Point(10, 18);
 			this.listboxOperators.Name = "listboxOperators";
 			this.listboxOperators.Size = new System.Drawing.Size(82, 78);
@@ -327,12 +327,12 @@ namespace EquationFinder_GUI
 			// 
 			this.tbStats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.tbStats.BackColor = System.Drawing.SystemColors.Control;
-			this.tbStats.Location = new System.Drawing.Point(459, 33);
+			this.tbStats.Location = new System.Drawing.Point(459, 31);
 			this.tbStats.Name = "tbStats";
-			this.tbStats.Size = new System.Drawing.Size(221, 90);
+			this.tbStats.Size = new System.Drawing.Size(221, 92);
 			this.tbStats.TabIndex = 8;
-			this.tbStats.Text = "TOTAL:\r\n  Equations generated: 000000\r\n  Solutions found: 000000\r\nTHIS ROUND:\r\n  " +
-    "Equations generated: 000000\r\n  New solutions: 000000\r\n";
+			this.tbStats.Text = "TOTAL:\r\n  Equations generated: 0\r\n  Solutions found: 0\r\nTHIS ROUND:\r\n  Equations " +
+    "generated: 0\r\n  New solutions: 0";
 			this.tbStats.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.tbStats.UseCompatibleTextRendering = true;
 			// 

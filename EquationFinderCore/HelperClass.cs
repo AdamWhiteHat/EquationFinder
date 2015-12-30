@@ -50,16 +50,19 @@ namespace EquationFinderCore
 			List<string> operators = new List<string>(EquationArgs.NumberOfOperations);
 			List<string> terms = new List<string>(EquationArgs.NumberOfOperations);
 
+			int termCount = EquationArgs.TermPool.Count;
+			int opCount = EquationArgs.OperatorPool.Length;
+
 			int counter = EquationArgs.NumberOfOperations - 1;
 			while (counter-- > 0)
 			{
-				operators.Add(EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.OperatorPool.Length)).ToString());
+				operators.Add(EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, opCount)).ToString());
 			}
 
 			counter = EquationArgs.NumberOfOperations;
 			while (counter-- > 0)
 			{
-				terms.Add(EquationArgs.TermPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.TermPool.Length)).ToString());
+				terms.Add(EquationArgs.TermPool.ElementAt(EquationArgs.Rand.Next(0, termCount)).ToString());
 			}
 
 			counter = 0;

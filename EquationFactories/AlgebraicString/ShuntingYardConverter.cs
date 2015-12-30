@@ -27,7 +27,7 @@ namespace EquationFactories
 
 		public static bool IsNumeric(string text)
 		{
-			if (!string.IsNullOrWhiteSpace(text))
+			if (string.IsNullOrWhiteSpace(text))
 			{
 				return false;
 			}
@@ -150,7 +150,7 @@ namespace EquationFactories
 				}
 				else
 				{
-					throw new Exception(string.Format("String '{0}' is not numeric and has a length greater than 1."));
+					throw new Exception(string.Format("String '{0}' is not numeric and has a length greater than 1.", token));
 				}
 			} // foreach
 

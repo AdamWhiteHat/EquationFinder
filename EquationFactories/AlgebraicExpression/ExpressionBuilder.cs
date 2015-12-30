@@ -90,12 +90,17 @@ namespace EquationFactories
 
 		#region PRIVATE METHODS
 
+		private int termCount { get; set; }
+		private int opCount { get; set; }
 		private Expression GenerateExpression()
 		{
 			if (EquationArgs == null)
 			{
 				throw new Exception("EquationArgs must be initialized and not null.");
 			}
+
+			termCount = EquationArgs.TermPool.Count;
+			opCount = EquationArgs.OperatorPool.Length;
 
 			Expression result = GenerateRandomConstant();
 
@@ -113,7 +118,7 @@ namespace EquationFactories
 			Expression rhs = Expression.Empty();
 			rhs = GenerateRandomConstant();
 
-			string randomOperation = EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.OperatorPool.Length)).ToString();
+			string randomOperation = EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, opCount)).ToString();
 			switch (randomOperation)
 			{
 				case "+":
@@ -140,13 +145,7 @@ namespace EquationFactories
 
 		private T GetRandomDecimal()
 		{
-			string randomTerm = EquationArgs.TermPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.TermPool.Length)).ToString();
-
-			int term = 0;
-			if (!int.TryParse(randomTerm, out term))
-			{
-				throw new InvalidCastException(string.Format("Cannot convert from type {0} to type Int32.", typeof(T).Name));
-			}
+			int term = EquationArgs.TermPool[EquationArgs.Rand.Next(0, termCount)];			
 			_lastTerm = term;
 
 			return (T)Convert.ChangeType(term, typeof(T));

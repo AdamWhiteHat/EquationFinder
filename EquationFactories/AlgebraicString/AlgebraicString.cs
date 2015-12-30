@@ -18,7 +18,7 @@ namespace EquationFactories
 	{
 		IEquationFinderArgs EquationArgs { get; set; }
 		string Equation { get; set; }
-		string TermPool { get { return EquationArgs.TermPool; } }
+		List<int> TermPool { get { return EquationArgs.TermPool; } }
 		string OperatorPool { get { return EquationArgs.OperatorPool; } }
 		decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }

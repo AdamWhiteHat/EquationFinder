@@ -55,7 +55,23 @@ namespace EquationFinder_Console
 
 		public void Find()
 		{
-			equationArgs = new  EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, Settings.Term_Pool, Settings.Operand_Pool);
+			if (string.IsNullOrWhiteSpace(Settings.Term_Pool))
+			{
+				throw new Exception("Setting TermPool is empty. Check the configuration file, and set the AppSetting value to a comma delimited list of allowed values for the key \"Term.Pool\".");
+			}
+
+			int parseOut = 0;
+			List<int> termPool = new List<int>();
+			foreach (string term in Settings.Term_Pool.Split(','))
+			{
+				parseOut = 0;
+				if (int.TryParse(term, out parseOut))
+				{
+					termPool.Add(parseOut);					
+				}
+			}
+
+			equationArgs = new  EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, termPool, Settings.Operand_Pool);
 			threadArgs = new ThreadSpawnerArgs(previousfoundResults, LogSolution, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Round_Quantity, equationArgs);
 
 			ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>(threadArgs);

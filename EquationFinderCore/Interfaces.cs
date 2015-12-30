@@ -27,7 +27,7 @@ namespace EquationFinderCore
 
 	public interface IEquationFinderArgs
 	{
-		string TermPool { get; }
+		List<int> TermPool { get; }
 		string OperatorPool { get; }
 		decimal TargetValue { get; }
 		int NumberOfOperations { get; }
