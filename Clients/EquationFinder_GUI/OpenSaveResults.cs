@@ -75,8 +75,7 @@ namespace EquationFinder_GUI
 				}
 
 				IsDirty = false;
-				EquationsGeneratedThisRound = 0;
-				TotalEquationsGenerated = 0;
+				ResetStats();
 				DisplayStats();
 			}
 
@@ -98,8 +97,7 @@ namespace EquationFinder_GUI
 					{
 						tbOutput.Text = string.Empty;
 					}
-					EquationsGeneratedThisRound = 0;
-					TotalEquationsGenerated = 0;
+					ResetStats();					
 					DisplayStats();
 				}
 			}

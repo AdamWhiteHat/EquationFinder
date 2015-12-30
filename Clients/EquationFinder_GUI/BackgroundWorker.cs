@@ -35,8 +35,8 @@ namespace EquationFinder_GUI
 					equationFinder.Run();
 
 					// Stats
-					EquationsGeneratedThisRound = equationFinder.TotalEquationsGenerated;
-					TotalEquationsGenerated += EquationsGeneratedThisRound;
+					RoundEquationsGenerated = equationFinder.TotalEquationsGenerated;
+					TotalEquationsGenerated += RoundEquationsGenerated;
 					DisplayStats();
 				}
 			}

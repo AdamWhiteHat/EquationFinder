@@ -26,45 +26,32 @@ namespace EquationFinder_GUI
 
 		bool IsDirty = false;
 		bool isSearching = false;
-		long TotalEquationsGenerated;
-		long EquationsGeneratedThisRound;	
+		long TotalEquationsGenerated { get; set; }		
+		long RoundEquationsGenerated { get; set; }
+		long TotalSolutionsFound { get; set; }
+		long RoundSolutionsFound { get; set; }
+		long lastSolutionCount { get; set; }
 		static string findButtonText = "Find Solution";
 		static string cancelButtonText = "Stop Searching";
 		string TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
 		string OperatorPool { get { return GetOperatorPool(); } }
-		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
-		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
-		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
+		int maxTerm { get { return Convert.ToInt32(tbOperandMax.Text); } }
+		decimal targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
+		int numberOfOperations { get { return HelperClass.String2Int(tbOperandQuantity.Text); } }
 		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
 		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
 		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
 
 		public MainForm()
 		{
-			InitializeComponent();
-
-			TotalEquationsGenerated = 0;
-			EquationsGeneratedThisRound = 0;
-
-			int numOps = 9;//StaticRandom.Instance.Next(3, 9);
-			//int maxPossible = numOps * (MaxIntValue);
-			int targetVal = 27;//StaticRandom.Instance.Next(1, maxPossible + 1);
-
-			tbTargetValue.Text = targetVal.ToString();
-			tbNumberOperations.Text = numOps.ToString();
-			tbTTL.Text = "6";
-			radioRandom.Checked = true;
-			tbTerm.Text = "9";
-
-			listOperators.Items[0].Selected = true;
-			listOperators.Items[1].Selected = true;
-			listOperators.Items[2].Selected = true;
+			InitializeComponent();						
+			listboxOperators.Items[0].Selected = true;		
 		}
 
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
-			tbNumberOperations.TextChanged += new EventHandler(this.OnParametersChanged);
-			tbTargetValue.TextChanged += new EventHandler(this.OnParametersChanged);
+			tbOperandQuantity.TextChanged += new EventHandler(this.OnParametersChanged);
+			tbGoal.TextChanged += new EventHandler(this.OnParametersChanged);
 			DisplayStats();
 		}
 
@@ -190,17 +177,47 @@ namespace EquationFinder_GUI
 			}
 		}
 
+		void ResetStats()
+		{
+			lastSolutionCount = 0;
+			TotalEquationsGenerated = 0;
+			TotalSolutionsFound = 0;
+			RoundEquationsGenerated = 0;
+			RoundSolutionsFound = 0;
+		}
+
 		void DisplayStats()
 		{
-			string statsString = string.Format("Equations generated this round: {1}{0}" +
-												"Equations generated total: {2}", Environment.NewLine,
-												EquationsGeneratedThisRound, TotalEquationsGenerated);
 			if (tbStats.InvokeRequired)
 			{
-				tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
-				return;
+				tbStats.Invoke(new MethodInvoker(delegate { DisplayStats(); }));
 			}
-			tbStats.Text = statsString;
+			else
+			{
+				tbOutput.Text = tbOutput.Text.TrimEnd(new char[] { '\r', '\n' });
+				TotalSolutionsFound = tbOutput.Lines.Count();
+				RoundSolutionsFound = TotalSolutionsFound - lastSolutionCount;
+				lastSolutionCount = TotalSolutionsFound;
+
+				if (RoundSolutionsFound < 0)
+				{
+					RoundSolutionsFound = 0;
+				}				
+
+				StringBuilder stats = new StringBuilder();
+				stats.AppendLine("TOTAL");
+				stats.Append("\tEquations generated: ");
+				stats.AppendLine(TotalEquationsGenerated.ToString());
+				stats.Append("\tSolutions found:     ");
+				stats.AppendLine(TotalSolutionsFound.ToString());
+				stats.AppendLine("THIS ROUND");
+				stats.Append("\tEquations generated: ");
+				stats.AppendLine(RoundEquationsGenerated.ToString());
+				stats.Append("\tNew solutions:       ");
+				stats.Append(RoundSolutionsFound);
+
+				tbStats.Text = stats.ToString();
+			}
 		}
 
 		#endregion
@@ -212,7 +229,7 @@ namespace EquationFinder_GUI
 		private string GetOperatorPool()
 		{
 			StringBuilder result = new StringBuilder();
-			foreach (ListViewItem item in listOperators.SelectedItems)
+			foreach (ListViewItem item in listboxOperators.SelectedItems)
 			{
 				switch (item.Text)
 				{
