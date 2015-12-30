@@ -65,8 +65,8 @@ namespace EquationFactories
 		{
 			if (_result == null)
 			{
-				//_result = InfixNotationParser.Parse(Equation);
-				_result = StaticScriptControl.Evaluate(Equation);
+				_result = InfixNotationParser.Parse(Equation);
+				//_result = StaticScriptControl.Evaluate(Equation);
 			}
 				
 			return (decimal)_result;			
