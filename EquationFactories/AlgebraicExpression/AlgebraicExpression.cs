@@ -21,23 +21,24 @@ namespace EquationFactories
 		public AlgebraicExpression()
 		{
 		}
-		
-		public void SetArgs(IEquationFinderArgs args)
+
+		public AlgebraicExpression(IEquationFinderArgs args)
 		{
-			if (_equationArgs == null)
+			GenerateNewAndEvaluate(args);
+		}		
+
+		public void GenerateNewAndEvaluate(IEquationFinderArgs args)
+		{
+			if (args == null)
 			{
-				_equationArgs = default(IEquationFinderArgs);
-				if (args == null)
-				{
-					throw new ArgumentNullException("args");
-				}
+				throw new ArgumentNullException("args");
+			}
+			if (_equationArgs == null)
+			{				
 				_equationArgs = args;
 			}
-		}
+			_builder = new ExpressionBuilder<decimal>(args);
 
-		public void GenerateNewAndEvaluate()
-		{			
-			_builder = new ExpressionBuilder<decimal>(_equationArgs);
 
 			IsSolution = (Result == _equationArgs.TargetValue);
 		}

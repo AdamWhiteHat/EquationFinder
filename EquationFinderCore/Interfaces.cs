@@ -18,8 +18,7 @@ namespace EquationFinderCore
 
 	public interface IEquation
 	{
-		void SetArgs(IEquationFinderArgs args);
-		void GenerateNewAndEvaluate();
+		void GenerateNewAndEvaluate(IEquationFinderArgs args);
 		bool IsSolution { get; }
 		decimal Result { get; }
 		string ToString();
@@ -32,5 +31,51 @@ namespace EquationFinderCore
 		decimal TargetValue { get; }
 		int NumberOfOperations { get; }
 		Random Rand { get; }
-	}	
+	}
+
+	public enum OperationType
+	{
+		Equal = 0,
+		Add = 1,
+		Subtract = 2,
+		Multiply = 3,
+		Divide = 4,
+		Raise = 5,
+		None = 6
+	}
+
+
+	public class MathSystem
+	{
+
+
+		public interface IExpresionGenerator
+		{
+			IEquation GenerateExpression(IExpresionGeneratorArgs args);
+		}
+
+		public interface IEquationSolver
+		{
+		}
+
+
+		//public interface IEquationFinder
+		//{
+		//	  IExpression CreateEquation(IEquationFinderArgs args);
+		//	  IEquation SolveEquation(IEquation equation);
+		//	  
+		//	  string ToString();
+		//}
+
+		public interface IExpresionGeneratorArgs
+		{
+			  List<int> TermPool { get; }
+			  string OperatorPool { get; }
+			  int NumberOfOperations { get; }
+			  
+			  decimal TargetValue { get; }		
+		}
+
+
+	}
 }

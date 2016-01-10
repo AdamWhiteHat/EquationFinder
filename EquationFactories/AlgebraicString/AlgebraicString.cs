@@ -23,15 +23,7 @@ namespace EquationFactories
 		decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 		public bool IsCorrect { get { return (Result == TargetValue); } }
-
-		public decimal Result
-		{
-			get
-			{
-				if (_result == null) { _result = Solve(); }
-				return (decimal)_result;
-			}
-		}
+		public decimal Result { get { return Solve(); } }
 		private decimal? _result = null;
 
 		public AlgebraicString()
@@ -40,18 +32,13 @@ namespace EquationFactories
 
 		public AlgebraicString(IEquationFinderArgs equationArgs)
 		{
-			SetArgs(equationArgs);
+			GenerateNewAndEvaluate(equationArgs);
 		}
 
-		public void SetArgs(IEquationFinderArgs args)
-		{
-			EquationArgs = args;
-			GenerateNewAndEvaluate();
-		}
-
-		public void GenerateNewAndEvaluate()
+		public void GenerateNewAndEvaluate(IEquationFinderArgs equationArgs)
 		{
 			_result = null;
+			EquationArgs = equationArgs;
 			Equation = HelperClass.GenerateRandomEquation(EquationArgs);
 			Solve();
 		}
@@ -67,9 +54,8 @@ namespace EquationFactories
 			{
 				_result = InfixNotationParser.Parse(Equation);
 				//_result = StaticScriptControl.Evaluate(Equation);
-			}
-				
-			return (decimal)_result;			
+			}				
+			return (decimal)_result;
 		}
 
 		public override string ToString()

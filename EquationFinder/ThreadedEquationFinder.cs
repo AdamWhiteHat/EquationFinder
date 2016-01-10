@@ -56,12 +56,11 @@ namespace EquationFinder
 				Age.Start();
 
 				IEquation currentEquation = (IEquation)new TEquation();
-				currentEquation.SetArgs(threadArgs.EquationFinderArgs);
 
 				int maxResults = 300;
 				while (Age.ElapsedMilliseconds < maxMilliseconds)
 				{
-					currentEquation.GenerateNewAndEvaluate();
+					currentEquation.GenerateNewAndEvaluate(threadArgs.EquationFinderArgs);
 					TotalEquationsGenerated += 1;
 
 					if (currentEquation.IsSolution) //if (currentEquation.Result == (decimal)threadArgs.EquationFinderArgs.TargetValue)

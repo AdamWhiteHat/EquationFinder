@@ -14,7 +14,7 @@ namespace EquationFactories
     /// </summary>
     public class TupleOperation : IOperation
     {
-        public OperandType Operand { get; set; }
+        public OperationType Operand { get; set; }
 				
         public TupleOperation() : this(HelperClass.AlgebraicOperators[StaticRandom.Instance.Next(0,HelperClass.AlgebraicOperators.Length)].ToString() )
         {
@@ -25,20 +25,20 @@ namespace EquationFactories
 			this.Operand = Parse(operation);
 		}
 
-		public static OperandType Parse(string stringOperand)
+		public static OperationType Parse(string stringOperand)
 		{
 			switch (stringOperand)
 			{
 				case "+":
-					return OperandType.Add;
+					return OperationType.Add;
 				case "-":
-					return OperandType.Subtract;
+					return OperationType.Subtract;
 				case "*":
-					return OperandType.Multiply;
+					return OperationType.Multiply;
 				case "/":
-					return OperandType.Divide;			
+					return OperationType.Divide;			
 				case "^":
-					return OperandType.Raise;
+					return OperationType.Raise;
 				
 				default:
 					throw new ArgumentException(
@@ -47,7 +47,7 @@ namespace EquationFactories
 			}						
 		}
 
-        public TupleOperation(OperandType operation)
+        public TupleOperation(OperationType operation)
         {
             this.Operand = operation;
         }
@@ -57,23 +57,23 @@ namespace EquationFactories
 			return TupleOperation.Calculate(Value1, Value2, Operand);
         }
 
-		public static decimal Calculate(decimal Value1, decimal Value2, OperandType Operation)
+		public static decimal Calculate(decimal Value1, decimal Value2, OperationType Operation)
 		{
 			switch (Operation)
 			{
-				case OperandType.Add:
+				case OperationType.Add:
 					return Value1 + Value2;
-				case OperandType.Subtract:
+				case OperationType.Subtract:
 					return Value1 - Value2;
-				case OperandType.Multiply:
+				case OperationType.Multiply:
 					return Value1 * Value2;
-				case OperandType.Divide:
+				case OperationType.Divide:
 					return Value1 / Value2;
-				case OperandType.Raise:
+				case OperationType.Raise:
 					return (decimal)Math.Pow((double)Value1, (double)Value2);
 				default:
 					throw new ArgumentException(
-						string.Format("OperandType \"{0}\" does not exist.", Enum.GetName(typeof(OperandType), Operation)),
+						string.Format("OperandType \"{0}\" does not exist.", Enum.GetName(typeof(OperationType), Operation)),
 						"Operation"
 					);
 			}
@@ -84,12 +84,12 @@ namespace EquationFactories
         {
 			switch (Operand)
 			{
-				case OperandType.Add: return "+";
-				case OperandType.Subtract: return "-";
-				case OperandType.Multiply: return "*";
-				case OperandType.Divide: return "/";
-				case OperandType.Raise: return "^";
-				case OperandType.Equal: return "=";
+				case OperationType.Add: return "+";
+				case OperationType.Subtract: return "-";
+				case OperationType.Multiply: return "*";
+				case OperationType.Divide: return "/";
+				case OperationType.Raise: return "^";
+				case OperationType.Equal: return "=";
 				default:
 					return " ";
 			}

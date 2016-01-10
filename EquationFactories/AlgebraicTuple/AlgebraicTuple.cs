@@ -38,18 +38,13 @@ namespace EquationFactories
 
 		public AlgebraicTuple(EquationFinderArgs equationArgs)
 		{
-			SetArgs(equationArgs);
-		}	
-
-		public void SetArgs(IEquationFinderArgs args)
-		{
-			EquationArgs = args;
-			GenerateNewAndEvaluate();
+			GenerateNewAndEvaluate(equationArgs);
 		}
-		
-		public void GenerateNewAndEvaluate()
-		{
+
+		public void GenerateNewAndEvaluate(IEquationFinderArgs args)
+		{			
 			_result = null;
+			EquationArgs = args;
 			Equation = GenerateRandomEquation();
 			Solve();
 		}
@@ -68,18 +63,18 @@ namespace EquationFactories
 			int termCount = TermPool.Count;
 			int opCount = OperatorPool.Length;
 			TupleOperation operation = new TupleOperation();
-			OperandType lastOperand = OperandType.None;
+			OperationType lastOperand = OperationType.None;
 			while (counter <= NumberOfOperations)
 			{
 				do
 				{
 					term = Convert.ToDecimal(TermPool[EquationArgs.Rand.Next(0, termCount)]);
 				}
-				while (lastOperand == OperandType.Divide && term == 0);
+				while (lastOperand == OperationType.Divide && term == 0);
 
 				if (counter == NumberOfOperations)
 				{
-					operation = new TupleOperation(OperandType.Equal);
+					operation = new TupleOperation(OperationType.Equal);
 				}
 				else
 				{
@@ -98,11 +93,11 @@ namespace EquationFactories
 		{
 			if (_result == null)
 			{
-				TupleOperation lastOperation = new TupleOperation(OperandType.None);
+				TupleOperation lastOperation = new TupleOperation(OperationType.None);
 				decimal runningTotal = 0;
 				foreach (Tuple<decimal, TupleOperation> t in Equation)
 				{
-					if (lastOperation.Operand == OperandType.None)
+					if (lastOperation.Operand == OperationType.None)
 					{
 						runningTotal = (decimal)t.Item1;
 					}
