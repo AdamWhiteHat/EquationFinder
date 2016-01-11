@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgebraicExpression2.cs" />
     <Compile Include="AlgebraicExpression.cs" />
     <Compile Include="ExpressionBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

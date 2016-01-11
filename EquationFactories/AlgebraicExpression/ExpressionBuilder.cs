@@ -83,7 +83,7 @@ namespace EquationFactories
 
 		public override string ToString()
 		{
-			return string.Format(CultureInfo.CurrentCulture,"{0,13:0.######} = {1}", Result, Expression.ToString().Replace("(", "").Replace(")", ""));
+			return string.Format(CultureInfo.CurrentCulture, "{0} = {1:0.######}", Expression.ToString().Replace("(", "").Replace(")", ""), Result);
 		}
 
 		
