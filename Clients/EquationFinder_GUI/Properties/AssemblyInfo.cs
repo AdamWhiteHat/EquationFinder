@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("www.csharpprogramming.tips")]
 [assembly: AssemblyProduct("EquationFinder_GUI")]
-[assembly: AssemblyCopyright("Copyright © Adam Rakaska 2015")]
+[assembly: AssemblyCopyright("Copyright © Adam Rakaska 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
