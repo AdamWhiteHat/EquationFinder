@@ -5,7 +5,6 @@
  * 
  */
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -19,28 +18,28 @@ using System.Drawing;
 namespace EquationFinder_GUI
 {
 	public partial class MainForm : Form
-	{		
-		EquationFinderArgs equationArgs { get; set; }
-		ThreadSpawnerArgs threadArgs { get; set; }
-		ThreadedEquationFinder<AlgebraicString> equationFinder { get; set; }
+	{
+		private EquationFinderArgs equationArgs { get; set; }
+		private ThreadSpawnerArgs threadArgs { get; set; }
+		private ThreadedEquationFinder<AlgebraicExpression2> equationFinder { get; set; }
 
-		bool IsDirty = false;
-		bool isSearching = false;
-		long TotalEquationsGenerated { get; set; }		
-		long RoundEquationsGenerated { get; set; }
-		long TotalSolutionsFound { get; set; }
-		long RoundSolutionsFound { get; set; }
-		long lastSolutionCount { get; set; }
-		static string findButtonText = "Find Solution";
-		static string cancelButtonText = "Stop Searching";
-		List<int> TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
-		string OperatorPool { get { return GetOperatorPool(); } }
-		int maxTerm { get { return Convert.ToInt32(tbOperandMax.Text); } }
-		decimal targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
-		int numberOfOperations { get { return HelperClass.String2Int(tbOperandQuantity.Text); } }
-		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
-		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
-		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
+		private bool IsDirty = false;
+		private bool isSearching = false;
+		private long TotalEquationsGenerated { get; set; }
+		private long RoundEquationsGenerated { get; set; }
+		private long TotalSolutionsFound { get; set; }
+		private long RoundSolutionsFound { get; set; }
+		private long lastSolutionCount { get; set; }
+		private static string findButtonText = "Find Solution";
+		private static string cancelButtonText = "Stop Searching";
+		private List<int> TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
+		private string OperatorPool { get { return GetOperatorPool(); } }
+		private int maxTerm { get { return Convert.ToInt32(tbOperandMax.Text); } }
+		private decimal targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
+		private int numberOfOperations { get { return HelperClass.String2Int(tbOperandQuantity.Text); } }
+		private int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
+		private int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
+		private int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
 
 		public MainForm()
 		{
@@ -56,7 +55,7 @@ namespace EquationFinder_GUI
 		}
 
 
-		void BtnSaveClick(object sender, EventArgs e)
+		private void BtnSaveClick(object sender, EventArgs e)
 		{
 			SaveWork();
 		}
@@ -64,14 +63,14 @@ namespace EquationFinder_GUI
 		#region Equation search toggling
 
 		///<summary>enabled = make visible</summary>
-		void ToggleControlsVisibility(bool enabled)
+		private void ToggleControlsVisibility(bool enabled)
 		{
 				isSearching = !enabled;
 				btnFindSolution.Text = isSearching ? cancelButtonText : findButtonText;
 				btnFindSolution.BackColor = isSearching ? Color.MistyRose : Color.LightGreen;		
 		}
 
-		void BtnFindSolutionClick(object sender, EventArgs e)
+		private void BtnFindSolutionClick(object sender, EventArgs e)
 		{
 			if (isSearching)
 			{
@@ -83,7 +82,7 @@ namespace EquationFinder_GUI
 			}
 		}
 
-		void CancelSearch()
+		private void CancelSearch()
 		{
 			if (isSearching && !equationFinder.CancellationPending)
 			{
@@ -91,7 +90,7 @@ namespace EquationFinder_GUI
 			}
 		}
 
-		void BeginSearch()
+		private void BeginSearch()
 		{		
 			if (TermPool == null || TermPool.Count < 1)
 			{
@@ -128,7 +127,7 @@ namespace EquationFinder_GUI
 
 		#region Display Solution Logic
 
-		void DisplaySolution(string foundSolution)
+		private void DisplaySolution(string foundSolution)
 		{
 			if (tbOutput.InvokeRequired)
 			{
@@ -147,37 +146,43 @@ namespace EquationFinder_GUI
 
 		private string[] GetOutputLines()
 		{
-			if (tbOutput.Lines.Length < 1)
-			{
-				return new string[] { };
-			}
 			if (tbOutput.InvokeRequired)
 			{
-				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return tbOutput.Lines; }));
+				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return GetOutputLines(); }));
 			}
 			else
 			{
-				return tbOutput.Lines;
+				if (tbOutput.Lines.Length < 1)
+				{
+					return new string[] { };
+				}
+				else
+				{
+					return tbOutput.Lines;
+				}
 			}
 		}
 
 		private string GetOutputText()
 		{
-			if (tbOutput.Text.Length < 1)
-			{
-				return "";
-			}
 			if (tbOutput.InvokeRequired)
 			{
-				return (string)tbOutput.Invoke(new Func<string>(delegate { return tbOutput.Text; }));
+				return (string)tbOutput.Invoke(new Func<string>(delegate { return GetOutputText(); }));
 			}
 			else
 			{
-				return tbOutput.Text;
+				if (tbOutput.Text.Length < 1)
+				{
+					return "";
+				}
+				else
+				{
+					return tbOutput.Text;
+				}
 			}
 		}
 
-		void ResetStats()
+		private void ResetStats()
 		{
 			lastSolutionCount = 0;
 			TotalEquationsGenerated = 0;
@@ -186,7 +191,7 @@ namespace EquationFinder_GUI
 			RoundSolutionsFound = 0;
 		}
 
-		void DisplayStats()
+		private void DisplayStats()
 		{
 			if (tbStats.InvokeRequired)
 			{
@@ -275,9 +280,7 @@ namespace EquationFinder_GUI
 		}
 
 		#endregion
-
-
-
+		
 	}
 }
 

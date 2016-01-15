@@ -4,12 +4,7 @@
  *  http://www.csharpprogramming.tips
  * 
  */
-using System;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 using EquationFinder;
 using EquationFactories;
@@ -30,7 +25,7 @@ namespace EquationFinder_GUI
 				{
 					IsDirty = true;
 
-					equationFinder = new ThreadedEquationFinder<AlgebraicString>((ThreadSpawnerArgs)e.Argument);
+					equationFinder = new ThreadedEquationFinder<AlgebraicExpression2>((ThreadSpawnerArgs)e.Argument);
 
 					equationFinder.Run();
 
