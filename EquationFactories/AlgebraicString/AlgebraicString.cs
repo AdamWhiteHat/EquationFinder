@@ -16,19 +16,18 @@ namespace EquationFactories
 {
 	public partial class AlgebraicString : IEquation
 	{
-		IEquationFinderArgs EquationArgs { get; set; }
-		string Equation { get; set; }
-		List<int> TermPool { get { return EquationArgs.TermPool; } }
-		string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		decimal TargetValue { get { return EquationArgs.TargetValue; } }
-		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 		public bool IsCorrect { get { return (Result == TargetValue); } }
 		public decimal Result { get { return Solve(); } }
 		private decimal? _result = null;
-
+		private string Equation { get; set; }
+		private IEquationFinderArgs EquationArgs { get; set; }		
+		private List<int> TermPool { get { return EquationArgs.TermPool; } }
+		private string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		private decimal TargetValue { get { return EquationArgs.TargetValue; } }
+		private int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
+		
 		public AlgebraicString()
-		{
-		}
+		{ }
 
 		public AlgebraicString(IEquationFinderArgs equationArgs)
 		{
@@ -46,15 +45,15 @@ namespace EquationFactories
 		public bool IsSolution
 		{
 			get { return (Result == TargetValue); }
-		}		
+		}
 
-		decimal Solve()
+		private decimal Solve()
 		{
 			if (_result == null)
 			{
 				_result = InfixNotationParser.Parse(Equation);
 				//_result = StaticScriptControl.Evaluate(Equation);
-			}				
+			}
 			return (decimal)_result;
 		}
 

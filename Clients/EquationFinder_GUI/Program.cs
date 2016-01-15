@@ -33,17 +33,17 @@ namespace EquationFinder_GUI
 
 		private static string ExceptionFileName = "Exception.log.txt";
 
-		static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+		private static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
 		{
 			HandleException((Exception)e.Exception, "FirstChanceException");
 		}
 
-		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			HandleException((Exception)e.ExceptionObject, "UnhandledException");
 		}
 
-		static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+		private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
 			HandleException((Exception)e.Exception, "ThreadException");
 		}

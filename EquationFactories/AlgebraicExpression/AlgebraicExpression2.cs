@@ -13,10 +13,11 @@ namespace EquationFactories
 	public class AlgebraicExpression2 : IEquation
 	{
 		public bool IsSolution { get { return (Result == EquationArgs.TargetValue); } }
-		IEquationFinderArgs EquationArgs { get; set; }
-		Expression Equation { get; set; }
 		public decimal Result { get { return Solve(); } }
 		private decimal? _result = null;
+		private IEquationFinderArgs EquationArgs { get; set; }
+		private Expression Equation { get; set; }
+		
 
 		public static Dictionary<char, Func<Expression, Expression, Expression>> OperationTypeDictionary = new Dictionary<char, Func<Expression, Expression, Expression>>()
 		{
@@ -27,8 +28,8 @@ namespace EquationFactories
 			{'^', Expression.Power}
 		};
 
-		decimal _lastTerm = 0;
-		decimal GenerateTerm
+		private decimal _lastTerm = 0;
+		private decimal GenerateTerm
 		{
 			get 
 			{
@@ -37,8 +38,8 @@ namespace EquationFactories
 			}
 		}
 
-		char _lastOperation = '\0';
-		Func<Expression, Expression, Expression> GenerateOperator
+		private char _lastOperation = '\0';
+		private Func<Expression, Expression, Expression> GenerateOperator
 		{
 			get 
 			{
@@ -53,8 +54,7 @@ namespace EquationFactories
 		}
 
 		public AlgebraicExpression2()
-		{
-		}
+		{ }
 
 		public AlgebraicExpression2(IEquationFinderArgs args)
 		{
@@ -112,7 +112,7 @@ namespace EquationFactories
 			int i = 0;
 		}
 
-		decimal Solve()
+		private decimal Solve()
 		{
 			if (_result == null)
 			{

@@ -6,20 +6,13 @@
  */
 using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using EquationFinder;
-using EquationFactories;
-using EquationFinderCore;
-using System.Drawing;
 
 namespace EquationFinder_GUI
 {
 	public partial class MainForm : Form
 	{
-		DialogResult SaveWork()
+		private DialogResult SaveWork()
 		{
 			DialogResult dResult = saveFileDialog.ShowDialog();
 
@@ -40,12 +33,12 @@ namespace EquationFinder_GUI
 			return dResult;
 		}
 
-		void BtnOpenClick(object sender, EventArgs e)
+		private void BtnOpenClick(object sender, EventArgs e)
 		{
 			OpenWork();
 		}
 
-		DialogResult OpenWork()
+		private DialogResult OpenWork()
 		{
 			if (PromptToSaveWork() == DialogResult.Cancel)
 			{
@@ -83,7 +76,7 @@ namespace EquationFinder_GUI
 		}
 
 		// Clear found solutions when changing Target or # Operations
-		void OnParametersChanged(object sender, EventArgs e)
+		private void OnParametersChanged(object sender, EventArgs e)
 		{
 			if (!backgroundWorker_ThreadSpawner.IsBusy)
 			{
@@ -103,7 +96,7 @@ namespace EquationFinder_GUI
 			}
 		}
 
-		DialogResult PromptToSaveWork()
+		private DialogResult PromptToSaveWork()
 		{
 			if (!IsDirty || string.IsNullOrEmpty(GetOutputText()))
 			{

@@ -25,12 +25,12 @@ namespace EquationFactories
 		}
 		private decimal? _result = null;
 
-		IEquationFinderArgs EquationArgs { get; set; }
-		List<Tuple<decimal, TupleOperation>> Equation { get; set; }
-		List<int> TermPool { get { return EquationArgs.TermPool; } }
-		string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		decimal TargetValue { get { return EquationArgs.TargetValue; } }
-		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
+		private IEquationFinderArgs EquationArgs { get; set; }
+		private List<Tuple<decimal, TupleOperation>> Equation { get; set; }
+		private List<int> TermPool { get { return EquationArgs.TermPool; } }
+		private string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		private decimal TargetValue { get { return EquationArgs.TargetValue; } }
+		private int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 
 		public AlgebraicTuple()
 		{
@@ -54,7 +54,7 @@ namespace EquationFactories
 			get { return (Solve() == TargetValue); }
 		}
 
-		List<Tuple<decimal, TupleOperation>> GenerateRandomEquation()
+		private List<Tuple<decimal, TupleOperation>> GenerateRandomEquation()
 		{
 			List<Tuple<decimal, TupleOperation>> result = new List<Tuple<decimal, TupleOperation>>();
 
@@ -89,7 +89,7 @@ namespace EquationFactories
 			return result;
 		}
 
-		decimal Solve()
+		private decimal Solve()
 		{
 			if (_result == null)
 			{

@@ -10,16 +10,14 @@ namespace EquationFinder_Console
 {
 	public class MainRoutine
 	{
+		public ThreadSpawnerArgs threadArgs { get; set; }
+		public IEquationFinderArgs equationArgs { get; set; }
 		//BackgroundWorker bgWorker;
 		private string outputFilename;
+		private List<string> previousfoundResults { get; set; }
 		private static string settingsExceptionMessage = "<appSettings> must be configured in App.config file: {0}  key was missing or empty.";
 		private static string settingsExceptionArgument = "<appSettings><add key=\"{0}\" value=\"{1}\"/>";
-
-		private List<string> previousfoundResults { get; set; }
-
-		public IEquationFinderArgs equationArgs { get; set; }
-		public ThreadSpawnerArgs threadArgs { get; set; }
-
+		
 		public MainRoutine(List<string> args)
 		{
 			if (args.Count > 1)
