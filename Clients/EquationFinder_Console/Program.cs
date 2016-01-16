@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EquationFinder_Console
 {
-	private sealed class Program
+	sealed class Program
 	{
 		private static void Main(string[] args)
 		{
