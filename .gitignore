@@ -77,3 +77,4 @@ EquationFactories/AlgebraicSolver/bin/*
 *.cache
 *.vhost.*
 *.FileListAbsolute.txt
+/ProfilerOBJ.dll

@@ -23,6 +23,7 @@ namespace EquationFinder_GUI
 		private ThreadSpawnerArgs threadArgs { get; set; }
 		private ThreadedEquationFinder<AlgebraicExpression2> equationFinder { get; set; }
 
+		private Timer timerCollectResults;
 		private bool IsDirty = false;
 		private bool isSearching = false;
 		private long TotalEquationsGenerated { get; set; }
@@ -44,17 +45,35 @@ namespace EquationFinder_GUI
 		public MainForm()
 		{
 			InitializeComponent();						
-			listboxOperators.Items[0].Selected = true;		
+			listboxOperators.Items[0].Selected = true;
 		}
 
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
+			timerCollectResults = new Timer();
+			timerCollectResults.Interval = 200;
+			timerCollectResults.Tick += collectResults_Tick;
 			tbOperandQuantity.TextChanged += new EventHandler(this.OnParametersChanged);
 			tbGoal.TextChanged += new EventHandler(this.OnParametersChanged);
 			DisplayStats();
 		}
 
-
+		private void collectResults_Tick(object sender, EventArgs e)
+		{
+			if (!isSearching)
+			{
+				timerCollectResults.Stop();
+				return;
+			}
+			List<string> solutionDump = threadArgs.FoundSolutions.ToList();
+			string[] alreadyFound = GetOutputLines();
+			List<string> diffrence = solutionDump.Except(alreadyFound).ToList();
+			if (diffrence.Count > 0)
+			{
+				DisplaySolutions(diffrence);
+			}
+		}
+		
 		private void BtnSaveClick(object sender, EventArgs e)
 		{
 			SaveWork();
@@ -65,9 +84,22 @@ namespace EquationFinder_GUI
 		///<summary>enabled = make visible</summary>
 		private void ToggleControlsVisibility(bool enabled)
 		{
+			if (btnFindSolution.InvokeRequired)
+			{
+				btnFindSolution.Invoke(new MethodInvoker(() => ToggleControlsVisibility(enabled)));
+			}
+			else
+			{
+				if (!enabled)
+				{
+					RoundEquationsGenerated = 0;
+					RoundSolutionsFound = 0;
+					DisplayStats();
+				}
 				isSearching = !enabled;
 				btnFindSolution.Text = isSearching ? cancelButtonText : findButtonText;
-				btnFindSolution.BackColor = isSearching ? Color.MistyRose : Color.LightGreen;		
+				btnFindSolution.BackColor = isSearching ? Color.MistyRose : Color.LightGreen;
+			}
 		}
 
 		private void BtnFindSolutionClick(object sender, EventArgs e)
@@ -84,7 +116,7 @@ namespace EquationFinder_GUI
 
 		private void CancelSearch()
 		{
-			if (isSearching && !equationFinder.CancellationPending)
+			if (isSearching)
 			{
 				equationFinder.Cancel();
 			}
@@ -118,6 +150,7 @@ namespace EquationFinder_GUI
 			if (backgroundWorker_ThreadSpawner.IsBusy == false)
 			{
 				ToggleControlsVisibility(false);
+				timerCollectResults.Start();
 				backgroundWorker_ThreadSpawner.RunWorkerAsync(threadArgs);
 			}
 		}
@@ -127,20 +160,24 @@ namespace EquationFinder_GUI
 
 		#region Display Solution Logic
 
+		private void DisplaySolutions(IEnumerable<string> foundSolutions)
+		{
+			DisplaySolution(string.Join(Environment.NewLine, foundSolutions));
+		}
+
 		private void DisplaySolution(string foundSolution)
 		{
-			if (tbOutput.InvokeRequired)
+			if (string.IsNullOrWhiteSpace(foundSolution))
 			{
-				tbOutput.Invoke(new MethodInvoker(
-					delegate
-					{
-						tbOutput.Text = tbOutput.Text.Insert(0, string.IsNullOrWhiteSpace(foundSolution) ? "" : string.Concat(foundSolution,Environment.NewLine));
-					}
-				));
+				return;
+			}
+			else if (tbOutput.InvokeRequired)
+			{
+				tbOutput.Invoke(new Action<string>((fs) => DisplaySolution(fs)));
 			}
 			else
 			{
-				tbOutput.Text = tbOutput.Text.Insert(0, string.IsNullOrWhiteSpace(foundSolution) ? "" : string.Concat(foundSolution, Environment.NewLine));
+				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
 			}
 		}
 
@@ -148,7 +185,7 @@ namespace EquationFinder_GUI
 		{
 			if (tbOutput.InvokeRequired)
 			{
-				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return GetOutputLines(); }));
+				return (string[])tbOutput.Invoke(new Func<string[]>(() => GetOutputLines()));
 			}
 			else
 			{
@@ -167,7 +204,7 @@ namespace EquationFinder_GUI
 		{
 			if (tbOutput.InvokeRequired)
 			{
-				return (string)tbOutput.Invoke(new Func<string>(delegate { return GetOutputText(); }));
+				return (string)tbOutput.Invoke(new Func<string>(() => GetOutputText()));
 			}
 			else
 			{
@@ -195,7 +232,7 @@ namespace EquationFinder_GUI
 		{
 			if (tbStats.InvokeRequired)
 			{
-				tbStats.Invoke(new MethodInvoker(delegate { DisplayStats(); }));
+				tbStats.Invoke(new MethodInvoker(() => DisplayStats()));
 			}
 			else
 			{

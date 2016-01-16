@@ -290,11 +290,12 @@ namespace EquationFinder_GUI
 			// 
 			// cbAllowZero
 			// 
+			this.cbAllowZero.AutoSize = true;
 			this.cbAllowZero.Checked = true;
 			this.cbAllowZero.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.cbAllowZero.Location = new System.Drawing.Point(12, 100);
 			this.cbAllowZero.Name = "cbAllowZero";
-			this.cbAllowZero.Size = new System.Drawing.Size(74, 15);
+			this.cbAllowZero.Size = new System.Drawing.Size(74, 17);
 			this.cbAllowZero.TabIndex = 4;
 			this.cbAllowZero.Text = "Allow zero";
 			this.cbAllowZero.UseVisualStyleBackColor = true;

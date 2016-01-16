@@ -19,15 +19,12 @@ namespace EquationFinder_GUI
 		{
 			if (e != null && e.Argument != null)
 			{
-				//DisableControls();
-
 				if (e.Argument is ThreadSpawnerArgs)
 				{
 					IsDirty = true;
 
-					equationFinder = new ThreadedEquationFinder<AlgebraicExpression2>((ThreadSpawnerArgs)e.Argument);
-
-					equationFinder.Run();
+					equationFinder = new ThreadedEquationFinder<AlgebraicExpression2>((ThreadSpawnerArgs)e.Argument);					
+					equationFinder.Run();					
 
 					// Stats
 					RoundEquationsGenerated = equationFinder.TotalEquationsGenerated;
@@ -38,15 +35,12 @@ namespace EquationFinder_GUI
 		}
 
 		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
-		{
+		{			
 			equationArgs = null;
 			threadArgs = null;
 			equationFinder = null;
-
-			btnFindSolution.Text = findButtonText;
-			isSearching = false;
-			btnFindSolution.BackColor = Color.LightGreen;
-			//EnableControls();
+			timerCollectResults.Stop();
+			ToggleControlsVisibility(true);			
 		}
 	}
 }

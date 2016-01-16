@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThreadedEquationFinder.cs" />
+    <Compile Include="ThreadState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EquationFinderCore\EquationFinderCore.csproj">

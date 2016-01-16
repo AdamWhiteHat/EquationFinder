@@ -16,22 +16,22 @@ using EquationFinderCore;
 
 namespace EquationFinder
 {
-	public delegate List<EquationResults> EquationThreadManagerDelegate(ThreadSpawnerArgs threadArgs);
+	public delegate List<EquationResults> EquationThreadManagerDelegate(ThreadState threadState);
 
 	public class ThreadedEquationFinder<TEquation> where TEquation : class, IEquation, new()
 	{
-		//		
+		// Public properties
 		public List<string> Results { get; set; }
 		public long TotalEquationsGenerated { get; private set; }
-		public bool CancellationPending { get; private set; }
 		// Read only
 		public int NumberOfRounds { get { return threadSpawnerArgs.NumberOfRounds; } }
 		public FoundEquationDelegate FoundSolutionCallback { get { return threadSpawnerArgs.FoundResultCallback; } }
 		public static string ExpirationMessage = "Time-to-live expired.";
+		// Private
+		private ThreadSpawnerArgs threadSpawnerArgs { get; set; }
+		private ThreadState threadState;
 
-		ThreadSpawnerArgs threadSpawnerArgs { get; set; }
-
-		public ThreadedEquationFinder()
+		private ThreadedEquationFinder()
 		{ }
 
 		public ThreadedEquationFinder(ThreadSpawnerArgs spawnerArgs)
@@ -43,90 +43,43 @@ namespace EquationFinder
 
 		public void Cancel()
 		{
-			CancellationPending = true;
-		}
-
-		private List<EquationResults> ThreadFunction_FindSatisfiableEquations(ThreadSpawnerArgs threadArgs)
-		{
-			List<EquationResults> results = new List<EquationResults>();
-			try
+			if (!threadState.CancelToken.IsCancellationRequested)
 			{
-				int maxMilliseconds = (threadArgs.TimeToLive * 1000);
-				Stopwatch Age = new Stopwatch();
-				Age.Start();
-
-				IEquation currentEquation = (IEquation)new TEquation();
-
-				int maxResults = 300;
-				while (Age.ElapsedMilliseconds < maxMilliseconds)
-				{
-					currentEquation.GenerateNewAndEvaluate(threadArgs.EquationFinderArgs);
-					TotalEquationsGenerated += 1;
-
-					if (currentEquation.IsSolution) //if (currentEquation.Result == (decimal)threadArgs.EquationFinderArgs.TargetValue)
-					{
-						string equationString = currentEquation.ToString();
-						if (string.IsNullOrWhiteSpace(equationString))
-						{
-							continue; 
-						}
-						if (threadArgs.FoundSolutions.Contains(equationString) == false)
-						{
-							results.Add(new EquationResults(equationString, threadArgs.EquationFinderArgs.TargetValue, currentEquation.Result, currentEquation.IsSolution));
-							//results.Add(new EquationResults(equationString, currentEquation.Result, currentEquation.Result));
-							threadArgs.FoundSolutions.Add(equationString);
-
-							if (--maxResults < 1)
-							{
-								break;
-							}
-						}
-					}
-				} // End while
-
-				Age.Stop();
-				Age = null;
+				threadState.CancelToken.Cancel();
 			}
-			finally
-			{
-				if (results == null)
-				{
-					results = new List<EquationResults>();
-				}
-			}
-
-			return results;
 		}
 
 		public void Run()
 		{
-			int ttlMiliseconds = (threadSpawnerArgs.TimeToLive * 1000);
-			List<string> results = new List<string>();
+			if (threadState != null && threadState.TimeToStop != null && DateTime.Now < threadState.TimeToStop)
+			{
+				return;
+			}
 
-			Stopwatch resultsTimer = new Stopwatch();
-			resultsTimer.Start();
+			List<string> results = new List<string>();
+			DateTime timeToStop = DateTime.Now.AddSeconds(threadSpawnerArgs.TimeToLive);
+			threadState = new ThreadState(threadSpawnerArgs, timeToStop);
 
 			for (int roundCounter = NumberOfRounds; roundCounter > 0; roundCounter--)
 			{
-				if (CancellationPending)
+				if (threadState.CancelToken.IsCancellationRequested || DateTime.Now > timeToStop)
 				{
-					return;
-				}
-				if (resultsTimer.ElapsedMilliseconds > ttlMiliseconds)
-				{
-					return;
+					break;
 				}
 
+				// Im leaving this in for three reasons:
+				//  1) Testing, time trials between the two methods
+				//  2) If you want to see EVERY equation generated, you will likely want to return data this way
+				//  3) If this code is extended to span more than one computer, results will need to be aggregated in a more controlled fashion
 				results = ThreadSpawner(threadSpawnerArgs, ThreadFunction_FindSatisfiableEquations);
-				ReportSolution(string.Join(Environment.NewLine, results.ToArray()));
+				//ReportSolution(string.Join(Environment.NewLine, results.ToArray()));
 			}
 
-			resultsTimer.Stop();
-			resultsTimer = null;
+			threadState = null;
 			results = null;
 		}
 
-		public static List<string> ThreadSpawner(ThreadSpawnerArgs threadArgs, EquationThreadManagerDelegate equationManager)
+		public List<string> ThreadSpawner(ThreadSpawnerArgs threadArgs, EquationThreadManagerDelegate equationManager)
 		{
 			List<string> strResults = new List<string>();
 			try
@@ -143,7 +96,7 @@ namespace EquationFinder
 				// Invoke all the threads
 				foreach (EquationThreadManagerDelegate thread in threadDelegateList)
 				{
-					threadHandletList.Add(thread.BeginInvoke(threadArgs, null, null));
+					threadHandletList.Add(thread.BeginInvoke(threadState, null/*new AsyncCallback(OnThreadCompleted)*/, null));
 				}
 
 				// Await the result of each thread 
@@ -156,8 +109,8 @@ namespace EquationFinder
 
 				// Free up some resources
 				threadHandletList.RemoveAll(d => true);
-				threadHandletList = null;
 				threadDelegateList.RemoveAll(d => true);
+				threadHandletList = null;				
 				threadDelegateList = null;
 
 
@@ -187,6 +140,47 @@ namespace EquationFinder
 			}
 
 			return strResults;
+		}
+
+		private List<EquationResults> ThreadFunction_FindSatisfiableEquations(ThreadState threadState)
+		{
+			List<EquationResults> results = new List<EquationResults>();
+			try
+			{
+				IEquation currentEquation = (IEquation)new TEquation();
+				DateTime timeToStop = new DateTime(threadState.TimeToStop.Ticks);
+
+				while (!threadState.CancelToken.IsCancellationRequested && DateTime.Now < timeToStop)
+				{
+					currentEquation.GenerateNewAndEvaluate(threadState.ThreadArgs.EquationFinderArgs);
+					TotalEquationsGenerated += 1;
+
+					if (!currentEquation.IsSolution)
+					{
+						continue;
+					}
+
+					string equationString = currentEquation.ToString();
+					if (string.IsNullOrWhiteSpace(equationString))
+					{
+						continue;
+					}
+					if (threadState.ThreadArgs.FoundSolutions.Contains(equationString) == false)
+					{
+						results.Add(new EquationResults(equationString, threadState.ThreadArgs.EquationFinderArgs.TargetValue, currentEquation.Result, currentEquation.IsSolution));
+						threadState.ThreadArgs.FoundSolutions.Add(equationString);
+					}
+				} // End while
+			}
+			finally
+			{
+				if (results == null)
+				{
+					results = new List<EquationResults>();
+				}
+			}
+
+			return results;
 		}
 
 		private void ReportSolution(string results)

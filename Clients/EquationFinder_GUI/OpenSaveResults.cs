@@ -60,7 +60,7 @@ namespace EquationFinder_GUI
 
 				if (tbOutput.InvokeRequired)
 				{
-					tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = fileText; }));
+					tbOutput.Invoke(new MethodInvoker(() => tbOutput.Text = fileText));
 				}
 				else
 				{
@@ -84,7 +84,7 @@ namespace EquationFinder_GUI
 				{
 					if (tbOutput.InvokeRequired)
 					{
-						tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
+						tbOutput.Invoke(new MethodInvoker(() => tbOutput.Text = string.Empty));
 					}
 					else
 					{
