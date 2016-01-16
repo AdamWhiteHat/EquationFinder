@@ -42,9 +42,17 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+ProfilerOBJ.exe
+CLRProfiler.exe
+CLRProfilerControl.dll
+
+vshost32.pdb/*
 
 EquationFinder/obj/*
 EquationFinder/bin/*
+
+EquationFinderCore/obj/*
+EquationFinderCore/bin/*
 
 Clients/EquationFinder_GUI/obj/*
 Clients/EquationFinder_GUI/bin/*
@@ -60,6 +68,9 @@ EquationFactories/AlgebraicString/bin/*
 
 EquationFactories/AlgebraicExpression/obj/*
 EquationFactories/AlgebraicExpression/bin/*
+
+EquationFactories/AlgebraicSolver/obj/*
+EquationFactories/AlgebraicSolver/bin/*
 
 *.suo
 *.pdb
