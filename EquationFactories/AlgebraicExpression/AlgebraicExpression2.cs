@@ -109,7 +109,6 @@ namespace EquationFactories
 			Solve();
 			decimal result = Result;
 			bool solved = IsSolution;
-			int i = 0;
 		}
 
 		private decimal Solve()

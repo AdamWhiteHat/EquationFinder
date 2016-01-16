@@ -30,10 +30,10 @@ namespace EquationFinderCore
 
 	public class EquationFinderArgs : IEquationFinderArgs
 	{
-		public decimal TargetValue { get; set; }
-		public int NumberOfOperations { get; set; }
-		public List<int> TermPool { get; set; }
-		public string OperatorPool { get; set; }
+		public decimal TargetValue { get; private set; }
+		public int NumberOfOperations { get; private set; }
+		public List<int> TermPool { get; private set; }
+		public string OperatorPool { get; private set; }
 		public Random Rand { get; private set; }
 
 		public EquationFinderArgs(decimal targetValue, int numOperations, List<int> termPool, string operatorPool)
@@ -63,11 +63,11 @@ namespace EquationFinderCore
 
 	public class ThreadSpawnerArgs
 	{
-		public int TimeToLive { get; set; }
-		public int NumberOfThreads { get; set; }
-		public int NumberOfRounds { get; set; }
-		public FoundEquationDelegate FoundResultCallback { get; set; }
-		public IEquationFinderArgs EquationFinderArgs { get; set; }
+		public int TimeToLive { get; private set; }
+		public int NumberOfThreads { get; private set; }
+		public int NumberOfRounds { get; private set; }
+		public FoundEquationDelegate FoundResultCallback { get; private set; }
+		public IEquationFinderArgs EquationFinderArgs { get; private set; }
 		public BlockingCollection<string> FoundSolutions { get; set; }
 
 		public ThreadSpawnerArgs()

@@ -43,39 +43,4 @@ namespace EquationFinderCore
 		Raise = 5,
 		None = 6
 	}
-
-
-	public class MathSystem
-	{
-
-
-		public interface IExpresionGenerator
-		{
-			IEquation GenerateExpression(IExpresionGeneratorArgs args);
-		}
-
-		public interface IEquationSolver
-		{
-		}
-
-
-		//public interface IEquationFinder
-		//{
-		//	  IExpression CreateEquation(IEquationFinderArgs args);
-		//	  IEquation SolveEquation(IEquation equation);
-		//	  
-		//	  string ToString();
-		//}
-
-		public interface IExpresionGeneratorArgs
-		{
-			  List<int> TermPool { get; }
-			  string OperatorPool { get; }
-			  int NumberOfOperations { get; }
-			  
-			  decimal TargetValue { get; }		
-		}
-
-
-	}
 }
