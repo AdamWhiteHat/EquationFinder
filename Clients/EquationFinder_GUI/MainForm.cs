@@ -140,11 +140,11 @@ namespace EquationFinder_GUI
 			string[] previousResults = GetOutputLines();
 			if (previousResults != null && previousResults.Length > 0)
 			{
-				threadArgs = new ThreadSpawnerArgs(previousResults.ToList(), DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+				threadArgs = new ThreadSpawnerArgs(previousResults.ToList(), null, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
 			}
 			else
 			{
-				threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+				threadArgs = new ThreadSpawnerArgs(null, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
 			}
 
 			if (backgroundWorker_ThreadSpawner.IsBusy == false)

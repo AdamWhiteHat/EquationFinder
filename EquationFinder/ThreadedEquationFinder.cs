@@ -67,12 +67,13 @@ namespace EquationFinder
 					break;
 				}
 
-				// Im leaving this in for three reasons:
-				//  1) Testing, time trials between the two methods
-				//  2) If you want to see EVERY equation generated, you will likely want to return data this way
-				//  3) If this code is extended to span more than one computer, results will need to be aggregated in a more controlled fashion
+				// Im leaving this in for these reasons:
+				//  1) For the Console application to work without modification.
+				//  2) Testing, time trials between the two methods
+				//  3) If you want to see EVERY equation generated, you will likely want to return data this way
+				//  4) If this code is extended to span more than one computer, results will need to be aggregated in a more controlled fashion
 				results = ThreadSpawner(threadSpawnerArgs, ThreadFunction_FindSatisfiableEquations);
-				//ReportSolution(string.Join(Environment.NewLine, results.ToArray()));
+				ReportSolution(string.Join(Environment.NewLine, results.ToArray()));
 			}
 
 			threadState = null;

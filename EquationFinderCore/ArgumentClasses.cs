@@ -94,13 +94,17 @@ namespace EquationFinderCore
 			{
 				throw new ArgumentException("NumberOfRounds must be at least one.", "numberOfRounds");
 			}
+
 			if (foundSolutionCallbackFunction == null)
 			{
-				foundSolutionCallbackFunction = (string e) => { };
+				FoundResultCallback = null;
+			}
+			else
+			{
+				FoundResultCallback = foundSolutionCallbackFunction;
 			}
 
 			// Thread settings
-			FoundResultCallback = foundSolutionCallbackFunction;
 			TimeToLive = timeToLive;
 			NumberOfThreads = numberOfThreads;
 			NumberOfRounds = numberOfRounds;
