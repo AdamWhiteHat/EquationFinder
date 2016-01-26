@@ -7,14 +7,15 @@ namespace EquationFactories
 {
 	public static class ShuntingYardConverter
 	{
-		private static string AllowedCharacters = InfixNotationParser.Numbers + InfixNotationParser.Operators + "()";
+		private static string AllowedCharacters = InfixNotation.Numbers + InfixNotation.Operators + "()";
 
 		private enum Associativity
 		{
 			Left, Right
 		}
 		private static Dictionary<char, int> PrecedenceDictionary = new Dictionary<char, int>()
-		{	
+		{
+			{'(', 0}, {')', 0},
 			{'+', 1}, {'-', 1},
 			{'*', 2}, {'/', 2},
 			{'^', 3}
@@ -24,16 +25,6 @@ namespace EquationFactories
 			{'+', Associativity.Left}, {'-', Associativity.Left}, {'*', Associativity.Left}, {'/', Associativity.Left},
 			{'^', Associativity.Right}
 		};
-
-		public static bool IsNumeric(string text)
-		{
-			if (string.IsNullOrWhiteSpace(text))
-			{
-				return false;
-			}
-
-			return text.All(c => InfixNotationParser.Numbers.Contains(c));
-		}
 
 		private static void AddToOutput(List<char> output, params char[] chars)
 		{
@@ -62,7 +53,7 @@ namespace EquationFactories
 			List<string> enumerableInfixTokens = new List<string>();
 			foreach (char c in sanitizedString)
 			{
-				if (InfixNotationParser.Operators.Contains(c) || "()".Contains(c))
+				if (InfixNotation.Operators.Contains(c) || "()".Contains(c))
 				{
 					if (number.Length > 0)
 					{
@@ -71,7 +62,7 @@ namespace EquationFactories
 					}
 					enumerableInfixTokens.Add(c.ToString());
 				}
-				else if (InfixNotationParser.Numbers.Contains(c))
+				else if (InfixNotation.Numbers.Contains(c))
 				{
 					number += c.ToString();
 				}
@@ -89,7 +80,7 @@ namespace EquationFactories
 
 			foreach (string token in enumerableInfixTokens)
 			{
-				if (IsNumeric(token))
+				if (InfixNotation.IsNumeric(token))
 				{
 					AddToOutput(output, token.ToArray());
 				}
@@ -97,11 +88,11 @@ namespace EquationFactories
 				{
 					char c = token[0];
 
-					if (InfixNotationParser.Numbers.Contains(c))
+					if (InfixNotation.Numbers.Contains(c))
 					{
 						AddToOutput(output, c);
 					}
-					else if (InfixNotationParser.Operators.Contains(c))
+					else if (InfixNotation.Operators.Contains(c))
 					{
 						if (operatorStack.Count > 0)
 						{
@@ -124,7 +115,7 @@ namespace EquationFactories
 					else if (c == ')')
 					{
 						bool leftParenthesisFound = false;
-						while (operatorStack.Count > 0)
+						while (operatorStack.Count > 0 )
 						{
 							char o = operatorStack.Peek();
 							if (o != '(')
@@ -135,6 +126,7 @@ namespace EquationFactories
 							{
 								operatorStack.Pop();
 								leftParenthesisFound = true;
+								break;
 							}
 						}
 

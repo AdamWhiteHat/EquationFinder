@@ -5,15 +5,20 @@ using System.Text;
 
 namespace EquationFactories
 {
-	public static class InfixNotationParser
+	public static class InfixNotation
 	{
 		public static string Numbers = "0123456789";
 		public static string Operators = "+-*/^";
 
-		public static int Parse(string infixNotationString)
+		public static bool IsNumeric(string text)
+		{
+			return string.IsNullOrWhiteSpace(text) ? false : text.All(c => Numbers.Contains(c));
+		}
+
+		public static int Evaluate(string infixNotationString)
 		{
 			string postFixNotationString = ShuntingYardConverter.Convert(infixNotationString);
-			int result = PostfixNotationEvaluator.Evaluate(postFixNotationString);
+			int result = PostfixNotation.Evaluate(postFixNotationString);
 			return result;
 		}
 	}
