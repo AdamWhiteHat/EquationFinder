@@ -5,12 +5,11 @@
  * 
  */
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using EquationFinderCore;
+using System.Globalization;
+using System.Collections.Generic;
 
 namespace EquationFactories
 {
@@ -20,12 +19,12 @@ namespace EquationFactories
 		public decimal Result { get { return Solve(); } }
 		private decimal? _result = null;
 		private string Equation { get; set; }
-		private IEquationFinderArgs EquationArgs { get; set; }		
+		private IEquationFinderArgs EquationArgs { get; set; }
 		private List<int> TermPool { get { return EquationArgs.TermPool; } }
 		private string OperatorPool { get { return EquationArgs.OperatorPool; } }
 		private decimal TargetValue { get { return EquationArgs.TargetValue; } }
 		private int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
-		
+
 		public AlgebraicString()
 		{ }
 

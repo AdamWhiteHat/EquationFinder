@@ -37,6 +37,10 @@ namespace EquationFactories
 			{				
 				_equationArgs = args;
 			}
+
+
+
+
 			_builder = new ExpressionBuilder<decimal>(args);
 
 

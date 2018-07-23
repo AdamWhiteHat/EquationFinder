@@ -67,6 +67,7 @@ namespace EquationFinder_GUI
 			this.tbStats = new System.Windows.Forms.Label();
 			this.groupOperators = new System.Windows.Forms.GroupBox();
 			this.groupGoal = new System.Windows.Forms.GroupBox();
+			this.btnTest = new System.Windows.Forms.Button();
 			this.groupThreads.SuspendLayout();
 			this.groupOperands.SuspendLayout();
 			this.groupOperators.SuspendLayout();
@@ -98,6 +99,7 @@ namespace EquationFinder_GUI
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.tbOutput.Size = new System.Drawing.Size(684, 327);
 			this.tbOutput.TabIndex = 6;
+			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
 			// 
 			// tbOperandQuantity
 			// 
@@ -359,11 +361,22 @@ namespace EquationFinder_GUI
 			this.groupGoal.TabStop = false;
 			this.groupGoal.Text = "Goal:";
 			// 
+			// btnTest
+			// 
+			this.btnTest.Location = new System.Drawing.Point(486, 5);
+			this.btnTest.Name = "btnTest";
+			this.btnTest.Size = new System.Drawing.Size(32, 23);
+			this.btnTest.TabIndex = 9;
+			this.btnTest.Text = "{T}";
+			this.btnTest.UseVisualStyleBackColor = true;
+			this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(684, 453);
+			this.Controls.Add(this.btnTest);
 			this.Controls.Add(this.groupGoal);
 			this.Controls.Add(this.groupOperators);
 			this.Controls.Add(this.tbStats);
@@ -414,5 +427,6 @@ namespace EquationFinder_GUI
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.GroupBox groupOperators;
 		private System.Windows.Forms.GroupBox groupGoal;
+		private System.Windows.Forms.Button btnTest;
 	}
 }

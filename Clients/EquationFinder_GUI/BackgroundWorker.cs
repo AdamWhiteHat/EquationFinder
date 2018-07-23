@@ -23,7 +23,7 @@ namespace EquationFinder_GUI
 				{
 					IsDirty = true;
 
-					equationFinder = new ThreadedEquationFinder<AlgebraicExpression2>((ThreadSpawnerArgs)e.Argument);					
+					equationFinder = new ThreadedEquationFinder<AlgebraicExpression>((ThreadSpawnerArgs)e.Argument);					
 					equationFinder.Run();					
 
 					// Stats

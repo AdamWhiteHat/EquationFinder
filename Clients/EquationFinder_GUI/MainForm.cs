@@ -14,6 +14,8 @@ using EquationFinder;
 using EquationFactories;
 using EquationFinderCore;
 using System.Drawing;
+using System.Linq.Expressions;
+
 
 namespace EquationFinder_GUI
 {
@@ -21,7 +23,7 @@ namespace EquationFinder_GUI
 	{
 		private EquationFinderArgs equationArgs { get; set; }
 		private ThreadSpawnerArgs threadArgs { get; set; }
-		private ThreadedEquationFinder<AlgebraicExpression2> equationFinder { get; set; }
+		private ThreadedEquationFinder<AlgebraicExpression> equationFinder { get; set; }
 
 		private Timer timerCollectResults;
 		private bool IsDirty = false;
@@ -73,10 +75,29 @@ namespace EquationFinder_GUI
 				DisplaySolutions(diffrence);
 			}
 		}
+	
+		private void tbOutput_KeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Control)
+			{
+				if (e.KeyCode == Keys.A)
+				{
+					tbOutput.SelectAll();
+				}
+				else if (e.KeyCode == Keys.S)
+				{
+					SaveWork();
+				}
+			}
+		}
 		
 		private void BtnSaveClick(object sender, EventArgs e)
 		{
 			SaveWork();
+		}
+
+		private void btnTest_Click(object sender, EventArgs e)
+		{
 		}
 
 		#region Equation search toggling
@@ -157,7 +178,6 @@ namespace EquationFinder_GUI
 
 		#endregion
 			
-
 		#region Display Solution Logic
 
 		private void DisplaySolutions(IEnumerable<string> foundSolutions)
@@ -263,9 +283,7 @@ namespace EquationFinder_GUI
 		}
 
 		#endregion
-
-
-
+				
 		#region Option pools (term & operator)
 
 		private string GetOperatorPool()
@@ -317,6 +335,8 @@ namespace EquationFinder_GUI
 		}
 
 		#endregion
+
+
 		
 	}
 }
