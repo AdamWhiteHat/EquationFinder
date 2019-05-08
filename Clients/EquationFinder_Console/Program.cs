@@ -1,7 +1,7 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
@@ -17,7 +17,7 @@ namespace EquationFinder_Console
 		private static void Main(string[] args)
 		{
 			MainRoutine mRoutine = new MainRoutine(args.ToList());
-			mRoutine.Find();			
+			mRoutine.Find();
 		}
 	}
 }

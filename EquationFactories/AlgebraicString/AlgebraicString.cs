@@ -1,52 +1,44 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
+using System.Globalization;
+using System.Collections.Generic;
 using EquationFinderCore;
 
 namespace EquationFactories
 {
-	public partial class AlgebraicString
+	public partial class AlgebraicString : IEquation
 	{
-		EquationFinderArgs EquationArgs { get; set; }
-		string Equation { get; set; }
-		string TermPool { get { return EquationArgs.TermPool; } }
-		string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		decimal TargetValue { get { return EquationArgs.TargetValue; } }
-		int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 		public bool IsCorrect { get { return (Result == TargetValue); } }
-
-		public decimal Result
-		{
-			get
-			{
-				if (_result == null) { _result = Solve(); }
-				return (decimal)_result;
-			}
-		}
-		private decimal? _result = null;
+		public BigInteger Result { get { return Solve(); } }
+		private BigInteger? _result = null;
+		private string Equation { get; set; }
+		private IEquationFinderArgs EquationArgs { get; set; }
+		private List<int> TermPool { get { return EquationArgs.TermPool; } }
+		private string OperatorPool { get { return EquationArgs.OperatorPool; } }
+		private BigInteger TargetValue { get { return EquationArgs.TargetValue; } }
+		private int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
 
 		public AlgebraicString()
+		{ }
+
+		public AlgebraicString(IEquationFinderArgs equationArgs)
 		{
+			GenerateNewAndEvaluate(equationArgs);
 		}
 
-		public AlgebraicString(EquationFinderArgs equationArgs)
+		public void GenerateNewAndEvaluate(IEquationFinderArgs equationArgs)
 		{
+			_result = null;
 			EquationArgs = equationArgs;
-			GenerateAndEvaluate();
-		}
-
-		public bool GenerateAndEvaluate()
-		{
-			Equation = GenerateRandomEquation();
-			return IsSolution;
+			Equation = HelperClass.GenerateRandomEquation(EquationArgs);
+			Solve();
 		}
 
 		public bool IsSolution
@@ -54,43 +46,19 @@ namespace EquationFactories
 			get { return (Result == TargetValue); }
 		}
 
-		string GenerateRandomEquation()
-		{
-			List<string> operators = new List<string>(NumberOfOperations);
-			List<string> terms = new List<string>(NumberOfOperations);
-
-			int counter = NumberOfOperations - 1;
-			while (counter-- > 0)
-				operators.Add(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, OperatorPool.Length)).ToString());
-						
-			counter = NumberOfOperations;
-			while (counter-- > 0)
-				terms.Add(TermPool.ElementAt(EquationArgs.Rand.Next(0, TermPool.Length)).ToString());
-
-			counter = 0;
-			string result = terms[counter++];
-
-			foreach (string op in operators)
-				result += string.Format(" {0} {1}", op, terms[counter++]);
-
-			return result;
-		}
-
-		decimal Solve()
+		private BigInteger Solve()
 		{
 			if (_result == null)
 			{
-				return StaticScriptControl.Evaluate(Equation);
+				_result = InfixNotation.Evaluate(Equation);
+				//_result = StaticScriptControl.Evaluate(Equation);
 			}
-			else
-			{
-				return -1;
-			}
+			return (BigInteger)_result;
 		}
 
 		public override string ToString()
 		{
-			return Equation + " = " + Result.ToString();
+			return string.Format(CultureInfo.CurrentCulture, "{0} = {1:0.##}", Equation, Result);
 		}
 	}
 }

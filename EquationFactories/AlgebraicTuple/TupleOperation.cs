@@ -1,138 +1,149 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
+using System.Numerics;
 using EquationFinderCore;
 
 namespace EquationFactories
 {
-    /// <summary>
-    /// Describes a mathematical operation
-    /// </summary>
-    public class TupleOperation : IOperation
-    {
-        public OperandType Operand { get; set; }
-				
-        public TupleOperation() : this(HelperClass.AlgebraicOperators[StaticRandom.Instance.Next(0,HelperClass.AlgebraicOperators.Length)].ToString() )
-        {
-        }
+	/// <summary>
+	/// Describes a mathematical operation
+	/// </summary>
+	public class TupleOperation : IOperation
+	{
+		public OperationType Operand { get; private set; }
+
+		public TupleOperation() : this(HelperClass.AlgebraicOperators[StaticRandom.Instance.Next(0, HelperClass.AlgebraicOperators.Length)].ToString())
+		{
+		}
+
+		public TupleOperation(char operation)
+		{
+			this.Operand = Parse(operation);
+		}
 
 		public TupleOperation(string operation)
 		{
 			this.Operand = Parse(operation);
 		}
 
-		public static OperandType Parse(string stringOperand)
+		public static OperationType Parse(char charOperand)
+		{
+			return TupleOperation.Parse(charOperand.ToString());
+		}
+
+		public static OperationType Parse(string stringOperand)
 		{
 			switch (stringOperand)
 			{
 				case "+":
-					return OperandType.Add;
+					return OperationType.Add;
 				case "-":
-					return OperandType.Subtract;
+					return OperationType.Subtract;
 				case "*":
-					return OperandType.Multiply;
+					return OperationType.Multiply;
 				case "/":
-					return OperandType.Divide;			
+					return OperationType.Divide;
 				case "^":
-					return OperandType.Raise;
-				
+					return OperationType.Exponentiation;
+
 				default:
 					throw new ArgumentException(
 						string.Format("Parameter stringOperand cannot parse string \"{0}\" into one of the OperandType enums.  Valid values: \"+-*/^\". If you added a new OperandType, a translation should be added to the method that threw this Exception.", stringOperand),
 						"stringOperand");
-			}						
+			}
 		}
 
-        public TupleOperation(OperandType operation)
-        {
-            this.Operand = operation;
-        }
+		public TupleOperation(OperationType operation)
+		{
+			this.Operand = operation;
+		}
 
-        public decimal Calculate(decimal Value1, decimal Value2)
-        {
-			return TupleOperation.Calculate(Value1, Value2, Operand);
-        }
+		public BigInteger Calculate(BigInteger Value1, BigInteger Value2)
+		{
+			return TupleOperation.Calculate(Value1, Value2, this.Operand);
+		}
 
-		public static decimal Calculate(decimal Value1, decimal Value2, OperandType Operation)
+		public static BigInteger Calculate(BigInteger Value1, BigInteger Value2, OperationType Operation)
 		{
 			switch (Operation)
 			{
-				case OperandType.Add:
+				case OperationType.Add:
 					return Value1 + Value2;
-				case OperandType.Subtract:
+				case OperationType.Subtract:
 					return Value1 - Value2;
-				case OperandType.Multiply:
+				case OperationType.Multiply:
 					return Value1 * Value2;
-				case OperandType.Divide:
+				case OperationType.Divide:
 					return Value1 / Value2;
-				case OperandType.Raise:
-					return (decimal)Math.Pow((double)Value1, (double)Value2);
+				case OperationType.Exponentiation:
+					return HelperClass.Pow(Value1, Value2);
 				default:
 					throw new ArgumentException(
-						string.Format("OperandType \"{0}\" does not exist.", Enum.GetName(typeof(OperandType), Operation)),
+						string.Format("OperandType \"{0}\" does not exist.", Enum.GetName(typeof(OperationType), Operation)),
 						"Operation"
 					);
 			}
 		}
 
-        #region Overrides
-        public override string ToString()
-        {
+		#region Overrides
+		public override string ToString()
+		{
 			switch (Operand)
 			{
-				case OperandType.Add: return "+";
-				case OperandType.Subtract: return "-";
-				case OperandType.Multiply: return "*";
-				case OperandType.Divide: return "/";
-				case OperandType.Raise: return "^";
-				case OperandType.Equal: return "=";
+				case OperationType.Add: return "+";
+				case OperationType.Subtract: return "-";
+				case OperationType.Multiply: return "*";
+				case OperationType.Divide: return "/";
+				case OperationType.Exponentiation: return "^";
+				case OperationType.Equal: return "=";
 				default:
 					return " ";
 			}
-        }
+		}
 
-        public override bool Equals(object obj)
-        {
-            TupleOperation other = obj as TupleOperation;
-            if (other == null)
-            {
-                return false;
-            }
-            return this.Operand.Equals(other.Operand);
-        }
+		public override bool Equals(object obj)
+		{
+			TupleOperation other = obj as TupleOperation;
+			if (other == null)
+			{
+				return false;
+			}
+			return this.Operand.Equals(other.Operand);
+		}
 
-        public override int GetHashCode()
-        {
+		public override int GetHashCode()
+		{
 			int hashCode = (int)Operand;
-            unchecked
-            {
-                hashCode += hashCode.GetHashCode();
-            }
-            return hashCode;
-        }
+			unchecked
+			{
+				hashCode += hashCode.GetHashCode();
+			}
+			return hashCode;
+		}
 
-        public static bool operator ==(TupleOperation lhs, TupleOperation rhs)
-        {
-            if (ReferenceEquals(lhs, rhs))
-            {
-                return true;
-            }
-            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
-            {
-                return false;
-            }
-            return lhs.Operand.Equals(rhs.Operand);
+		public static bool operator ==(TupleOperation lhs, TupleOperation rhs)
+		{
+			if (ReferenceEquals(lhs, rhs))
+			{
+				return true;
+			}
+			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+			{
+				return false;
+			}
+			return lhs.Operand.Equals(rhs.Operand);
 
-        }
+		}
 
-        public static bool operator !=(TupleOperation lhs, TupleOperation rhs)
-        {
-            return !(lhs == rhs);
-        }
-        #endregion
-    }
+		public static bool operator !=(TupleOperation lhs, TupleOperation rhs)
+		{
+			return !(lhs == rhs);
+		}
+		#endregion
+	}
 }

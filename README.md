@@ -1,4 +1,6 @@
-EquationFinder
+# EquationFinder
+
+![Screenshot](https://github.com/AdamWhiteHat/EquationFinder/blob/master/EquationFinder-Screenshot.PNG)
 
 [Quick explaination]
 Finds equations to match select constraints. Answers such questions as: "How many diffrent ways can nine 9's equal 27 (using only arithmetic operations)". Uses brute force equation finding approach. Example usage of interfaces.

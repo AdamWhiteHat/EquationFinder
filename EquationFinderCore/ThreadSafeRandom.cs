@@ -1,13 +1,12 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Collections.Generic;
 
 namespace EquationFinderCore
 {
@@ -23,22 +22,25 @@ namespace EquationFinderCore
 		}
 
 		private StaticRandom()
-		{ }	// Explicit private constructor with no public constructors prevents other classes from instantiating it
+		{ } // Explicit private constructor with no public constructors prevents other classes from instantiating it
 
 		static StaticRandom()
 		{ // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit
-			_instance = New();
+			_instance = Factory.Random();
 			int rounds = 250;
 			while (rounds-- > 0) { _instance.Next(); }
 		}
 
-		public static Random New()
+		public class Factory
 		{
-			Random result = new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0));
+			public static Random Random()
+			{
+				Random result = new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0));
 
-			int rounds = 250;
-			while (rounds-- > 0) { result.Next(); }
-			return result;
+				int rounds = 250;
+				while (rounds-- > 0) { result.Next(); }
+				return result;
+			}
 		}
 	}
 }

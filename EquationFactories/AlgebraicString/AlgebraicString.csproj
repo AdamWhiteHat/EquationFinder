@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,7 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlgebraicString.cs" />
+    <Compile Include="InfixNotation.cs" />
+    <Compile Include="PostfixNotation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShuntingYardConverter.cs" />
     <Compile Include="StaticScriptControl.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,37 +1,69 @@
-﻿using System;
-using System.Text;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Numerics;
 
 using EquationFinderCore;
 
 namespace EquationFactories
 {
 	public class AlgebraicExpression : IEquation
-    {
-		public decimal TargetValue { get; private set; }
-		public EquationFinderArgs EquationArgs { get; set; }
+	{
+		public BigInteger Result { get { return _builder.Result; } }
+		public string Equation { get { return _builder.ToString(); } }
+		public bool IsSolution { get; private set; }
 
-		public void Initialize(EquationFinderArgs equationArgs)
-		{ 
+		private ExpressionBuilder<BigInteger> _builder = null;
+		private IEquationFinderArgs _equationArgs = null;
+
+		public AlgebraicExpression()
+		{
 		}
 
-		public decimal Evaluate()
+		public AlgebraicExpression(IEquationFinderArgs args)
 		{
-			return 0;
+			GenerateNewAndEvaluate(args);
+		}
+
+		public void GenerateNewAndEvaluate(IEquationFinderArgs args)
+		{
+			if (args == null)
+			{
+				throw new ArgumentNullException("args");
+			}
+			if (_equationArgs == null)
+			{
+				_equationArgs = args;
+			}
+
+
+
+
+			_builder = new ExpressionBuilder<BigInteger>(args);
+
+
+			IsSolution = (Result == _equationArgs.TargetValue);
 		}
 
 		public EquationResults GetResults()
 		{
-			return new EquationResults(this);
+			if (_equationArgs != null)
+			{
+				return new EquationResults(Equation, _equationArgs.TargetValue, Result, IsSolution);
+			}
+			throw new Exception("Private property 'equationArgs' should never be null after initialization.");
 		}
-		
 
 		public override string ToString()
 		{
-			return base.ToString();
+			return _builder.ToString();
 		}
-    }
+	}
 }

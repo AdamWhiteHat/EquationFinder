@@ -1,31 +1,17 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
+using System.Numerics;
 
 namespace EquationFactories
 {
-	public enum OperandType
-	{
-		Equal = 0,
-		Add = 1,
-		Subtract = 2,
-		Multiply = 3,
-		Divide = 4,
-		Raise = 5,
-		None = 6
-	}
-
 	public interface IOperation
 	{
 		//IArithmeticOperation Art { get; set; }
-		decimal Calculate(decimal Value1, decimal Value2);
+		BigInteger Calculate(BigInteger Value1, BigInteger Value2);
 		string ToString();
 		bool Equals(object obj);
 	}

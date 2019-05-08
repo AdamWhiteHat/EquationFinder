@@ -1,16 +1,14 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
 using System.Linq;
 using System.Text;
-//using MSScriptControl;
-using System.Threading;
+using System.Numerics;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace EquationFinderCore
 {
@@ -32,10 +30,10 @@ namespace EquationFinderCore
 			}
 		}
 
-		public static decimal String2Decimal(string Input)
+		public static BigInteger String2Decimal(string Input)
 		{
-			decimal lResult = 0;
-			decimal.TryParse(Input, out lResult);
+			BigInteger lResult = 0;
+			BigInteger.TryParse(Input, out lResult);
 			return lResult;
 		}
 
@@ -47,5 +45,63 @@ namespace EquationFinderCore
 #endif
 			return result;
 		}
-	}	
+
+		public static string GenerateRandomEquation(IEquationFinderArgs EquationArgs)
+		{
+			List<string> operators = new List<string>(EquationArgs.NumberOfOperations);
+			List<string> terms = new List<string>(EquationArgs.NumberOfOperations);
+
+			int termCount = EquationArgs.TermPool.Count;
+			int opCount = EquationArgs.OperatorPool.Length;
+
+			int counter = EquationArgs.NumberOfOperations - 1;
+			while (counter-- > 0)
+			{
+				operators.Add(EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, opCount)).ToString());
+			}
+
+			counter = EquationArgs.NumberOfOperations;
+			while (counter-- > 0)
+			{
+				terms.Add(EquationArgs.TermPool.ElementAt(EquationArgs.Rand.Next(0, termCount)).ToString());
+			}
+
+			counter = 0;
+
+			StringBuilder stringBuilder = new StringBuilder(terms[counter++]);
+
+			foreach (string op in operators)
+			{
+				stringBuilder.AppendFormat(" {0} {1}", op, terms[counter++]);
+			}
+
+			return stringBuilder.ToString();
+		}
+
+		public static BigInteger Pow(BigInteger value, BigInteger exponent)
+		{
+			int use = 1;
+			BigInteger result = new BigInteger();
+			BigInteger exponentLeft = new BigInteger();
+
+			result = BigInteger.Abs(value);
+			exponentLeft = BigInteger.Abs(exponent);
+
+			while (exponentLeft > 0)
+			{
+				if (exponentLeft > int.MaxValue - 2)
+				{
+					use = (int.MaxValue - 2);
+					exponentLeft = BigInteger.Subtract(exponentLeft, use);
+				}
+				else
+				{
+					exponentLeft = BigInteger.Zero;
+					use = (int)exponentLeft;
+				}
+				result = BigInteger.Multiply(result, BigInteger.Pow(result, use));
+			}
+			return result;
+		}
+	}
 }

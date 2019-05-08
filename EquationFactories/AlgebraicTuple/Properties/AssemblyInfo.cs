@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("AlgebraicTuple")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("www.csharpprogramming.tips")]
+[assembly: AssemblyCompany("https://csharpcodewhisperer.blogspot.com")]
 [assembly: AssemblyProduct("AlgebraicTuple")]
-[assembly: AssemblyCopyright("Copyright © Adam Rakaska 2015")]
+[assembly: AssemblyCopyright("Copyright © Adam White 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

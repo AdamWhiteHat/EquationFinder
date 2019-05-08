@@ -1,75 +1,166 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
+using System.Numerics;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
 using EquationFinder;
 using EquationFactories;
 using EquationFinderCore;
+using System.Drawing;
+using System.Linq.Expressions;
+
 
 namespace EquationFinder_GUI
 {
 	public partial class MainForm : Form
 	{
-		public bool IsDirty = false;
+		private EquationFinderArgs equationArgs { get; set; }
+		private ThreadSpawnerArgs threadArgs { get; set; }
+		private ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
 
-		long TotalEquationsGenerated;
-		long EquationsGeneratedThisRound;
+		private Timer timerCollectResults;
+		private bool IsDirty = false;
+		private bool isSearching = false;
+		private long TotalEquationsGenerated { get; set; }
+		private long RoundEquationsGenerated { get; set; }
+		private long TotalSolutionsFound { get; set; }
+		private long RoundSolutionsFound { get; set; }
+		private long lastSolutionCount { get; set; }
+		private static string findButtonText = "Find Solution";
+		private static string cancelButtonText = "Stop Searching";
+		private static string maxLabelText = "Max value:";
+		private static string constantLabelText = "Constant:";
+		private List<int> TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
+		private string OperatorPool { get { return GetOperatorPool(); } }
+		private int maxTerm { get { return Convert.ToInt32(tbOperandMax.Text); } }
+		private BigInteger targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
+		private int numberOfOperations { get { return HelperClass.String2Int(tbOperandQuantity.Text); } }
+		private int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
+		private int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
+		private int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
 
 		public MainForm()
 		{
-			InitializeComponent();
-
-			TotalEquationsGenerated = 0;
-			EquationsGeneratedThisRound = 0;
-
-			int numOps = 9;//StaticRandom.Instance.Next(3, 9);
-			//int maxPossible = numOps * (MaxIntValue);
-			int targetVal = 27;//StaticRandom.Instance.Next(1, maxPossible + 1);
-
-			tbTargetValue.Text = targetVal.ToString();
-			tbNumberOperations.Text = numOps.ToString();
-			tbTTL.Text = "6";
-			radioRandom.Checked = true;
-			tbTerm.Text = "9";
-
-			listOperators.Items[0].Selected = true;
-			listOperators.Items[1].Selected = true;
-			listOperators.Items[2].Selected = true;
+			InitializeComponent();						
+			listboxOperators.Items[0].Selected = true;
 		}
 
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
-			tbNumberOperations.TextChanged += new EventHandler(this.OnParametersChanged);
-			tbTargetValue.TextChanged += new EventHandler(this.OnParametersChanged);
+			timerCollectResults = new Timer();
+			timerCollectResults.Interval = 200;
+			timerCollectResults.Tick += collectResults_Tick;
+			tbOperandQuantity.TextChanged += new EventHandler(this.OnParametersChanged);
+			tbGoal.TextChanged += new EventHandler(this.OnParametersChanged);
 			DisplayStats();
 		}
 
-		EquationFinderArgs equationArgs { get; set; }
-		ThreadSpawnerArgs threadArgs { get; set; }
-		ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
-
-		int maxTerm { get { return Convert.ToInt32(tbTerm.Text); } }
-		decimal targetValue { get { return HelperClass.String2Decimal(tbTargetValue.Text); } }
-		int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
-		int numberOfOperations { get { return HelperClass.String2Int(tbNumberOperations.Text); } }
-		int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
-		int numberOfRounds { get { return HelperClass.String2Int(tbRounds.Text); } }
-		string OperatorPool { get { return GetOperatorPool(); } }
-		string TermPool { get { return GetTermPool(); } }
-		//int MaxIntValue { get { return 9; } }
-
-		void BtnFindSolutionClick(object sender, EventArgs e)
+		private void collectResults_Tick(object sender, EventArgs e)
 		{
-			if (string.IsNullOrWhiteSpace(TermPool))
+			if (!isSearching)
+			{
+				timerCollectResults.Stop();
+				return;
+			}
+			List<string> solutionDump = threadArgs.FoundSolutions.ToList();
+			string[] alreadyFound = GetOutputLines();
+			List<string> diffrence = solutionDump.Except(alreadyFound).ToList();
+			if (diffrence.Count > 0)
+			{
+				DisplaySolutions(diffrence);
+			}
+		}
+	
+		private void tbOutput_KeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Control)
+			{
+				if (e.KeyCode == Keys.A)
+				{
+					tbOutput.SelectAll();
+				}
+				else if (e.KeyCode == Keys.S)
+				{
+					SaveWork();
+				}
+			}
+		}
+		
+		private void BtnSaveClick(object sender, EventArgs e)
+		{
+			SaveWork();
+		}
+
+		private void btnTest_Click(object sender, EventArgs e)
+		{
+		}
+
+		private void radioConstant_CheckedChanged(object sender, EventArgs e)
+		{
+			if (radioConstant.Checked)
+			{
+				lblMaxOrConstantValue.Text = constantLabelText;
+			}
+			else
+			{
+				lblMaxOrConstantValue.Text = maxLabelText;
+			}
+		}
+
+		#region Equation search toggling
+
+		///<summary>enabled = make visible</summary>
+		private void ToggleControlsVisibility(bool enabled)
+		{
+			if (btnFindSolution.InvokeRequired)
+			{
+				btnFindSolution.Invoke(new MethodInvoker(() => ToggleControlsVisibility(enabled)));
+			}
+			else
+			{
+				if (!enabled)
+				{
+					RoundEquationsGenerated = 0;
+					RoundSolutionsFound = 0;
+					DisplayStats();
+				}
+				isSearching = !enabled;
+				btnFindSolution.Text = isSearching ? cancelButtonText : findButtonText;
+				btnFindSolution.BackColor = isSearching ? Color.MistyRose : Color.LightGreen;
+			}
+		}
+
+		private void BtnFindSolutionClick(object sender, EventArgs e)
+		{
+			if (isSearching)
+			{
+				CancelSearch();
+			}
+			else
+			{			
+				BeginSearch();
+			}
+		}
+
+		private void CancelSearch()
+		{
+			if (isSearching)
+			{
+				equationFinder.Cancel();
+			}
+		}
+
+		private void BeginSearch()
+		{		
+			if (TermPool == null || TermPool.Count < 1)
 			{
 				MessageBox.Show("Term cannot be empty.", "Input missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
@@ -80,63 +171,140 @@ namespace EquationFinder_GUI
 				return;
 			}
 
-			equationFinder = null;
-			equationArgs = null;
-			threadArgs = null;
-
 			equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
 
 			string[] previousResults = GetOutputLines();
 			if (previousResults != null && previousResults.Length > 0)
 			{
-				threadArgs = new ThreadSpawnerArgs(previousResults.ToList(), DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+				threadArgs = new ThreadSpawnerArgs(previousResults.ToList(), null, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
 			}
 			else
 			{
-				threadArgs = new ThreadSpawnerArgs(DisplaySolution, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
+				threadArgs = new ThreadSpawnerArgs(null, timeToLive, numberOfThreads, numberOfRounds, equationArgs);
 			}
 
 			if (backgroundWorker_ThreadSpawner.IsBusy == false)
 			{
+				ToggleControlsVisibility(false);
+				timerCollectResults.Start();
 				backgroundWorker_ThreadSpawner.RunWorkerAsync(threadArgs);
 			}
 		}
 
-		private void backgroundWorker_ThreadSpawner_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+		#endregion
+			
+		#region Display Solution Logic
+
+		private void DisplaySolutions(IEnumerable<string> foundSolutions)
 		{
-			if (e != null && e.Argument != null)
+			DisplaySolution(string.Join(Environment.NewLine, foundSolutions));
+		}
+
+		private void DisplaySolution(string foundSolution)
+		{
+			if (string.IsNullOrWhiteSpace(foundSolution))
 			{
-				DisableControls();
+				return;
+			}
+			else if (tbOutput.InvokeRequired)
+			{
+				tbOutput.Invoke(new Action<string>((fs) => DisplaySolution(fs)));
+			}
+			else
+			{
+				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
+			}
+		}
 
-				if (e.Argument is ThreadSpawnerArgs)
+		private string[] GetOutputLines()
+		{
+			if (tbOutput.InvokeRequired)
+			{
+				return (string[])tbOutput.Invoke(new Func<string[]>(() => GetOutputLines()));
+			}
+			else
+			{
+				if (tbOutput.Lines.Length < 1)
 				{
-					IsDirty = true;
-
-					equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);
-
-					equationFinder.Run();
-
-					// Stats
-					EquationsGeneratedThisRound = equationFinder.TotalEquationsGenerated;
-					TotalEquationsGenerated += EquationsGeneratedThisRound;
-					DisplayStats();
+					return new string[] { };
+				}
+				else
+				{
+					return tbOutput.Lines;
 				}
 			}
 		}
 
-		private void backgroundWorker_ThreadSpawner_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+		private string GetOutputText()
 		{
-			equationArgs = null;
-			threadArgs = null;
-			equationFinder = null;
-
-			EnableControls();
+			if (tbOutput.InvokeRequired)
+			{
+				return (string)tbOutput.Invoke(new Func<string>(() => GetOutputText()));
+			}
+			else
+			{
+				if (tbOutput.Text.Length < 1)
+				{
+					return "";
+				}
+				else
+				{
+					return tbOutput.Text;
+				}
+			}
 		}
+
+		private void ResetStats()
+		{
+			lastSolutionCount = 0;
+			TotalEquationsGenerated = 0;
+			TotalSolutionsFound = 0;
+			RoundEquationsGenerated = 0;
+			RoundSolutionsFound = 0;
+		}
+
+		private void DisplayStats()
+		{
+			if (tbStats.InvokeRequired)
+			{
+				tbStats.Invoke(new MethodInvoker(() => DisplayStats()));
+			}
+			else
+			{
+				tbOutput.Text = tbOutput.Text.TrimEnd(new char[] { '\r', '\n' });
+				TotalSolutionsFound = tbOutput.Lines.Count();
+				RoundSolutionsFound = TotalSolutionsFound - lastSolutionCount;
+				lastSolutionCount = TotalSolutionsFound;
+
+				if (RoundSolutionsFound < 0)
+				{
+					RoundSolutionsFound = 0;
+				}				
+
+				StringBuilder stats = new StringBuilder();
+				stats.AppendLine("TOTAL:");
+				stats.Append("  Equations generated: ");
+				stats.AppendLine(TotalEquationsGenerated.ToString());
+				stats.Append("  Solutions found:     ");
+				stats.AppendLine(TotalSolutionsFound.ToString());
+				stats.AppendLine("THIS ROUND:");
+				stats.Append("  Equations generated: ");
+				stats.AppendLine(RoundEquationsGenerated.ToString());
+				stats.Append("  New solutions:       ");
+				stats.Append(RoundSolutionsFound);
+
+				tbStats.Text = stats.ToString();
+			}
+		}
+
+		#endregion
+				
+		#region Option pools (term & operator)
 
 		private string GetOperatorPool()
 		{
 			StringBuilder result = new StringBuilder();
-			foreach (ListViewItem item in listOperators.SelectedItems)
+			foreach (ListViewItem item in listboxOperators.SelectedItems)
 			{
 				switch (item.Text)
 				{
@@ -155,237 +323,34 @@ namespace EquationFinder_GUI
 					case "Division":
 						result.Append('/');
 						break;
+
+					case "Exponentiation":
+						result.Append('^');
+						break;
 				}
 			}
 			return result.ToString();
 		}
 
-		private string GetTermPool()
+		private List<int> GetTermPool(bool IncludeZero = false)
 		{
-			StringBuilder result = new StringBuilder();
+			int minTerm = IncludeZero ? -1 : 0;
+			List<int> result = new List<int>();
 
 			if (radioRandom.Checked)
 			{
 				int counter = maxTerm;
-				while (counter > 0)
+				while (counter > minTerm)
 				{
-					result.Append(counter);
-					counter--;
+					result.Add(counter--);
 				}
 			}
 			else
 			{
-				result = result.Append(maxTerm);
+				result.Add(maxTerm);
 			}
 
-			return result.ToString();
-		}
-
-		private string[] GetOutputLines()
-		{
-			if (tbOutput.Lines.Length < 1)
-			{
-				return new string[] { };
-			}
-			if (tbOutput.InvokeRequired)
-			{
-				return (string[])tbOutput.Invoke(new Func<string[]>(delegate { return tbOutput.Lines; }));
-			}
-			else
-			{
-				return tbOutput.Lines;
-			}
-		}
-
-		private string GetOutputText()
-		{
-			if (tbOutput.Text.Length < 1)
-			{
-				return "";
-			}
-			if (tbOutput.InvokeRequired)
-			{
-				return (string)tbOutput.Invoke(new Func<string>(delegate { return tbOutput.Text; }));
-			}
-			else
-			{
-				return tbOutput.Text;
-			}
-		}
-
-		DialogResult PromptToSaveWork()
-		{
-			if (!IsDirty || string.IsNullOrEmpty(GetOutputText()))
-			{
-				return DialogResult.OK;
-			}
-
-			DialogResult choice = MessageBox.Show(string.Format(
-									"Results not saved!{0}{0}" +
-									"Would you like to save these results now before discarding?", Environment.NewLine),
-									"Changing Parameters",
-									MessageBoxButtons.YesNoCancel,
-									MessageBoxIcon.Question,
-									MessageBoxDefaultButton.Button1
-							   );
-
-			if (choice == DialogResult.No)
-			{
-				// The user made the decision to throw the results buffer away.				
-				return DialogResult.OK; // Return OK to continue, 
-			}
-			if (choice == DialogResult.Yes)
-			{
-				if (SaveWork() == DialogResult.OK)
-				{
-					return DialogResult.OK;
-				}
-				// Else, the user canceled the save dialog box. Do not continue.
-			}
-			// Cancel, do not continue
-			return DialogResult.Cancel;
-		}
-
-		#region Mainform Events
-
-		DialogResult SaveWork()
-		{
-			DialogResult dResult = saveFileDialog.ShowDialog();
-
-			if (dResult == DialogResult.OK)
-			{
-				using (FileStream fStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
-				{
-					using (TextWriter tWriter = new StreamWriter(fStream))
-					{
-						tWriter.Write(GetOutputText());
-						tWriter.Flush();
-						tWriter.Close();
-					}
-				}
-				IsDirty = false;
-			}
-
-			return dResult;
-		}
-
-		DialogResult OpenWork()
-		{
-			if (PromptToSaveWork() == DialogResult.Cancel)
-				return DialogResult.Cancel;
-
-			DialogResult dResult = openFileDialog.ShowDialog();
-			if (dResult == DialogResult.OK)
-			{
-				using (FileStream fStream = new FileStream(openFileDialog.FileName, FileMode.Open))
-				{
-					using (TextReader tReader = new StreamReader(fStream))
-					{
-						string fileText = tReader.ReadToEnd();
-						if (tbOutput.InvokeRequired)
-						{
-							tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = fileText; }));
-						}
-						else
-						{
-							tbOutput.Text = fileText;
-						}
-						tReader.Close();
-					}
-				}
-				IsDirty = false;
-				EquationsGeneratedThisRound = 0;
-				TotalEquationsGenerated = 0;
-				DisplayStats();
-			}
-
-			return dResult;
-		}
-
-		// Clear found solutions when changing Target or # Operations
-		void OnParametersChanged(object sender, EventArgs e)
-		{
-			if (!backgroundWorker_ThreadSpawner.IsBusy)
-			{
-				if (PromptToSaveWork() == DialogResult.OK)
-				{
-					if (tbOutput.InvokeRequired)
-					{
-						tbOutput.Invoke(new MethodInvoker(delegate { tbOutput.Text = string.Empty; }));
-					}
-					else
-					{
-						tbOutput.Text = string.Empty;
-					}
-					EquationsGeneratedThisRound = 0;
-					TotalEquationsGenerated = 0;
-					DisplayStats();
-				}
-			}
-		}
-
-		void BtnOpenClick(object sender, EventArgs e)
-		{
-			OpenWork();
-		}
-
-		void BtnSaveClick(object sender, EventArgs e)
-		{
-			SaveWork();
-		}
-
-		void DisplaySolution(string foundSolution)
-		{
-			if (tbOutput.InvokeRequired)
-			{
-				tbOutput.Invoke(new MethodInvoker(
-					delegate
-					{
-						tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
-					}
-				));
-			}
-			else
-			{
-				tbOutput.Text = tbOutput.Text.Insert(0, string.Concat(foundSolution, Environment.NewLine));
-			}
-		}
-
-		void DisplayStats()
-		{
-			string statsString = string.Format("Equations generated this round: {1}{0}" +
-												"Equations generated total: {2}", Environment.NewLine,
-												EquationsGeneratedThisRound, TotalEquationsGenerated);
-			if (tbStats.InvokeRequired)
-			{
-				tbStats.Invoke(new MethodInvoker(delegate { tbStats.Text = statsString; }));
-			}
-			else
-			{
-				tbStats.Text = statsString;
-			}
-		}
-
-		void DisableControls()
-		{
-			SetControlsEnabled(false);
-		}
-
-		void EnableControls()
-		{
-			SetControlsEnabled(true);
-		}
-
-		void SetControlsEnabled(bool enabled)
-		{
-			if (btnFindSolution.InvokeRequired)
-			{
-				btnFindSolution.Invoke(new MethodInvoker(delegate { btnFindSolution.Enabled = enabled; }));
-			}
-			else
-			{
-				btnFindSolution.Enabled = enabled;
-			}
+			return result;
 		}
 
 		#endregion

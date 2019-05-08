@@ -1,7 +1,7 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
@@ -33,17 +33,17 @@ namespace EquationFinder_GUI
 
 		private static string ExceptionFileName = "Exception.log.txt";
 
-		static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+		private static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
 		{
 			HandleException((Exception)e.Exception, "FirstChanceException");
 		}
 
-		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			HandleException((Exception)e.ExceptionObject, "UnhandledException");
 		}
 
-		static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+		private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
 			HandleException((Exception)e.Exception, "ThreadException");
 		}
@@ -51,7 +51,7 @@ namespace EquationFinder_GUI
 
 		private static void HandleException(Exception ex, string CallingEvent)
 		{
-			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occurred @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
+			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occurred @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) });
 
 			string exceptionName = string.Empty;
 
@@ -59,7 +59,7 @@ namespace EquationFinder_GUI
 			{
 				List<string> outputLines = new List<string>();
 				exceptionName = ex.GetType().Name;
-								
+
 				string exType = string.Format("Exception of type \"{0}\":", exceptionName);
 				outputLines.Add(exType);
 
@@ -84,10 +84,10 @@ namespace EquationFinder_GUI
 
 				if (!string.IsNullOrEmpty(ex.StackTrace))
 				{
-					string exStacktrace = string.Format("\t[Stacktrace=\"{0}\"]", ex.StackTrace);
-					outputLines.Add(exStacktrace);				
+					string exStacktrace = string.Format("\t[StackTrace=\"{0}\"]", ex.StackTrace);
+					outputLines.Add(exStacktrace);
 				}
-				
+
 				if (outputLines != null && outputLines.Count > 0)
 				{
 					File.AppendAllLines(ExceptionFileName, outputLines.ToArray());
@@ -96,13 +96,13 @@ namespace EquationFinder_GUI
 					foreach (string line in outputLines)
 					{
 						if (line.Contains("[Message=")) { Console.ForegroundColor = ConsoleColor.Yellow; }
-						else if (line.Contains("[Stacktrace=")) { Console.ForegroundColor = ConsoleColor.Cyan; }
+						else if (line.Contains("[StackTrace=")) { Console.ForegroundColor = ConsoleColor.Cyan; }
 
 						Console.WriteLine(line);
 					}
-					Console.ResetColor();					
+					Console.ResetColor();
 				}
-				
+
 			}
 			else
 			{

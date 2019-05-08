@@ -4,10 +4,10 @@
     <ProjectGuid>{7F4F9CD1-236F-43F4-AE88-5158C8D05ACC}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>EquationFinder_GUI</RootNamespace>
     <AssemblyName>EquationFinder_GUI</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -34,8 +34,12 @@
     <StartupObject>EquationFinder_GUI.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>none</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,14 +48,21 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundWorker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OpenSaveResults.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +77,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\EquationFactories\AlgebraicExpression\AlgebraicExpression.csproj">
+      <Project>{2a80d85a-1ddd-42a4-a70a-a35e07ca4619}</Project>
+      <Name>AlgebraicExpression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EquationFactories\AlgebraicString\AlgebraicString.csproj">
+      <Project>{5a69dd25-21b1-4709-9b15-08bf198873e9}</Project>
+      <Name>AlgebraicString</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\EquationFactories\AlgebraicTuple\AlgebraicTuple.csproj">
       <Project>{8112e30a-4082-4b1a-9d44-6af7979ea90a}</Project>
       <Name>AlgebraicTuple</Name>
