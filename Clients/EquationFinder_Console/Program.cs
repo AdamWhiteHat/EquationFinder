@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +17,7 @@ namespace EquationFinder_Console
 		private static void Main(string[] args)
 		{
 			MainRoutine mRoutine = new MainRoutine(args.ToList());
-			mRoutine.Find();			
+			mRoutine.Find();
 		}
 	}
 }

@@ -1,8 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
+using System.Numerics;
 using System.Linq.Expressions;
-using System.Text;
+using System.Collections.Generic;
+using EquationFinderCore;
 
 namespace EquationFactories
 {
@@ -10,7 +17,7 @@ namespace EquationFactories
 	{
 		private static string AllowedCharacters = InfixNotation.Numbers + InfixNotation.Operators + " ";
 
-		public static Expression<Func<int>> ExpressionTree(string postfixNotationString)
+		public static Expression<Func<BigInteger>> ExpressionTree(string postfixNotationString)
 		{
 			if (string.IsNullOrWhiteSpace(postfixNotationString))
 			{
@@ -27,9 +34,9 @@ namespace EquationFactories
 				{
 					throw new Exception("Token.Length is less than one.");
 				}
-				
-				int tokenValue = 0;
-				bool parseSuccess = int.TryParse(token, out tokenValue);
+
+				BigInteger tokenValue = 0;
+				bool parseSuccess = BigInteger.TryParse(token, out tokenValue);
 
 
 				if (token.Length > 1) // Numbers > 10 will have a token length > 1
@@ -60,8 +67,9 @@ namespace EquationFactories
 
 						Expression left = stack.Pop();
 						Expression right = stack.Pop();
-						Expression operation = null;	
-						
+						Expression operation = null;
+
+						/*
 						// ^ token uses Math.Pow, which both gives and takes double, hence convert
 						if (tokenChar == '^')
 						{
@@ -76,15 +84,16 @@ namespace EquationFactories
 						}
 						else // Math.Pow returns a double, so we must check here for all other operators
 						{
-							if (left.Type != typeof(int))
+							if (left.Type != typeof(BigInteger))
 							{
-								left = Expression.Convert(left, typeof(int));
+								left = Expression.Convert(left, typeof(BigInteger));
 							}
-							if (right.Type != typeof(int))
+							if (right.Type != typeof(BigInteger))
 							{
-								right = Expression.Convert(right, typeof(int));
+								right = Expression.Convert(right, typeof(BigInteger));
 							}
 						}
+						*/
 
 						if (tokenChar == '+')
 						{
@@ -126,7 +135,7 @@ namespace EquationFactories
 
 			if (stack.Count == 1)
 			{
-				return Expression.Lambda<Func<int>>(stack.Pop());
+				return Expression.Lambda<Func<BigInteger>>(stack.Pop());
 			}
 			else
 			{
@@ -136,7 +145,7 @@ namespace EquationFactories
 		} // method
 
 
-		public static int Evaluate(string postfixNotationString)
+		public static BigInteger Evaluate(string postfixNotationString)
 		{
 			if (string.IsNullOrWhiteSpace(postfixNotationString))
 			{
@@ -180,19 +189,19 @@ namespace EquationFactories
 							string r = stack.Pop();
 							string l = stack.Pop();
 
-							int rhs = int.MinValue;
-							int lhs = int.MinValue;
+							BigInteger rhs = BigInteger.MinusOne;
+							BigInteger lhs = BigInteger.MinusOne;
 
-							bool parseSuccess = int.TryParse(r, out rhs);
-							parseSuccess &= int.TryParse(l, out lhs);
-							parseSuccess &= (rhs != int.MinValue && lhs != int.MinValue);
+							bool parseSuccess = BigInteger.TryParse(r, out rhs);
+							parseSuccess &= BigInteger.TryParse(l, out lhs);
+							parseSuccess &= (rhs != BigInteger.MinusOne && lhs != BigInteger.MinusOne);
 
 							if (!parseSuccess)
 							{
 								throw new Exception("Unable to parse valueStack characters to Int32.");
 							}
 
-							int value = int.MinValue;
+							BigInteger value = BigInteger.MinusOne;
 							if (tokenChar == '+')
 							{
 								value = lhs + rhs;
@@ -211,10 +220,10 @@ namespace EquationFactories
 							}
 							else if (tokenChar == '^')
 							{
-								value = (int)Math.Pow(lhs, rhs);
+								value = HelperClass.Pow(lhs, rhs);
 							}
 
-							if (value != int.MinValue)
+							if (value != BigInteger.MinusOne)
 							{
 								stack.Push(value.ToString());
 							}
@@ -237,8 +246,8 @@ namespace EquationFactories
 
 			if (stack.Count == 1)
 			{
-				int result = 0;
-				if (!int.TryParse(stack.Pop(), out result))
+				BigInteger result = 0;
+				if (!BigInteger.TryParse(stack.Pop(), out result))
 				{
 					throw new Exception("Last value on stack could not be parsed into an integer.");
 				}

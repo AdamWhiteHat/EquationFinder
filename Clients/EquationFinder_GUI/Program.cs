@@ -1,7 +1,7 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
@@ -51,7 +51,7 @@ namespace EquationFinder_GUI
 
 		private static void HandleException(Exception ex, string CallingEvent)
 		{
-			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occurred @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) } );
+			File.AppendAllLines(ExceptionFileName, new string[] { "", "", string.Format("{0} occurred @ {1}", CallingEvent, DateTime.Now.ToString("yyyy-MM-ddhh:mm:ss")) });
 
 			string exceptionName = string.Empty;
 
@@ -59,7 +59,7 @@ namespace EquationFinder_GUI
 			{
 				List<string> outputLines = new List<string>();
 				exceptionName = ex.GetType().Name;
-								
+
 				string exType = string.Format("Exception of type \"{0}\":", exceptionName);
 				outputLines.Add(exType);
 
@@ -85,9 +85,9 @@ namespace EquationFinder_GUI
 				if (!string.IsNullOrEmpty(ex.StackTrace))
 				{
 					string exStacktrace = string.Format("\t[StackTrace=\"{0}\"]", ex.StackTrace);
-					outputLines.Add(exStacktrace);				
+					outputLines.Add(exStacktrace);
 				}
-				
+
 				if (outputLines != null && outputLines.Count > 0)
 				{
 					File.AppendAllLines(ExceptionFileName, outputLines.ToArray());
@@ -100,9 +100,9 @@ namespace EquationFinder_GUI
 
 						Console.WriteLine(line);
 					}
-					Console.ResetColor();					
+					Console.ResetColor();
 				}
-				
+
 			}
 			else
 			{

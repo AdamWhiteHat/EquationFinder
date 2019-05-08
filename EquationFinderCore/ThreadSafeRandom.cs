@@ -1,7 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
-using System.Text;
+using System.Collections.Generic;
 
 namespace EquationFinderCore
 {
@@ -17,7 +22,7 @@ namespace EquationFinderCore
 		}
 
 		private StaticRandom()
-		{ }	// Explicit private constructor with no public constructors prevents other classes from instantiating it
+		{ } // Explicit private constructor with no public constructors prevents other classes from instantiating it
 
 		static StaticRandom()
 		{ // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit

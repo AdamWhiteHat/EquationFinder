@@ -1,7 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
-using System.Text;
+using System.Collections.Generic;
 
 namespace EquationFactories
 {
@@ -115,7 +120,7 @@ namespace EquationFactories
 					else if (c == ')')
 					{
 						bool leftParenthesisFound = false;
-						while (operatorStack.Count > 0 )
+						while (operatorStack.Count > 0)
 						{
 							char o = operatorStack.Peek();
 							if (o != '(')

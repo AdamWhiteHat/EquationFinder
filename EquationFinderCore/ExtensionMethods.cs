@@ -1,7 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace EquationFinderCore
 {

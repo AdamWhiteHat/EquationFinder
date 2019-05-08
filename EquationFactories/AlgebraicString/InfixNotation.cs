@@ -1,7 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
-using System.Text;
+using System.Numerics;
+using System.Collections.Generic;
 
 namespace EquationFactories
 {
@@ -15,11 +21,10 @@ namespace EquationFactories
 			return string.IsNullOrWhiteSpace(text) ? false : text.All(c => Numbers.Contains(c));
 		}
 
-		public static int Evaluate(string infixNotationString)
+		public static BigInteger Evaluate(string infixNotationString)
 		{
 			string postFixNotationString = ShuntingYardConverter.Convert(infixNotationString);
-			int result = PostfixNotation.Evaluate(postFixNotationString);
-			return result;
+			return PostfixNotation.Evaluate(postFixNotationString);
 		}
 	}
 }

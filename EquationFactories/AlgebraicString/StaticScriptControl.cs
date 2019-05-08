@@ -1,11 +1,12 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 namespace EquationFactories
-{	
+{
+	using System.Numerics;
 	public sealed class StaticScriptControl
 	{
 		public static MSScriptControl.ScriptControl Instance { get { return Nested.instance; } }
@@ -18,7 +19,7 @@ namespace EquationFactories
 			private Nested() { } // Cannot be instantiated
 		}
 
-		public static decimal Evaluate(string Equation)
+		public static BigInteger Evaluate(string Equation)
 		{			
 			return EquationFinderCore.HelperClass.String2Decimal(Instance.Eval(Equation).ToString());
 		}

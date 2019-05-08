@@ -1,14 +1,17 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System.Numerics;
 
 namespace EquationFactories
-{	
+{
 	public interface IOperation
 	{
 		//IArithmeticOperation Art { get; set; }
-		decimal Calculate(decimal Value1, decimal Value2);
+		BigInteger Calculate(BigInteger Value1, BigInteger Value2);
 		string ToString();
 		bool Equals(object obj);
 	}

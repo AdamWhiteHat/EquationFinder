@@ -1,65 +1,178 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using EquationFinderCore;
+using System.Numerics;
 using System.Globalization;
+using System.Collections.Generic;
+using EquationFinderCore;
 
 namespace EquationFactories
 {
 	public partial class AlgebraicTuple : IEquation
 	{
-		public decimal Result
+		public BigInteger Result
 		{
 			get
 			{
-				if (_result == null) { _result = Solve(); }
-				return (decimal)_result;
+				if (_result != null) { return (BigInteger)_result; }
+				else { throw new Exception(); }
 			}
 		}
-		private decimal? _result = null;
+		private BigInteger? _result = null;
+
+		public bool IsSolution
+		{
+			get { return _isSolution; }
+		}
+		private bool _isSolution = false;
+
+		private List<Tuple<BigInteger, TupleOperation>> Equation { get; set; }
 
 		private IEquationFinderArgs EquationArgs { get; set; }
-		private List<Tuple<decimal, TupleOperation>> Equation { get; set; }
-		private List<int> TermPool { get { return EquationArgs.TermPool; } }
-		private string OperatorPool { get { return EquationArgs.OperatorPool; } }
-		private decimal TargetValue { get { return EquationArgs.TargetValue; } }
+		private BigInteger TargetValue { get { return EquationArgs.TargetValue; } }
 		private int NumberOfOperations { get { return EquationArgs.NumberOfOperations; } }
+		private List<int> TermPool { get { return EquationArgs.TermPool; } }
+
+		private List<TupleOperation> IncreasingOperations { get; set; }
+		private List<TupleOperation> DecreasingOperations { get; set; }
+
 
 		public AlgebraicTuple()
 		{
 		}
 
-		public AlgebraicTuple(EquationFinderArgs equationArgs)
-		{
-			GenerateNewAndEvaluate(equationArgs);
-		}
-
 		public void GenerateNewAndEvaluate(IEquationFinderArgs args)
-		{			
+		{
 			_result = null;
+			_isSolution = false;
 			EquationArgs = args;
-			Equation = GenerateRandomEquation();
-			Solve();
+
+			IncreasingOperations = new List<TupleOperation>();
+			DecreasingOperations = new List<TupleOperation>();
+
+			foreach (char op in EquationArgs.OperatorPool)
+			{
+				TupleOperation tupleOperation = new TupleOperation(op);
+
+				switch (tupleOperation.Operand)
+				{
+					case OperationType.Add:
+					case OperationType.Multiply:
+					case OperationType.Exponentiation:
+						IncreasingOperations.Add(tupleOperation);
+						break;
+
+					case OperationType.Subtract:
+					case OperationType.Divide:
+						DecreasingOperations.Add(tupleOperation);
+						break;
+				}
+			}
+
+			BuildEquation();
 		}
 
-		public bool IsSolution
+		private void BuildEquation()
 		{
-			get { return (Solve() == TargetValue); }
-		}
+			if (_result != null)
+			{
+				return;
+			}
 
-		private List<Tuple<decimal, TupleOperation>> GenerateRandomEquation()
-		{
-			List<Tuple<decimal, TupleOperation>> result = new List<Tuple<decimal, TupleOperation>>();
+			int termCount = TermPool.Count;
+			int increasingOpCount = IncreasingOperations.Count;
+			int decreasingOpCount = DecreasingOperations.Count;
 
 			int counter = 1;
-			decimal term = 0;
+			BigInteger currentTerm = 0;
+			BigInteger runningTotal = 0;
+			TupleOperation currentOperation = new TupleOperation();
+			TupleOperation lastOperation = new TupleOperation(OperationType.None);
+
+			List<Tuple<BigInteger, TupleOperation>> result = new List<Tuple<BigInteger, TupleOperation>>();
+
+			while (counter <= NumberOfOperations)
+			{
+				do
+				{
+					currentTerm = TermPool[EquationArgs.Rand.Next(0, termCount)];
+				}
+				while (lastOperation.Operand == OperationType.Divide && currentTerm == 0);
+
+
+				if (lastOperation.Operand == OperationType.None)
+				{
+					runningTotal = currentTerm;
+				}
+				else
+				{
+					runningTotal = lastOperation.Calculate((BigInteger)runningTotal, currentTerm);
+				}
+
+
+				if (counter == NumberOfOperations)
+				{
+					currentOperation = new TupleOperation(OperationType.Equal);
+				}
+				else
+				{
+					switch (runningTotal.CompareTo(TargetValue))
+					{
+						case -1:
+
+							currentOperation = IncreasingOperations.ElementAt(EquationArgs.Rand.Next(0, increasingOpCount));
+
+							break;
+
+						case 1:
+
+							currentOperation = DecreasingOperations.ElementAt(EquationArgs.Rand.Next(0, decreasingOpCount));
+
+							break;
+
+						case 0:
+							currentOperation = new TupleOperation(OperationType.Equal);
+							result.Add(new Tuple<BigInteger, TupleOperation>(currentTerm, currentOperation));
+							Equation = result;
+							_result = runningTotal;
+							_isSolution = (_result == TargetValue);
+							return;
+					}
+
+
+
+					//
+
+
+				}
+
+				result.Add(new Tuple<BigInteger, TupleOperation>(currentTerm, currentOperation));
+
+				lastOperation = currentOperation;
+				counter++;
+			}
+
+
+			Equation = result;
+			_result = runningTotal;
+			_isSolution = (_result == TargetValue);
+		}
+
+		#region Dead/Old Code
+
+		/*
+		private List<Tuple<BigInteger, TupleOperation>> GenerateRandomEquation()
+		{
+			List<Tuple<BigInteger, TupleOperation>> result = new List<Tuple<BigInteger, TupleOperation>>();
+
+			int counter = 1;
+			BigInteger term = 0;
 			int termCount = TermPool.Count;
 			int opCount = OperatorPool.Length;
 			TupleOperation operation = new TupleOperation();
@@ -68,7 +181,7 @@ namespace EquationFactories
 			{
 				do
 				{
-					term = Convert.ToDecimal(TermPool[EquationArgs.Rand.Next(0, termCount)]);
+					term = TermPool[EquationArgs.Rand.Next(0, termCount)];
 				}
 				while (lastOperand == OperationType.Divide && term == 0);
 
@@ -81,7 +194,7 @@ namespace EquationFactories
 					operation = new TupleOperation(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, opCount)).ToString());
 				}
 
-				result.Add(new Tuple<decimal, TupleOperation>(term, operation));
+				result.Add(new Tuple<BigInteger, TupleOperation>(term, operation));
 				lastOperand = operation.Operand;
 				counter++;
 			}
@@ -89,34 +202,37 @@ namespace EquationFactories
 			return result;
 		}
 
-		private decimal Solve()
+		private BigInteger Solve()
 		{
 			if (_result == null)
 			{
 				TupleOperation lastOperation = new TupleOperation(OperationType.None);
-				decimal runningTotal = 0;
-				foreach (Tuple<decimal, TupleOperation> t in Equation)
+				BigInteger runningTotal = 0;
+				foreach (Tuple<BigInteger, TupleOperation> t in Equation)
 				{
 					if (lastOperation.Operand == OperationType.None)
 					{
-						runningTotal = (decimal)t.Item1;
+						runningTotal = (BigInteger)t.Item1;
 					}
 					else
 					{
-						runningTotal = lastOperation.Calculate((decimal)runningTotal, (decimal)t.Item1);
+						runningTotal = lastOperation.Calculate((BigInteger)runningTotal, (BigInteger)t.Item1);
 					}
 					lastOperation = t.Item2;
 				}
 				_result = runningTotal;
 			}
-		
-			return (decimal)_result;			
+
+			return (BigInteger)_result;
 		}
+		*/
+
+		#endregion
 
 		public override string ToString()
 		{
 			StringBuilder resultText = new StringBuilder();
-			foreach (Tuple<decimal, TupleOperation> exp in Equation)
+			foreach (Tuple<BigInteger, TupleOperation> exp in Equation)
 			{
 				resultText.AppendFormat(CultureInfo.CurrentCulture, "{0:0.##} {1} ", exp.Item1, exp.Item2);
 			}

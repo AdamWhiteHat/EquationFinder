@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
+using System.Globalization;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using EquationFinderCore;
 
 namespace EquationFactories
@@ -109,6 +113,8 @@ namespace EquationFactories
 				result = AddRandomOperation(result);
 			}
 
+			//result.Derivative("");
+
 			return result;
 		}
 
@@ -128,6 +134,10 @@ namespace EquationFactories
 					return Expression.MultiplyChecked(lhs, rhs);
 				case "/":
 					return Expression.Divide(lhs, GenerateRandomConstant(true));
+				case "^":
+					var leftHandSide = lhs.Reduce();
+					var invokedExpr = Expression.Invoke(leftHandSide);
+					return Expression.Lambda<Func<T>>(Expression.Power(rhs, invokedExpr));
 
 				default:
 					throw new Exception(string.Format("Operation '{0}' not within expected range.", randomOperation));

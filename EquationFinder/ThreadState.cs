@@ -1,8 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using System.Collections.Generic;
 using EquationFinderCore;
 
 namespace EquationFinder
@@ -19,7 +24,7 @@ namespace EquationFinder
 		public ThreadState(ThreadSpawnerArgs threadArgs, DateTime timeToStop)
 		{
 			this.ThreadArgs = threadArgs;
-			this.TimeToStop = new DateTime(timeToStop.Ticks);			
+			this.TimeToStop = new DateTime(timeToStop.Ticks);
 			this.CancelToken = new CancellationTokenSource();
 		}
 	}

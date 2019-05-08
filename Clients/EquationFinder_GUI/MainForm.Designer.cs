@@ -40,6 +40,7 @@ namespace EquationFinder_GUI
 			System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Subtraction");
 			System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Multiplication");
 			System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Division");
+			System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Exponentiation");
 			this.btnFindSolution = new System.Windows.Forms.Button();
 			this.tbOutput = new System.Windows.Forms.TextBox();
 			this.tbOperandQuantity = new System.Windows.Forms.TextBox();
@@ -62,7 +63,7 @@ namespace EquationFinder_GUI
 			this.tbOperandMax = new System.Windows.Forms.TextBox();
 			this.groupOperands = new System.Windows.Forms.GroupBox();
 			this.cbAllowZero = new System.Windows.Forms.CheckBox();
-			this.label3 = new System.Windows.Forms.Label();
+			this.lblMaxOrConstantValue = new System.Windows.Forms.Label();
 			this.listboxOperators = new System.Windows.Forms.ListView();
 			this.tbStats = new System.Windows.Forms.Label();
 			this.groupOperators = new System.Windows.Forms.GroupBox();
@@ -113,7 +114,7 @@ namespace EquationFinder_GUI
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(10, 19);
+			this.label2.Location = new System.Drawing.Point(17, 19);
 			this.label2.Margin = new System.Windows.Forms.Padding(0);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(50, 13);
@@ -250,6 +251,7 @@ namespace EquationFinder_GUI
 			this.radioConstant.Text = "Constant";
 			this.radioConstant.UseCompatibleTextRendering = true;
 			this.radioConstant.UseVisualStyleBackColor = true;
+			this.radioConstant.CheckedChanged += new System.EventHandler(this.radioConstant_CheckedChanged);
 			// 
 			// radioRandom
 			// 
@@ -276,7 +278,7 @@ namespace EquationFinder_GUI
 			// groupOperands
 			// 
 			this.groupOperands.Controls.Add(this.cbAllowZero);
-			this.groupOperands.Controls.Add(this.label3);
+			this.groupOperands.Controls.Add(this.lblMaxOrConstantValue);
 			this.groupOperands.Controls.Add(this.label2);
 			this.groupOperands.Controls.Add(this.tbOperandQuantity);
 			this.groupOperands.Controls.Add(this.radioRandom);
@@ -302,13 +304,14 @@ namespace EquationFinder_GUI
 			this.cbAllowZero.Text = "Allow zero";
 			this.cbAllowZero.UseVisualStyleBackColor = true;
 			// 
-			// label3
+			// lblMaxOrConstantValue
 			// 
-			this.label3.Location = new System.Drawing.Point(9, 39);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(59, 13);
-			this.label3.TabIndex = 11;
-			this.label3.Text = "Max value:";
+			this.lblMaxOrConstantValue.Location = new System.Drawing.Point(2, 39);
+			this.lblMaxOrConstantValue.Name = "lblMaxOrConstantValue";
+			this.lblMaxOrConstantValue.Size = new System.Drawing.Size(67, 13);
+			this.lblMaxOrConstantValue.TabIndex = 11;
+			this.lblMaxOrConstantValue.Text = "Max value:";
+			this.lblMaxOrConstantValue.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// listboxOperators
 			// 
@@ -318,10 +321,12 @@ namespace EquationFinder_GUI
             listViewItem1,
             listViewItem2,
             listViewItem3,
-            listViewItem4});
+            listViewItem4,
+            listViewItem5});
 			this.listboxOperators.Location = new System.Drawing.Point(10, 18);
 			this.listboxOperators.Name = "listboxOperators";
-			this.listboxOperators.Size = new System.Drawing.Size(82, 78);
+			this.listboxOperators.Scrollable = false;
+			this.listboxOperators.Size = new System.Drawing.Size(82, 95);
 			this.listboxOperators.TabIndex = 0;
 			this.listboxOperators.UseCompatibleStateImageBehavior = false;
 			this.listboxOperators.View = System.Windows.Forms.View.SmallIcon;
@@ -341,7 +346,6 @@ namespace EquationFinder_GUI
 			// 
 			// groupOperators
 			// 
-			this.groupOperators.AutoSize = true;
 			this.groupOperators.Controls.Add(this.listboxOperators);
 			this.groupOperators.Location = new System.Drawing.Point(207, 4);
 			this.groupOperators.Name = "groupOperators";
@@ -424,7 +428,7 @@ namespace EquationFinder_GUI
 		private System.Windows.Forms.ListView listboxOperators;
 		private System.Windows.Forms.Label tbStats;
 		private System.Windows.Forms.CheckBox cbAllowZero;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label lblMaxOrConstantValue;
 		private System.Windows.Forms.GroupBox groupOperators;
 		private System.Windows.Forms.GroupBox groupGoal;
 		private System.Windows.Forms.Button btnTest;

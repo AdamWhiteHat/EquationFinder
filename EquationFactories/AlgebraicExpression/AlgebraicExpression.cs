@@ -1,21 +1,26 @@
-﻿using System;
-using System.Text;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Numerics;
 
 using EquationFinderCore;
 
 namespace EquationFactories
 {
 	public class AlgebraicExpression : IEquation
-    {
-		public decimal Result { get { return _builder.Result; } }
+	{
+		public BigInteger Result { get { return _builder.Result; } }
 		public string Equation { get { return _builder.ToString(); } }
 		public bool IsSolution { get; private set; }
 
-		private ExpressionBuilder<decimal> _builder = null;
+		private ExpressionBuilder<BigInteger> _builder = null;
 		private IEquationFinderArgs _equationArgs = null;
 
 		public AlgebraicExpression()
@@ -25,7 +30,7 @@ namespace EquationFactories
 		public AlgebraicExpression(IEquationFinderArgs args)
 		{
 			GenerateNewAndEvaluate(args);
-		}		
+		}
 
 		public void GenerateNewAndEvaluate(IEquationFinderArgs args)
 		{
@@ -34,19 +39,19 @@ namespace EquationFactories
 				throw new ArgumentNullException("args");
 			}
 			if (_equationArgs == null)
-			{				
+			{
 				_equationArgs = args;
 			}
 
 
 
 
-			_builder = new ExpressionBuilder<decimal>(args);
+			_builder = new ExpressionBuilder<BigInteger>(args);
 
 
 			IsSolution = (Result == _equationArgs.TargetValue);
 		}
-		
+
 		public EquationResults GetResults()
 		{
 			if (_equationArgs != null)
@@ -60,5 +65,5 @@ namespace EquationFactories
 		{
 			return _builder.ToString();
 		}
-    }
+	}
 }

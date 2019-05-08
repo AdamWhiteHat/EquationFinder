@@ -1,16 +1,13 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.Text;
 using System.Linq;
+using System.Numerics;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EquationFinderCore
 {
@@ -20,7 +17,7 @@ namespace EquationFinderCore
 	{
 		void GenerateNewAndEvaluate(IEquationFinderArgs args);
 		bool IsSolution { get; }
-		decimal Result { get; }
+		BigInteger Result { get; }
 		string ToString();
 	}
 
@@ -28,7 +25,7 @@ namespace EquationFinderCore
 	{
 		List<int> TermPool { get; }
 		string OperatorPool { get; }
-		decimal TargetValue { get; }
+		BigInteger TargetValue { get; }
 		int NumberOfOperations { get; }
 		Random Rand { get; }
 	}
@@ -40,7 +37,7 @@ namespace EquationFinderCore
 		Subtract = 2,
 		Multiply = 3,
 		Divide = 4,
-		Raise = 5,
+		Exponentiation = 5,
 		None = 6
 	}
 }

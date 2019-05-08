@@ -1,7 +1,7 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System.Windows.Forms;
@@ -23,7 +23,7 @@ namespace EquationFinder_GUI
 				{
 					IsDirty = true;
 
-					equationFinder = new ThreadedEquationFinder<AlgebraicExpression>((ThreadSpawnerArgs)e.Argument);					
+					equationFinder = new ThreadedEquationFinder<AlgebraicTuple>((ThreadSpawnerArgs)e.Argument);					
 					equationFinder.Run();					
 
 					// Stats

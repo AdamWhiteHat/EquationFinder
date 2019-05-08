@@ -1,7 +1,12 @@
-﻿using System;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.IO;
 using System.Collections.Generic;
-
 using EquationFinder;
 using EquationFactories;
 using EquationFinderCore;
@@ -17,7 +22,7 @@ namespace EquationFinder_Console
 		private List<string> previousfoundResults { get; set; }
 		private static string settingsExceptionMessage = "<appSettings> must be configured in App.config file: {0}  key was missing or empty.";
 		private static string settingsExceptionArgument = "<appSettings><add key=\"{0}\" value=\"{1}\"/>";
-		
+
 		public MainRoutine(List<string> args)
 		{
 			if (args.Count > 1)
@@ -65,11 +70,11 @@ namespace EquationFinder_Console
 				parseOut = 0;
 				if (int.TryParse(term, out parseOut))
 				{
-					termPool.Add(parseOut);					
+					termPool.Add(parseOut);
 				}
 			}
 
-			equationArgs = new  EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, termPool, Settings.Operand_Pool);
+			equationArgs = new EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, termPool, Settings.Operand_Pool);
 			threadArgs = new ThreadSpawnerArgs(previousfoundResults, LogSolution, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Round_Quantity, equationArgs);
 
 			ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>(threadArgs);
@@ -92,7 +97,7 @@ namespace EquationFinder_Console
 				{
 					File.AppendAllText(outputFilename, outputString + Environment.NewLine);
 				}
-			}			
+			}
 		}
 	}
 }

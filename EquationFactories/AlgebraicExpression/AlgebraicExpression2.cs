@@ -1,23 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿/*
+ *
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
+ * 
+ */
+using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 using EquationFinderCore;
-using EquationFactories;
+using System.Globalization;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace EquationFactories
 {
 	public class AlgebraicExpression2 : IEquation
 	{
 		public bool IsSolution { get { return (Result == EquationArgs.TargetValue); } }
-		public decimal Result { get { return Solve(); } }
-		private decimal? _result = null;
+		public BigInteger Result { get { return Solve(); } }
+		private BigInteger? _result = null;
 		private IEquationFinderArgs EquationArgs { get; set; }
 		private Expression Equation { get; set; }
-		
+
 
 		public static Dictionary<char, Func<Expression, Expression, Expression>> OperationTypeDictionary = new Dictionary<char, Func<Expression, Expression, Expression>>()
 		{
@@ -28,10 +32,10 @@ namespace EquationFactories
 			{'^', Expression.Power}
 		};
 
-		private decimal _lastTerm = 0;
-		private decimal GenerateTerm
+		private BigInteger _lastTerm = 0;
+		private BigInteger GenerateTerm
 		{
-			get 
+			get
 			{
 				_lastTerm = EquationArgs.TermPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.TermPool.Count()));
 				return _lastTerm;
@@ -41,13 +45,13 @@ namespace EquationFactories
 		private char _lastOperation = '\0';
 		private Func<Expression, Expression, Expression> GenerateOperator
 		{
-			get 
+			get
 			{
 				_lastOperation = EquationArgs.OperatorPool.ElementAt(EquationArgs.Rand.Next(0, EquationArgs.OperatorPool.Count()));
 				return OperationTypeDictionary[_lastOperation];
 			}
 		}
-		
+
 		public Func<Expression, Expression, Expression> NextOperation()
 		{
 			return GenerateOperator;
@@ -71,10 +75,10 @@ namespace EquationFactories
 			Func<Expression, Expression, Expression> operation = NextOperation();
 			Expression lhs = AlgebraicBuilder.Constant(GenerateTerm);
 			Expression rhs = AlgebraicBuilder.Constant(GenerateTerm);
-			while ( _lastOperation == '/' && _lastTerm == 0)
+			while (_lastOperation == '/' && _lastTerm == 0)
 			{
 				operation = NextOperation();
-				rhs = AlgebraicBuilder.Constant(GenerateTerm);				
+				rhs = AlgebraicBuilder.Constant(GenerateTerm);
 			}
 			expression = operation(lhs, rhs);
 			counter -= 2;
@@ -85,7 +89,7 @@ namespace EquationFactories
 				{
 					operation = NextOperation();
 					rhs = AlgebraicBuilder.Constant(GenerateTerm);
-					
+
 					while (_lastOperation == '/' && _lastTerm == 0)
 					{
 						operation = NextOperation();
@@ -97,7 +101,7 @@ namespace EquationFactories
 				{
 					operation = NextOperation();
 					lhs = AlgebraicBuilder.Constant(GenerateTerm);
-					
+
 					while (_lastOperation == '/')
 					{
 						operation = NextOperation();
@@ -107,19 +111,19 @@ namespace EquationFactories
 			}
 			Equation = expression;
 			Solve();
-			decimal result = Result;
+			BigInteger result = Result;
 			bool solved = IsSolution;
 		}
 
-		private decimal Solve()
+		private BigInteger Solve()
 		{
 			if (_result == null)
 			{
-				Expression<Func<decimal>> exprssn = Expression.Lambda<Func<decimal>>(Equation);
-				Func<decimal> equationDelegate = exprssn.Compile();
+				Expression<Func<BigInteger>> exprssn = Expression.Lambda<Func<BigInteger>>(Equation);
+				Func<BigInteger> equationDelegate = exprssn.Compile();
 				_result = equationDelegate.Invoke();
 			}
-			return (decimal)_result;
+			return (BigInteger)_result;
 		}
 
 		public override string ToString()
@@ -142,7 +146,7 @@ namespace EquationFactories
 
 	public static class AlgebraicBuilder
 	{
-		public static Expression Constant(decimal value) { return Expression.Constant(value); }
+		public static Expression Constant(BigInteger value) { return Expression.Constant(value); }
 
 		public static Expression<Func<T>> InvokeLambda<T>(this Expression<Func<T>> lhs, Func<Expression, Expression, BinaryExpression> operation, Expression<Func<T>> rhs)
 		{

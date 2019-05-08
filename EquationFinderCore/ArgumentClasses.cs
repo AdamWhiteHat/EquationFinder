@@ -1,25 +1,25 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Numerics;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace EquationFinderCore
 {
 	public class EquationResults
 	{
-		public decimal TargetValue { get; private set; }
+		public BigInteger TargetValue { get; private set; }
 		public string EquationText { get; private set; }
-		public decimal Result { get; private set; }
+		public BigInteger Result { get; private set; }
 		public bool IsSolution { get; private set; }
 
-		public EquationResults(string equationText, decimal targetValue, decimal result, bool isSolution)
+		public EquationResults(string equationText, BigInteger targetValue, BigInteger result, bool isSolution)
 		{
 			EquationText = equationText;
 			TargetValue = targetValue;
@@ -30,13 +30,13 @@ namespace EquationFinderCore
 
 	public class EquationFinderArgs : IEquationFinderArgs
 	{
-		public decimal TargetValue { get; private set; }
+		public BigInteger TargetValue { get; private set; }
 		public int NumberOfOperations { get; private set; }
 		public List<int> TermPool { get; private set; }
 		public string OperatorPool { get; private set; }
 		public Random Rand { get; private set; }
 
-		public EquationFinderArgs(decimal targetValue, int numOperations, List<int> termPool, string operatorPool)
+		public EquationFinderArgs(BigInteger targetValue, int numOperations, List<int> termPool, string operatorPool)
 		{
 			if (termPool == null || termPool.Count < 1)
 			{

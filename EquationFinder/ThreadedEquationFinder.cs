@@ -1,17 +1,12 @@
 ﻿/*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
+using System.Collections.Generic;
 using EquationFinderCore;
 
 namespace EquationFinder
@@ -111,7 +106,7 @@ namespace EquationFinder
 				// Free up some resources
 				threadHandletList.RemoveAll(d => true);
 				threadDelegateList.RemoveAll(d => true);
-				threadHandletList = null;				
+				threadHandletList = null;
 				threadDelegateList = null;
 
 

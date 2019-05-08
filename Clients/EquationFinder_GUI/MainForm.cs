@@ -1,12 +1,13 @@
 /*
  *
- * Developed by Adam Rakaska
- *  http://www.csharpprogramming.tips
+ * Developed by Adam White
+ *  https://csharpcodewhisperer.blogspot.com
  * 
  */
 using System;
 using System.Linq;
 using System.Text;
+using System.Numerics;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -23,7 +24,7 @@ namespace EquationFinder_GUI
 	{
 		private EquationFinderArgs equationArgs { get; set; }
 		private ThreadSpawnerArgs threadArgs { get; set; }
-		private ThreadedEquationFinder<AlgebraicExpression> equationFinder { get; set; }
+		private ThreadedEquationFinder<AlgebraicTuple> equationFinder { get; set; }
 
 		private Timer timerCollectResults;
 		private bool IsDirty = false;
@@ -35,10 +36,12 @@ namespace EquationFinder_GUI
 		private long lastSolutionCount { get; set; }
 		private static string findButtonText = "Find Solution";
 		private static string cancelButtonText = "Stop Searching";
+		private static string maxLabelText = "Max value:";
+		private static string constantLabelText = "Constant:";
 		private List<int> TermPool { get { return GetTermPool(cbAllowZero.Checked); } }
 		private string OperatorPool { get { return GetOperatorPool(); } }
 		private int maxTerm { get { return Convert.ToInt32(tbOperandMax.Text); } }
-		private decimal targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
+		private BigInteger targetValue { get { return HelperClass.String2Decimal(tbGoal.Text); } }
 		private int numberOfOperations { get { return HelperClass.String2Int(tbOperandQuantity.Text); } }
 		private int numberOfThreads { get { return HelperClass.String2Int(tbThreads.Text); } }
 		private int timeToLive { get { return HelperClass.String2Int(tbTTL.Text); } }
@@ -98,6 +101,18 @@ namespace EquationFinder_GUI
 
 		private void btnTest_Click(object sender, EventArgs e)
 		{
+		}
+
+		private void radioConstant_CheckedChanged(object sender, EventArgs e)
+		{
+			if (radioConstant.Checked)
+			{
+				lblMaxOrConstantValue.Text = constantLabelText;
+			}
+			else
+			{
+				lblMaxOrConstantValue.Text = maxLabelText;
+			}
 		}
 
 		#region Equation search toggling
@@ -308,6 +323,10 @@ namespace EquationFinder_GUI
 					case "Division":
 						result.Append('/');
 						break;
+
+					case "Exponentiation":
+						result.Append('^');
+						break;
 				}
 			}
 			return result.ToString();
@@ -336,8 +355,6 @@ namespace EquationFinder_GUI
 
 		#endregion
 
-
-		
 	}
 }
 
