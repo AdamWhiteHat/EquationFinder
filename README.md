@@ -5,7 +5,8 @@
 [Quick explaination]
 Finds equations to match select constraints. Answers such questions as: "How many diffrent ways can nine 9's equal 27 (using only arithmetic operations)". Uses brute force equation finding approach. Example usage of interfaces.
 
-
+https://csharpcodewhisperer.blogspot.com/2015/09/threaded-equation-finder.html
+https://csharpcodewhisperer.blogspot.com/2015/12/infix-notation-parser-via-shunting-yard.html
 
 [Introduction]
 You should all be familiar with how a typical computer works; you give it some variables, describe some quantities of some resources you have, choose an algorithm, let it process, and it returns to you a result or outcome. Now imagine a computer if you could work with a computer that worked the other way around. I believe it was Douglas Adams that described the notion of an all-together different type of computer; That is, you tell the computer what you want the outcome to be, and it goes off figuring out how to get there and what you need to do it. Bart DeSmet's Theorem Prover, Z3, and the constraint satisfaction problem (CSP) solver (and probably others) in Microsoft's Solver Foundation do almost exactly that. 
