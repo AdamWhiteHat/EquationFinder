@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ResultPredicateEnum.cs" />
     <Compile Include="ThreadSpawnerArgs.cs" />
     <Compile Include="EquationFinderArgs.cs" />
     <Compile Include="EquationResults.cs" />

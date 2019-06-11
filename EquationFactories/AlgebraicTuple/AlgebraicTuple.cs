@@ -141,7 +141,16 @@ namespace EquationFactories
 							result.Add(new Tuple<BigInteger, TupleOperation>(currentTerm, currentOperation));
 							Equation = result;
 							_result = runningTotal;
-							_isSolution = (_result == TargetValue);
+
+							if (EquationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
+							{
+								_isSolution = (_result % TargetValue == 0);
+							}
+							else if (EquationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
+							{
+								_isSolution = (_result == TargetValue);
+							}
+
 							return;
 					}
 
@@ -161,73 +170,16 @@ namespace EquationFactories
 
 			Equation = result;
 			_result = runningTotal;
-			_isSolution = (_result == TargetValue);
-		}
 
-		#region Dead/Old Code
-
-		/*
-		private List<Tuple<BigInteger, TupleOperation>> GenerateRandomEquation()
-		{
-			List<Tuple<BigInteger, TupleOperation>> result = new List<Tuple<BigInteger, TupleOperation>>();
-
-			int counter = 1;
-			BigInteger term = 0;
-			int termCount = TermPool.Count;
-			int opCount = OperatorPool.Length;
-			TupleOperation operation = new TupleOperation();
-			OperationType lastOperand = OperationType.None;
-			while (counter <= NumberOfOperations)
+			if (EquationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
 			{
-				do
-				{
-					term = TermPool[EquationArgs.Rand.Next(0, termCount)];
-				}
-				while (lastOperand == OperationType.Divide && term == 0);
-
-				if (counter == NumberOfOperations)
-				{
-					operation = new TupleOperation(OperationType.Equal);
-				}
-				else
-				{
-					operation = new TupleOperation(OperatorPool.ElementAt(EquationArgs.Rand.Next(0, opCount)).ToString());
-				}
-
-				result.Add(new Tuple<BigInteger, TupleOperation>(term, operation));
-				lastOperand = operation.Operand;
-				counter++;
+				_isSolution = (_result % TargetValue == 0);
 			}
-
-			return result;
-		}
-
-		private BigInteger Solve()
-		{
-			if (_result == null)
+			else if (EquationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
 			{
-				TupleOperation lastOperation = new TupleOperation(OperationType.None);
-				BigInteger runningTotal = 0;
-				foreach (Tuple<BigInteger, TupleOperation> t in Equation)
-				{
-					if (lastOperation.Operand == OperationType.None)
-					{
-						runningTotal = (BigInteger)t.Item1;
-					}
-					else
-					{
-						runningTotal = lastOperation.Calculate((BigInteger)runningTotal, (BigInteger)t.Item1);
-					}
-					lastOperation = t.Item2;
-				}
-				_result = runningTotal;
+				_isSolution = (_result == TargetValue);
 			}
-
-			return (BigInteger)_result;
 		}
-		*/
-
-		#endregion
 
 		public override string ToString()
 		{

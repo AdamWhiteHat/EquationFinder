@@ -81,7 +81,7 @@ namespace EquationFactories
 			{
 				throw new ArgumentNullException("equationArgs");
 			}
-			EquationArgs = new EquationFinderArgs(equationArgs.TargetValue, equationArgs.NumberOfOperations, equationArgs.TermPool, equationArgs.OperatorPool);
+			EquationArgs = new EquationFinderArgs(equationArgs.TargetValue, ResultPredicate.IsEqualTo, equationArgs.NumberOfOperations, equationArgs.TermPool, equationArgs.OperatorPool);
 		}
 
 		public override string ToString()

@@ -8,13 +8,14 @@ namespace EquationFinderCore
 {
 	public class EquationFinderArgs : IEquationFinderArgs
 	{
+		public ResultPredicate TargetValuePredicate { get; private set; }
 		public BigInteger TargetValue { get; private set; }
 		public int NumberOfOperations { get; private set; }
 		public List<int> TermPool { get; private set; }
 		public string OperatorPool { get; private set; }
 		public Random Rand { get; private set; }
 
-		public EquationFinderArgs(BigInteger targetValue, int numOperations, List<int> termPool, string operatorPool)
+		public EquationFinderArgs(BigInteger targetValue, ResultPredicate targetValuePredicate, int numOperations, List<int> termPool, string operatorPool)
 		{
 			if (termPool == null || termPool.Count < 1)
 			{
@@ -28,6 +29,8 @@ namespace EquationFinderCore
 			{
 				throw new ArgumentException("numOperations must be one or greater.", "numOperations");
 			}
+
+			TargetValuePredicate = targetValuePredicate;
 
 			Rand = StaticRandom.Factory.Random();
 

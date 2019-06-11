@@ -1,4 +1,4 @@
-/*
+﻿/*
  * 
  * Created by BurningBunny
  * Made using SharpDevelop
@@ -68,16 +68,21 @@ namespace EquationFinder_GUI
 			this.tbStats = new System.Windows.Forms.Label();
 			this.groupOperators = new System.Windows.Forms.GroupBox();
 			this.groupGoal = new System.Windows.Forms.GroupBox();
+			this.labelGoalPredicate = new System.Windows.Forms.Label();
+			this.radioGoalDivisibleaBy = new System.Windows.Forms.RadioButton();
+			this.radioGoalEqual = new System.Windows.Forms.RadioButton();
 			this.btnTest = new System.Windows.Forms.Button();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.groupThreads.SuspendLayout();
 			this.groupOperands.SuspendLayout();
 			this.groupOperators.SuspendLayout();
 			this.groupGoal.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnFindSolution
 			// 
-			this.btnFindSolution.Location = new System.Drawing.Point(317, 97);
+			this.btnFindSolution.Location = new System.Drawing.Point(380, 96);
 			this.btnFindSolution.Name = "btnFindSolution";
 			this.btnFindSolution.Size = new System.Drawing.Size(136, 26);
 			this.btnFindSolution.TabIndex = 4;
@@ -93,12 +98,12 @@ namespace EquationFinder_GUI
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tbOutput.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.tbOutput.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tbOutput.Location = new System.Drawing.Point(0, 130);
+			this.tbOutput.Location = new System.Drawing.Point(0, 139);
 			this.tbOutput.MaxLength = 3276700;
 			this.tbOutput.Multiline = true;
 			this.tbOutput.Name = "tbOutput";
 			this.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tbOutput.Size = new System.Drawing.Size(684, 327);
+			this.tbOutput.Size = new System.Drawing.Size(944, 187);
 			this.tbOutput.TabIndex = 6;
 			this.tbOutput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbOutput_KeyUp);
 			// 
@@ -125,7 +130,7 @@ namespace EquationFinder_GUI
 			// btnOpen
 			// 
 			this.btnOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnOpen.Location = new System.Drawing.Point(605, 5);
+			this.btnOpen.Location = new System.Drawing.Point(865, 5);
 			this.btnOpen.Name = "btnOpen";
 			this.btnOpen.Size = new System.Drawing.Size(75, 23);
 			this.btnOpen.TabIndex = 6;
@@ -137,7 +142,7 @@ namespace EquationFinder_GUI
 			// btnSave
 			// 
 			this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnSave.Location = new System.Drawing.Point(524, 5);
+			this.btnSave.Location = new System.Drawing.Point(784, 5);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(75, 23);
 			this.btnSave.TabIndex = 5;
@@ -157,10 +162,10 @@ namespace EquationFinder_GUI
 			// 
 			// tbGoal
 			// 
-			this.tbGoal.Location = new System.Drawing.Point(9, 25);
+			this.tbGoal.Location = new System.Drawing.Point(66, 62);
 			this.tbGoal.MaxLength = 10;
 			this.tbGoal.Name = "tbGoal";
-			this.tbGoal.Size = new System.Drawing.Size(48, 20);
+			this.tbGoal.Size = new System.Drawing.Size(57, 20);
 			this.tbGoal.TabIndex = 0;
 			this.tbGoal.Text = "20";
 			this.tbGoal.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -234,7 +239,7 @@ namespace EquationFinder_GUI
 			this.groupThreads.Controls.Add(this.tbTTL);
 			this.groupThreads.Controls.Add(this.label5);
 			this.groupThreads.Controls.Add(this.label4);
-			this.groupThreads.Location = new System.Drawing.Point(317, 4);
+			this.groupThreads.Location = new System.Drawing.Point(380, 3);
 			this.groupThreads.Name = "groupThreads";
 			this.groupThreads.Size = new System.Drawing.Size(136, 87);
 			this.groupThreads.TabIndex = 3;
@@ -284,7 +289,7 @@ namespace EquationFinder_GUI
 			this.groupOperands.Controls.Add(this.radioRandom);
 			this.groupOperands.Controls.Add(this.tbOperandMax);
 			this.groupOperands.Controls.Add(this.radioConstant);
-			this.groupOperands.Location = new System.Drawing.Point(80, 4);
+			this.groupOperands.Location = new System.Drawing.Point(112, 3);
 			this.groupOperands.Name = "groupOperands";
 			this.groupOperands.Size = new System.Drawing.Size(120, 119);
 			this.groupOperands.TabIndex = 1;
@@ -335,7 +340,7 @@ namespace EquationFinder_GUI
 			// 
 			this.tbStats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.tbStats.BackColor = System.Drawing.SystemColors.Control;
-			this.tbStats.Location = new System.Drawing.Point(459, 31);
+			this.tbStats.Location = new System.Drawing.Point(719, 31);
 			this.tbStats.Name = "tbStats";
 			this.tbStats.Size = new System.Drawing.Size(221, 92);
 			this.tbStats.TabIndex = 8;
@@ -347,7 +352,7 @@ namespace EquationFinder_GUI
 			// groupOperators
 			// 
 			this.groupOperators.Controls.Add(this.listboxOperators);
-			this.groupOperators.Location = new System.Drawing.Point(207, 4);
+			this.groupOperators.Location = new System.Drawing.Point(3, 3);
 			this.groupOperators.Name = "groupOperators";
 			this.groupOperators.Size = new System.Drawing.Size(103, 119);
 			this.groupOperators.TabIndex = 2;
@@ -357,17 +362,53 @@ namespace EquationFinder_GUI
 			// groupGoal
 			// 
 			this.groupGoal.AutoSize = true;
+			this.groupGoal.Controls.Add(this.labelGoalPredicate);
+			this.groupGoal.Controls.Add(this.radioGoalDivisibleaBy);
+			this.groupGoal.Controls.Add(this.radioGoalEqual);
 			this.groupGoal.Controls.Add(this.tbGoal);
-			this.groupGoal.Location = new System.Drawing.Point(8, 4);
+			this.groupGoal.Location = new System.Drawing.Point(238, 3);
 			this.groupGoal.Name = "groupGoal";
-			this.groupGoal.Size = new System.Drawing.Size(65, 64);
+			this.groupGoal.Size = new System.Drawing.Size(136, 119);
 			this.groupGoal.TabIndex = 0;
 			this.groupGoal.TabStop = false;
 			this.groupGoal.Text = "Goal:";
 			// 
+			// labelGoalPredicate
+			// 
+			this.labelGoalPredicate.Location = new System.Drawing.Point(9, 65);
+			this.labelGoalPredicate.Name = "labelGoalPredicate";
+			this.labelGoalPredicate.Size = new System.Drawing.Size(53, 13);
+			this.labelGoalPredicate.TabIndex = 3;
+			this.labelGoalPredicate.Text = "≡ 0,  mod";
+			this.labelGoalPredicate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// radioGoalDivisibleaBy
+			// 
+			this.radioGoalDivisibleaBy.AutoSize = true;
+			this.radioGoalDivisibleaBy.Checked = true;
+			this.radioGoalDivisibleaBy.Location = new System.Drawing.Point(15, 19);
+			this.radioGoalDivisibleaBy.Name = "radioGoalDivisibleaBy";
+			this.radioGoalDivisibleaBy.Size = new System.Drawing.Size(86, 17);
+			this.radioGoalDivisibleaBy.TabIndex = 2;
+			this.radioGoalDivisibleaBy.TabStop = true;
+			this.radioGoalDivisibleaBy.Text = "is divisible by";
+			this.radioGoalDivisibleaBy.UseVisualStyleBackColor = true;
+			this.radioGoalDivisibleaBy.CheckedChanged += new System.EventHandler(this.radioGoalPredicate_CheckedChanged);
+			// 
+			// radioGoalEqual
+			// 
+			this.radioGoalEqual.AutoSize = true;
+			this.radioGoalEqual.Location = new System.Drawing.Point(15, 39);
+			this.radioGoalEqual.Name = "radioGoalEqual";
+			this.radioGoalEqual.Size = new System.Drawing.Size(73, 17);
+			this.radioGoalEqual.TabIndex = 1;
+			this.radioGoalEqual.Text = "is equal to";
+			this.radioGoalEqual.UseVisualStyleBackColor = true;
+			this.radioGoalEqual.CheckedChanged += new System.EventHandler(this.radioGoalPredicate_CheckedChanged);
+			// 
 			// btnTest
 			// 
-			this.btnTest.Location = new System.Drawing.Point(486, 5);
+			this.btnTest.Location = new System.Drawing.Point(522, 3);
 			this.btnTest.Name = "btnTest";
 			this.btnTest.Size = new System.Drawing.Size(32, 23);
 			this.btnTest.TabIndex = 9;
@@ -375,21 +416,30 @@ namespace EquationFinder_GUI
 			this.btnTest.UseVisualStyleBackColor = true;
 			this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.groupOperators);
+			this.panel1.Controls.Add(this.btnTest);
+			this.panel1.Controls.Add(this.groupOperands);
+			this.panel1.Controls.Add(this.groupGoal);
+			this.panel1.Controls.Add(this.groupThreads);
+			this.panel1.Controls.Add(this.btnFindSolution);
+			this.panel1.Location = new System.Drawing.Point(5, 5);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(564, 128);
+			this.panel1.TabIndex = 10;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(684, 453);
-			this.Controls.Add(this.btnTest);
-			this.Controls.Add(this.groupGoal);
-			this.Controls.Add(this.groupOperators);
+			this.ClientSize = new System.Drawing.Size(944, 322);
+			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.tbStats);
-			this.Controls.Add(this.groupThreads);
-			this.Controls.Add(this.groupOperands);
 			this.Controls.Add(this.btnSave);
 			this.Controls.Add(this.btnOpen);
 			this.Controls.Add(this.tbOutput);
-			this.Controls.Add(this.btnFindSolution);
+			this.MinimumSize = new System.Drawing.Size(960, 300);
 			this.Name = "MainForm";
 			this.Text = "Equation Finder";
 			this.Shown += new System.EventHandler(this.MainForm_Shown);
@@ -400,6 +450,8 @@ namespace EquationFinder_GUI
 			this.groupOperators.ResumeLayout(false);
 			this.groupGoal.ResumeLayout(false);
 			this.groupGoal.PerformLayout();
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -432,5 +484,9 @@ namespace EquationFinder_GUI
 		private System.Windows.Forms.GroupBox groupOperators;
 		private System.Windows.Forms.GroupBox groupGoal;
 		private System.Windows.Forms.Button btnTest;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Label labelGoalPredicate;
+		private System.Windows.Forms.RadioButton radioGoalDivisibleaBy;
+		private System.Windows.Forms.RadioButton radioGoalEqual;
 	}
 }

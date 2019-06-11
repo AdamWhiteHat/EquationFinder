@@ -42,14 +42,18 @@ namespace EquationFactories
 			{
 				_equationArgs = args;
 			}
-
-
-
-
+			
 			_builder = new ExpressionBuilder<BigInteger>(args);
 
 
-			IsSolution = (Result == _equationArgs.TargetValue);
+			if (_equationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
+			{
+				IsSolution = (Result % _equationArgs.TargetValue == 0);
+			}
+			else if (_equationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
+			{
+				IsSolution = (Result == _equationArgs.TargetValue);
+			}
 		}
 
 		public EquationResults GetResults()
