@@ -48,7 +48,7 @@ namespace EquationFactories
 
 			if (_equationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
 			{
-				IsSolution = (Result % _equationArgs.TargetValue == 0);
+				IsSolution = ((Result != 0) && (Result % _equationArgs.TargetValue == 0));
 			}
 			else if (_equationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
 			{

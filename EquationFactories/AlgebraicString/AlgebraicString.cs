@@ -15,7 +15,22 @@ namespace EquationFactories
 {
 	public partial class AlgebraicString : IEquation
 	{
-		public bool IsCorrect { get { return (Result == TargetValue); } }
+		public bool IsCorrect
+		{
+			get
+			{
+				if (EquationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
+				{
+					return ((Result != 0) && (Result % EquationArgs.TargetValue == 0));
+				}
+				else if (EquationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
+				{
+					return (Result == EquationArgs.TargetValue);
+				}
+				return (Result == EquationArgs.TargetValue);				
+			}
+		}
+
 		public BigInteger Result { get { return Solve(); } }
 		private BigInteger? _result = null;
 		private string Equation { get; set; }

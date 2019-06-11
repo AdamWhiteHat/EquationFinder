@@ -144,7 +144,7 @@ namespace EquationFactories
 
 							if (EquationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
 							{
-								_isSolution = (_result % TargetValue == 0);
+								_isSolution = ((_result != 0) && (_result % TargetValue == 0));
 							}
 							else if (EquationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
 							{
@@ -173,7 +173,7 @@ namespace EquationFactories
 
 			if (EquationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
 			{
-				_isSolution = (_result % TargetValue == 0);
+				_isSolution = ((_result != 0) && (_result % TargetValue == 0));
 			}
 			else if (EquationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
 			{

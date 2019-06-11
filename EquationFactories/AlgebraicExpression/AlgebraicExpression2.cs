@@ -22,7 +22,7 @@ namespace EquationFactories
 			{
 				if (EquationArgs.TargetValuePredicate == ResultPredicate.IsDivisibleBy)
 				{
-					return (Result % EquationArgs.TargetValue == 0);
+					return ((Result != 0) && (Result % EquationArgs.TargetValue == 0));
 				}
 				else if (EquationArgs.TargetValuePredicate == ResultPredicate.IsEqualTo)
 				{
