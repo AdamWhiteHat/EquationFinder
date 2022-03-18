@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentClasses.cs" />
+    <Compile Include="ResultPredicateEnum.cs" />
+    <Compile Include="ThreadSpawnerArgs.cs" />
+    <Compile Include="EquationFinderArgs.cs" />
+    <Compile Include="EquationResults.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

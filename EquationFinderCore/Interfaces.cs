@@ -26,6 +26,7 @@ namespace EquationFinderCore
 		List<int> TermPool { get; }
 		string OperatorPool { get; }
 		BigInteger TargetValue { get; }
+		ResultPredicate TargetValuePredicate { get; }
 		int NumberOfOperations { get; }
 		Random Rand { get; }
 	}

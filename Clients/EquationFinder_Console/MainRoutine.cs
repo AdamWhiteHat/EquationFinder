@@ -74,7 +74,7 @@ namespace EquationFinder_Console
 				}
 			}
 
-			equationArgs = new EquationFinderArgs(Settings.Equations_Goal, Settings.Operations_Quantity, termPool, Settings.Operand_Pool);
+			equationArgs = new EquationFinderArgs(Settings.Equations_Goal, ResultPredicate.IsEqualTo, Settings.Operations_Quantity, termPool, Settings.Operand_Pool);
 			threadArgs = new ThreadSpawnerArgs(previousfoundResults, LogSolution, Settings.Round_TimeToLive, Settings.Round_Threads, Settings.Round_Quantity, equationArgs);
 
 			ThreadedEquationFinder<AlgebraicTuple> equationFinder = new ThreadedEquationFinder<AlgebraicTuple>(threadArgs);

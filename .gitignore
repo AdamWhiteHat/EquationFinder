@@ -79,3 +79,4 @@ EquationFactories/AlgebraicSolver/bin/*
 *.FileListAbsolute.txt
 /ProfilerOBJ.dll
 *.user
+/.vs/

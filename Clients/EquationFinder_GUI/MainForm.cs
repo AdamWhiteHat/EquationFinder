@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Developed by Adam White
  *  https://csharpcodewhisperer.blogspot.com
@@ -51,6 +51,7 @@ namespace EquationFinder_GUI
 		{
 			InitializeComponent();						
 			listboxOperators.Items[0].Selected = true;
+			listboxOperators.Items[1].Selected = true;
 		}
 
 		private void MainForm_Shown(object sender, EventArgs e)
@@ -171,7 +172,18 @@ namespace EquationFinder_GUI
 				return;
 			}
 
-			equationArgs = new EquationFinderArgs(targetValue, numberOfOperations, TermPool, OperatorPool);
+			ResultPredicate resultCondition = ResultPredicate.IsDivisibleBy;
+			
+			if (radioGoalDivisibleaBy.Checked)
+			{
+				resultCondition = ResultPredicate.IsDivisibleBy;
+			}
+			else if (radioGoalEqual.Checked)
+			{
+				resultCondition = ResultPredicate.IsEqualTo;
+			}
+
+			equationArgs = new EquationFinderArgs(targetValue, resultCondition, numberOfOperations, TermPool, OperatorPool);
 
 			string[] previousResults = GetOutputLines();
 			if (previousResults != null && previousResults.Length > 0)
@@ -355,6 +367,17 @@ namespace EquationFinder_GUI
 
 		#endregion
 
+		private void radioGoalPredicate_CheckedChanged(object sender, EventArgs e)
+		{
+			if (radioGoalDivisibleaBy.Checked)
+			{
+				labelGoalPredicate.Text = "≡ 0,  mod";
+			}
+			else if (radioGoalEqual.Checked)
+			{
+				labelGoalPredicate.Text = "=";
+			}
+		}
 	}
 }
 
